@@ -37,7 +37,9 @@ export default function PrivacyPage() {
             },
             {
               title: '4. Google AdSense & Advertising',
-              content: `AdSenseAI does not currently display Google AdSense ads. If we add advertising in the future, we will update this policy. Our service analyzes your site for AdSense readiness but does not place ads on your behalf.`,
+              content: `AdSenseAI does not currently display Google AdSense ads. Our service analyzes your site for AdSense readiness but does not place ads on your behalf.
+
+To get approved for Google AdSense, you must comply with Google's [Program Policies](https://support.google.com/adsense/answer/6150124). We recommend reviewing their [Ad Placement policies](https://support.google.com/adsense/answer/1282097) to ensure your site meets their guidelines.`,
             },
             {
               title: '5. Data Sharing',
@@ -69,7 +71,18 @@ Contact us at support@adsenseai.in to exercise these rights.`,
               content: `We may update this Privacy Policy from time to time. We will notify you of significant changes via email or a notice on our website.`,
             },
             {
-              title: '10. Contact',
+              title: '10. AdSense Approval',
+              content: `AdSenseAI helps you prepare your website for Google AdSense approval. However, final approval is determined by Google. To improve your chances:
+
+• Review Google's [AdSense Program Policies](https://support.google.com/adsense/answer/6150124)
+• Follow their [Ad Placement guidelines](https://support.google.com/adsense/answer/1282097)
+• Ensure your site has sufficient original content
+• Add the required AdSense code to your site after approval
+
+We are not affiliated with Google or Google AdSense. For AdSense support, visit the [AdSense Help Center](https://support.google.com/adsense).`,
+            },
+            {
+              title: '11. Contact',
               content: `For privacy-related questions, contact us at: privacy@adsenseai.in`,
             },
           ].map(({ title, content }) => (

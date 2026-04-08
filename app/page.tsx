@@ -249,8 +249,8 @@ export default function Home() {
               </div>
 
               <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-[1.04] mb-7">
-                Turn Your Traffic Into<br />
-                <span className="gradient-text">Passive Revenue</span>
+                Get Your Website<br />
+                <span className="gradient-text">Adsense Ready</span>
               </h1>
 
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed mb-10">

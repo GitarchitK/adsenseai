@@ -7,6 +7,12 @@ const footerLinks = {
     { href: '/pricing',   label: 'Pricing' },
     { href: '/dashboard', label: 'Dashboard' },
   ],
+  'AdSense Resources': [
+    { href: 'https://support.google.com/adsense/answer/160544', label: 'AdSense Help Center' },
+    { href: 'https://support.google.com/adsense/answer/6150124', label: 'Program Policies' },
+    { href: 'https://support.google.com/adsense/answer/6140686', label: 'AdSense Approval Guide' },
+    { href: 'https://support.google.com/adsense/answer/2652284', label: 'Ad Placement Tips' },
+  ],
   Company: [
     { href: '/about',   label: 'About Us' },
     { href: '/contact', label: 'Contact' },
@@ -26,7 +32,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-border/60 bg-muted/20">
       <div className="container mx-auto px-6 py-14">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
@@ -48,13 +54,21 @@ export function SiteFooter() {
             <div key={section}>
               <p className="text-[11px] font-bold text-foreground uppercase tracking-widest mb-4">{section}</p>
               <ul className="space-y-2.5">
-                {links.map(({ href, label }) => (
-                  <li key={href}>
-                    <Link href={href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                      {label}
-                    </Link>
-                  </li>
-                ))}
+                {links.map(({ href, label }) => {
+                  const isExternal = href.startsWith('http')
+                  return (
+                    <li key={href}>
+                      <Link 
+                        href={href} 
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        target={isExternal ? '_blank' : undefined}
+                        rel={isExternal ? 'noopener noreferrer' : undefined}
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  )
+                })}
               </ul>
             </div>
           ))}
