@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card'
 import {
   ArrowLeft, AlertCircle, CheckCircle2, AlertTriangle,
   ShieldCheck, ShieldAlert, Brain, Search, Sparkles,
-  UserCheck, FileText, Lightbulb, Globe, Lock, Crown, Zap, Calendar, TrendingUp,
+  UserCheck, FileText, Lightbulb, Globe, Lock, Crown, Zap, Calendar, TrendingUp, BarChart3,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useProfile } from '@/hooks/use-profile'
