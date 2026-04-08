@@ -1,14 +1,14 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, CheckCircle2, Zap, ArrowRight } from 'lucide-react'
 import { signInWithGoogle } from '@/lib/auth'
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
@@ -109,5 +109,13 @@ export default function LoginPage() {
         <span className="text-primary cursor-pointer hover:underline">Privacy Policy</span>
       </p>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-muted-foreground">Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   )
 }
