@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import {
-  ArrowLeft, AlertCircle, CheckCircle2, AlertTriangle,
+  ArrowLeft, ArrowRight, AlertCircle, CheckCircle2, AlertTriangle,
   ShieldCheck, ShieldAlert, Brain, Search, Sparkles,
   UserCheck, FileText, Lightbulb, Globe, Lock, Crown, Zap, Calendar, TrendingUp, BarChart3,
 } from 'lucide-react'
