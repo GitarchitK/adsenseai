@@ -1,0 +1,207 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.08 0.015 265);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.08 0.015 265);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.08 0.015 265);
+  --primary: oklch(0.48 0.24 270);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.006 265);
+  --secondary-foreground: oklch(0.25 0.02 265);
+  --muted: oklch(0.96 0.004 265);
+  --muted-foreground: oklch(0.50 0.012 265);
+  --accent: oklch(0.95 0.012 270);
+  --accent-foreground: oklch(0.48 0.24 270);
+  --destructive: oklch(0.57 0.22 27);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.90 0.006 265);
+  --input: oklch(0.93 0.005 265);
+  --ring: oklch(0.48 0.24 270);
+  --radius: 0.75rem;
+  --chart-1: oklch(0.48 0.24 270);
+  --chart-2: oklch(0.58 0.18 200);
+  --chart-3: oklch(0.63 0.16 145);
+  --chart-4: oklch(0.70 0.16 55);
+  --chart-5: oklch(0.56 0.20 15);
+  --sidebar: oklch(0.985 0.002 265);
+  --sidebar-foreground: oklch(0.08 0.015 265);
+  --sidebar-primary: oklch(0.48 0.24 270);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.93 0.010 270);
+  --sidebar-accent-foreground: oklch(0.48 0.24 270);
+  --sidebar-border: oklch(0.90 0.006 265);
+  --sidebar-ring: oklch(0.48 0.24 270);
+}
+
+.dark {
+  --background: oklch(0.08 0.012 265);
+  --foreground: oklch(0.97 0.004 265);
+  --card: oklch(0.11 0.012 265);
+  --card-foreground: oklch(0.97 0.004 265);
+  --popover: oklch(0.11 0.012 265);
+  --popover-foreground: oklch(0.97 0.004 265);
+  --primary: oklch(0.66 0.20 270);
+  --primary-foreground: oklch(0.08 0.012 265);
+  --secondary: oklch(0.17 0.012 265);
+  --secondary-foreground: oklch(0.97 0.004 265);
+  --muted: oklch(0.17 0.010 265);
+  --muted-foreground: oklch(0.58 0.012 265);
+  --accent: oklch(0.19 0.030 270);
+  --accent-foreground: oklch(0.66 0.20 270);
+  --destructive: oklch(0.50 0.20 25);
+  --destructive-foreground: oklch(0.97 0.004 265);
+  --border: oklch(0.19 0.012 265);
+  --input: oklch(0.15 0.010 265);
+  --ring: oklch(0.66 0.20 270);
+  --chart-1: oklch(0.66 0.20 270);
+  --chart-2: oklch(0.66 0.16 200);
+  --chart-3: oklch(0.68 0.14 145);
+  --chart-4: oklch(0.73 0.14 55);
+  --chart-5: oklch(0.63 0.18 15);
+  --sidebar: oklch(0.09 0.012 265);
+  --sidebar-foreground: oklch(0.97 0.004 265);
+  --sidebar-primary: oklch(0.66 0.20 270);
+  --sidebar-primary-foreground: oklch(0.08 0.012 265);
+  --sidebar-accent: oklch(0.17 0.022 270);
+  --sidebar-accent-foreground: oklch(0.66 0.20 270);
+  --sidebar-border: oklch(0.19 0.012 265);
+  --sidebar-ring: oklch(0.66 0.20 270);
+}
+
+@theme inline {
+  --font-sans: 'Geist', 'Geist Fallback';
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  body { @apply bg-background text-foreground antialiased; font-feature-settings: 'rlig' 1, 'calt' 1; }
+  h1, h2, h3, h4 { @apply tracking-tight; }
+}
+
+/* ── Gradient mesh hero background ── */
+.mesh-bg {
+  background-image:
+    radial-gradient(ellipse 90% 60% at 15% -5%, oklch(0.48 0.24 270 / 0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 85% 105%, oklch(0.58 0.18 200 / 0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, oklch(0.48 0.24 270 / 0.04) 0%, transparent 70%);
+}
+.dark .mesh-bg {
+  background-image:
+    radial-gradient(ellipse 90% 60% at 15% -5%, oklch(0.66 0.20 270 / 0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 85% 105%, oklch(0.66 0.16 200 / 0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, oklch(0.66 0.20 270 / 0.05) 0%, transparent 70%);
+}
+
+/* ── Animated gradient text ── */
+.gradient-text {
+  background: linear-gradient(135deg,
+    oklch(0.48 0.24 270) 0%,
+    oklch(0.55 0.22 240) 40%,
+    oklch(0.52 0.26 290) 70%,
+    oklch(0.48 0.24 270) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: grad 5s ease infinite;
+}
+@keyframes grad { 0%,100% { background-position: 0% center } 50% { background-position: 100% center } }
+
+/* ── Card hover lift ── */
+.lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px oklch(0 0 0 / 0.08);
+}
+.dark .lift:hover { box-shadow: 0 12px 40px oklch(0 0 0 / 0.35); }
+
+/* ── Glow on primary elements ── */
+.glow { box-shadow: 0 0 50px oklch(0.48 0.24 270 / 0.22); }
+.dark .glow { box-shadow: 0 0 50px oklch(0.66 0.20 270 / 0.28); }
+
+/* ── Dot grid background ── */
+.dot-grid {
+  background-image: radial-gradient(circle, oklch(0.48 0.24 270 / 0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.dark .dot-grid {
+  background-image: radial-gradient(circle, oklch(0.66 0.20 270 / 0.10) 1px, transparent 1px);
+}
+
+/* ── Animated hero orbs ── */
+@keyframes orb-float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(40px, -30px) scale(1.08); }
+  66%       { transform: translate(-20px, 20px) scale(0.95); }
+}
+@keyframes orb-float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(-50px, 25px) scale(1.05); }
+  66%       { transform: translate(30px, -40px) scale(0.92); }
+}
+@keyframes orb-float-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(20px, 30px) scale(1.1); }
+}
+@keyframes grid-pan {
+  0%   { background-position: 0 0; }
+  100% { background-position: 28px 28px; }
+}
+
+.hero-orb-1 { animation: orb-float-1 12s ease-in-out infinite; }
+.hero-orb-2 { animation: orb-float-2 16s ease-in-out infinite; }
+.hero-orb-3 { animation: orb-float-3 10s ease-in-out infinite; }
+.dot-grid-anim {
+  background-image: radial-gradient(circle, oklch(0.48 0.24 270 / 0.13) 1px, transparent 1px);
+  background-size: 28px 28px;
+  animation: grid-pan 8s linear infinite;
+}
+.dark .dot-grid-anim {
+  background-image: radial-gradient(circle, oklch(0.66 0.20 270 / 0.10) 1px, transparent 1px);
+}

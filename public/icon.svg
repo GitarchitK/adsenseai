@@ -1,0 +1,34 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shield_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7C3AED" />
+      <stop offset="100%" stop-color="#4F46E5" />
+    </linearGradient>
+    <linearGradient id="accent_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Shield Shape -->
+  <path d="M256 48C160 48 80 80 80 180C80 320 256 464 256 464C256 464 432 320 432 180C432 80 352 48 256 48Z" fill="url(#shield_grad)" />
+  
+  <!-- Growth Line / AdSense Symbol -->
+  <path d="M160 300L220 240L280 280L360 180" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" />
+  <circle cx="360" cy="180" r="24" fill="#10B981" filter="url(#glow)" />
+  
+  <!-- AI Sparkles -->
+  <path d="M380 80L390 110L420 120L390 130L380 160L370 130L340 120L370 110L380 80Z" fill="white" opacity="0.8">
+    <animate attributeName="opacity" values="0.4;1;0.4" dur="3s" repeatCount="indefinite" />
+  </path>
+  <path d="M440 160L445 175L460 180L445 185L440 200L435 185L420 180L435 175L440 160Z" fill="white" opacity="0.6">
+    <animate attributeName="opacity" values="0.2;0.8;0.2" dur="4s" repeatCount="indefinite" />
+  </path>
+  
+  <!-- Inner Shield Detail -->
+  <path d="M256 80C180 80 120 110 120 180C120 280 256 380 256 380C256 380 392 280 392 180C392 110 332 80 256 80Z" stroke="white" stroke-width="4" stroke-dasharray="12 12" opacity="0.3" />
+</svg>

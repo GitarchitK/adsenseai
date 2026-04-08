@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      width: 320px;
+      margin: 0;
+      padding: 16px;
+      background-color: #0f172a;
+      color: white;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
+    }
+    .score-container {
+      text-align: center;
+      padding: 20px;
+      background-color: #1e293b;
+      border-radius: 16px;
+      border: 1px solid #334155;
+      margin-bottom: 16px;
+    }
+    .score {
+      font-size: 48px;
+      font-weight: 900;
+      color: #10b981;
+    }
+    .score-label {
+      font-size: 12px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+    }
+    .issues-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .issue-item {
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 11px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .issue-item.error {
+      background-color: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+    .issue-item.warning {
+      background-color: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      color: #fcd34d;
+    }
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 10px;
+      color: #64748b;
+    }
+    .footer a {
+      color: #7c3aed;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">A</div>
+    <div style="font-weight: 900; font-size: 18px;">AdSenseAI <span style="color: #7c3aed;">Shield</span></div>
+  </div>
+
+  <div id="no-data" style="text-align: center; color: #94a3b8; padding: 20px;">
+    No scan data found for this page. Refresh to scan.
+  </div>
+
+  <div id="scan-data" style="display: none;">
+    <div class="score-container">
+      <div id="score" class="score">0</div>
+      <div class="score-label">Policy Score</div>
+    </div>
+
+    <div id="issues-list" class="issues-list">
+      <!-- Issues and warnings will be injected here -->
+    </div>
+  </div>
+
+  <div class="footer">
+    A product of <a href="https://navroll.studio" target="_blank">Navroll Studio</a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

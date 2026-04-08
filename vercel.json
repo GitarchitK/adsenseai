@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "app/api/crawl/route.ts":              { "maxDuration": 60 },
+    "app/api/analyze/articles/route.ts":   { "maxDuration": 60 },
+    "app/api/ai/**":                       { "maxDuration": 30 },
+    "app/api/razorpay/webhook/route.ts":   { "maxDuration": 10 }
+  },
+  "regions": ["bom1"]
+}
