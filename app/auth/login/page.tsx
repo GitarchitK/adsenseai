@@ -1,5 +1,6 @@
 'use client'
 
+import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -9,6 +10,7 @@ import { signInWithGoogle } from '@/lib/auth'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -25,7 +27,12 @@ export default function LoginPage() {
       )
       setIsLoading(false)
     } else {
-      router.push('/dashboard')
+      const returnUrl = searchParams.get('returnUrl')
+      if (returnUrl) {
+        router.push(`/dashboard?scan=${encodeURIComponent(returnUrl)}`)
+      } else {
+        router.push('/dashboard')
+      }
     }
   }
 

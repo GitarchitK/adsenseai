@@ -41,7 +41,7 @@ export class WebsiteCrawler {
     this.url = normalizeUrl(url);
     this.domain = getDomain(url);
     this.options = {
-      maxPages: options.maxPages || 15,
+      maxPages: options.maxPages || 50,
       timeout: options.timeout || 30000,
     };
   }
@@ -71,7 +71,7 @@ export class WebsiteCrawler {
       this.pagesToVisit = this.buildVisitQueue(internalLinks, sitemapEntries);
 
       // Step 4: Crawl pages in parallel with concurrency limit
-      const CONCURRENCY = 5;
+      const CONCURRENCY = 8;
       const queue = [...this.pagesToVisit];
       const crawledByUrl = new Map<string, CrawledPage>();
       
@@ -97,13 +97,30 @@ export class WebsiteCrawler {
 
       // Start concurrent workers
       await Promise.all(Array(CONCURRENCY).fill(null).map(() => processQueue()));
+      
+      // Ensure the order matches the visit queue
       this.crawledPages = this.pagesToVisit
         .map((pageUrl) => crawledByUrl.get(pageUrl))
         .filter((page): page is CrawledPage => !!page);
 
       // Step 5: Build site structure
-      const allUrls = this.crawledPages.map((p) => p.url);
+      const allUrls = Array.from(new Set([
+        ...this.crawledPages.map((p) => p.url),
+        ...this.pagesToVisit,
+        ...sitemapEntries.map(e => e.url)
+      ]));
       const siteStructure = detectRequiredPages(allUrls, this.domain);
+
+      // Add estimated domain age if we have sitemap entries
+      if (sitemapEntries.length > 0) {
+        const earliest = sitemapEntries
+          .map(e => e.lastmod ? Date.parse(e.lastmod) : Date.now())
+          .sort((a, b) => a - b)[0];
+        
+        const ageMs = Date.now() - earliest;
+        const ageYears = ageMs / (1000 * 60 * 60 * 24 * 365);
+        siteStructure.domain_age_years = Number(ageYears.toFixed(1));
+      }
 
       const crawlTime = Date.now() - this.startTime;
 

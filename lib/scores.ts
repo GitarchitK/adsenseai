@@ -26,7 +26,7 @@ export interface ScoreBreakdown {
 export function computeScores(crawl: CrawlResponse): ScoreBreakdown {
   const pages = crawl.pages
   const total = pages.length || 1
-  const { has_privacy, has_about, has_contact, has_terms } = crawl.site_structure
+  const { has_privacy, has_about, has_contact, has_terms, has_disclaimer } = crawl.site_structure
 
   // ── quality_score (content quality) ──────────────────────────────────────
   const avgWords = pages.reduce((s, p) => s + p.word_count, 0) / total
@@ -38,8 +38,8 @@ export function computeScores(crawl: CrawlResponse): ScoreBreakdown {
 
   // ── policy_score ──────────────────────────────────────────────────────────
   // Deduct for missing required legal pages; base is 100
-  const legalPages = [has_privacy, has_terms].filter(Boolean).length
-  const policy_score = Math.round(clamp(50 + legalPages * 25, 0, 100))
+  const legalPages = [has_privacy, has_terms, has_disclaimer].filter(Boolean).length
+  const policy_score = Math.round(clamp(40 + legalPages * 20, 0, 100))
 
   // ── seo_score ─────────────────────────────────────────────────────────────
   const structureBonus = [has_about, has_contact].filter(Boolean).length * 10
@@ -61,10 +61,11 @@ export function computeScores(crawl: CrawlResponse): ScoreBreakdown {
 
   // ── trust_score ───────────────────────────────────────────────────────────
   const trustPoints =
-    (has_privacy ? 30 : 0) +
-    (has_about ? 25 : 0) +
-    (has_contact ? 25 : 0) +
-    (has_terms ? 20 : 0)
+    (has_privacy ? 25 : 0) +
+    (has_about ? 20 : 0) +
+    (has_contact ? 20 : 0) +
+    (has_terms ? 20 : 0) +
+    (has_disclaimer ? 15 : 0)
   const trust_score = Math.round(clamp(trustPoints, 0, 100))
 
   // ── final weighted score ──────────────────────────────────────────────────
@@ -97,6 +98,10 @@ export function computeScores(crawl: CrawlResponse): ScoreBreakdown {
   if (!has_terms) {
     warnings.push('Missing Terms of Service page')
     missing_pages.push('Terms of Service')
+  }
+  if (!has_disclaimer) {
+    warnings.push('Missing Disclaimer page — highly recommended for policy safety')
+    missing_pages.push('Disclaimer')
   }
   if (!has_about) {
     recommendations.push('Add an About page to build authority and trust')

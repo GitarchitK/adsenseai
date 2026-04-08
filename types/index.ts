@@ -83,6 +83,8 @@ export interface SiteStructure {
   has_about: boolean;
   has_contact: boolean;
   has_terms: boolean;
+  has_disclaimer: boolean;
+  domain_age_years?: number;
 }
 
 export interface CrawlResponse {

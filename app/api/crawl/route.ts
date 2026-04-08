@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     catch { return NextResponse.json({ success: false, error: 'Invalid URL.' }, { status: 400 }) }
 
     // ── Crawl ───────────────────────────────────────────────────────────────
-    const crawler = new WebsiteCrawler(normalizedUrl, { maxPages: 40, timeout: 60000 })
+    const crawler = new WebsiteCrawler(normalizedUrl, { maxPages: 50, timeout: 60000 })
     const crawlResult = await crawler.crawl()
 
     if (!crawlResult.success) {
@@ -84,6 +84,7 @@ export async function POST(request: NextRequest) {
       finalScore:   aiReport?.final_score  ?? scores.final_score,
       statusLabel:  aiReport?.status_label ?? scores.status_label,
       scores:       scores as unknown as Record<string, unknown>,
+      crawlData:    crawlResult as unknown as Record<string, unknown>,
       aiReport:     aiReport as unknown as Record<string, unknown> | null,
       isAiUnlocked: isPro,
     })

@@ -160,7 +160,23 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (searchParams.get('upgraded') === '1') setUpgraded(true)
-  }, [searchParams])
+    const scanUrl = searchParams.get('scan')
+    if (scanUrl && !isScanning) {
+      setUrl(decodeURIComponent(scanUrl))
+    }
+  }, [searchParams, isScanning])
+
+  // Auto-start scan if URL is provided in params
+  useEffect(() => {
+    const scanUrl = searchParams.get('scan')
+    if (scanUrl && canScan && token && !isScanning && url === decodeURIComponent(scanUrl)) {
+      // Small delay to ensure everything is loaded
+      const timer = setTimeout(() => {
+        handleScan({ preventDefault: () => {} } as React.FormEvent)
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [searchParams, canScan, token, url])
 
   useEffect(() => {
     if (!token) return

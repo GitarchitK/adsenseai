@@ -25,6 +25,8 @@ export interface ScanRecord {
   statusLabel: string | null
   // Basic scores always present
   scores: Record<string, unknown> | null
+  // Full crawl data — saved for later so user can unlock AI report without re-crawling
+  crawlData: Record<string, unknown> | null
   // AI report — null until unlocked (pay-per-report or pro)
   aiReport: Record<string, unknown> | null
   isAiUnlocked: boolean   // true if user paid ₹19 or is Pro

@@ -13,7 +13,7 @@ interface ScanRow {
   domain: string
   finalScore: number | null
   statusLabel: string | null
-  isDetailed: boolean
+  isAiUnlocked: boolean
   createdAt: string
 }
 
@@ -112,7 +112,7 @@ export default function ScansPage() {
                       <p className="font-semibold text-sm text-foreground truncate">
                         {scan.domain || scan.websiteUrl}
                       </p>
-                      {scan.isDetailed && (
+                      {scan.isAiUnlocked && (
                         <span className="flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300">
                           <Crown className="h-2.5 w-2.5" /> AI
                         </span>

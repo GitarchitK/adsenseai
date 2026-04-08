@@ -198,7 +198,7 @@ export function extractSitemapUrls(xml: string, baseUrl: string): string[] {
 export function detectRequiredPages(
   urls: string[],
   domain: string
-): { has_privacy: boolean; has_about: boolean; has_contact: boolean; has_terms: boolean } {
+): { has_privacy: boolean; has_about: boolean; has_contact: boolean; has_terms: boolean; has_disclaimer: boolean } {
   const lowerUrls = urls.map((url) => url.toLowerCase());
 
   return {
@@ -206,6 +206,7 @@ export function detectRequiredPages(
     has_about: lowerUrls.some((url) => url.includes('about')),
     has_contact: lowerUrls.some((url) => url.includes('contact')),
     has_terms: lowerUrls.some((url) => url.includes('terms') || url.includes('tos')),
+    has_disclaimer: lowerUrls.some((url) => url.includes('disclaimer')),
   };
 }
 

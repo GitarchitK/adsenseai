@@ -87,11 +87,31 @@ export async function POST(request: NextRequest) {
 
     console.log(`[Payment] Saved unlock payment ${paymentRef.id} for scan ${scanId}`)
 
-    // Generate AI report
+    // Try to get crawl data from DB first, fallback to client-provided data
+    const scan = await getScanById(scanId, profile.uid)
+    const effectiveCrawlData = scan?.crawlData || crawlData
+
+    // Generate AI report — sanitize crawlData to a clean CrawlResponse
     let aiReport = null
-    if (crawlData && process.env.OPENAI_API_KEY) {
-      try { aiReport = await generateAIReport(crawlData as CrawlResponse) }
-      catch (err) { console.error('[Unlock] AI report failed:', err) }
+    if (effectiveCrawlData && process.env.OPENAI_API_KEY) {
+      try {
+        // Strip any non-CrawlResponse fields that may have been stored in sessionStorage
+        const cleanCrawl: CrawlResponse = {
+          success:      true,
+          pages:        effectiveCrawlData.pages        ?? [],
+          site_structure: effectiveCrawlData.site_structure ?? { has_privacy: false, has_about: false, has_contact: false, has_terms: false },
+          total_pages:  effectiveCrawlData.total_pages  ?? effectiveCrawlData.pages?.length ?? 0,
+          domain:       effectiveCrawlData.domain       ?? '',
+          crawl_time_ms: effectiveCrawlData.crawl_time_ms ?? 0,
+        }
+        if (cleanCrawl.pages.length === 0) {
+          console.warn('[Unlock] effectiveCrawlData has no pages — cannot generate AI report')
+        } else {
+          aiReport = await generateAIReport(cleanCrawl)
+        }
+      } catch (err) { console.error('[Unlock] AI report failed:', err) }
+    } else {
+      console.warn('[Unlock] Missing crawlData or OPENAI_API_KEY — skipping AI report')
     }
 
     await unlockScanAiReport(scanId, profile.uid, aiReport as unknown as Record<string, unknown> ?? {})
@@ -105,15 +125,35 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, ai_report: aiReport })
   }
 
-  // ── Pro auto-unlock (no payment needed) ──────────────────────────────────
+  // ── Pro auto-unlock or Re-generate unlocked (no payment needed) ──────────
   if (action === 'pro_unlock') {
     if (!scanId) return NextResponse.json({ error: 'Missing scanId.' }, { status: 400 })
-    if (profile.plan !== 'pro') return NextResponse.json({ error: 'Pro plan required.' }, { status: 403 })
+
+    // Try to get crawl data from DB first, fallback to client-provided data
+    const scan = await getScanById(scanId, profile.uid)
+    
+    // Check if user is Pro OR if this specific scan was already paid for
+    if (profile.plan !== 'pro' && !scan?.isAiUnlocked) {
+      return NextResponse.json({ error: 'Pro plan or one-time payment required.' }, { status: 403 })
+    }
+
+    const effectiveCrawlData = scan?.crawlData || crawlData
 
     let aiReport = null
-    if (crawlData && process.env.OPENAI_API_KEY) {
-      try { aiReport = await generateAIReport(crawlData as CrawlResponse) }
-      catch (err) { console.error('[Unlock] Pro AI report failed:', err) }
+    if (effectiveCrawlData && process.env.OPENAI_API_KEY) {
+      try {
+        const cleanCrawl: CrawlResponse = {
+          success:      true,
+          pages:        effectiveCrawlData.pages        ?? [],
+          site_structure: effectiveCrawlData.site_structure ?? { has_privacy: false, has_about: false, has_contact: false, has_terms: false },
+          total_pages:  effectiveCrawlData.total_pages  ?? effectiveCrawlData.pages?.length ?? 0,
+          domain:       effectiveCrawlData.domain       ?? '',
+          crawl_time_ms: effectiveCrawlData.crawl_time_ms ?? 0,
+        }
+        if (cleanCrawl.pages.length > 0) {
+          aiReport = await generateAIReport(cleanCrawl)
+        }
+      } catch (err) { console.error('[Unlock] AI report failed:', err) }
     }
 
     await unlockScanAiReport(scanId, profile.uid, aiReport as unknown as Record<string, unknown> ?? {})

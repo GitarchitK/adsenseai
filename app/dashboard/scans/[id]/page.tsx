@@ -22,14 +22,14 @@ export default function SavedScanPage() {
         // Reconstruct the shape the results page expects
         const payload = {
           ...(scan.scores ?? {}),
+          ...(scan.crawlData ?? {}),
           success: true,
-          pages: [],
-          site_structure: { has_privacy: false, has_about: false, has_contact: false, has_terms: false },
-          total_pages: 0,
           domain: scan.domain,
-          crawl_time_ms: 0,
           scores: scan.scores,
-          ai_report: scan.ai_report,
+          ai_report: scan.aiReport,
+          scan_id: scan.id,
+          isAiUnlocked: scan.isAiUnlocked,
+          crawl_data: scan.crawlData,
         }
         sessionStorage.setItem('lastCrawlData', JSON.stringify(payload))
         setStatus('ready')
