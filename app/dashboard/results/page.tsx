@@ -382,7 +382,7 @@ export default function ResultsPage() {
         {activeTab === 'overview' && (
           <div className="space-y-6 animate-in fade-in duration-300">
 
-            {/* Score card */}
+            {/* Score card — always shown */}
             <Card className="p-6 md:p-8 border-border/60 rounded-3xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
               <div className="grid md:grid-cols-2 gap-8 items-center relative z-10">
@@ -400,14 +400,6 @@ export default function ResultsPage() {
                           : "Significant issues found. AdSense will likely reject in current state."}
                       </p>
                     )}
-                    {isAiUnlocked && ai && (
-                      <div className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full mt-1 ${
-                        ai.adsense_ready ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
-                          : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'}`}>
-                        {ai.adsense_ready ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}
-                        {ai.adsense_ready ? 'AdSense Ready' : 'Fix Recommended'}
-                      </div>
-                    )}
                   </div>
                 </div>
                 <div className="space-y-4 bg-muted/20 p-5 rounded-2xl border border-border/40">
@@ -420,33 +412,34 @@ export default function ResultsPage() {
               </div>
             </Card>
 
-            {/* AI timeline + action plan shortcut */}
-            {isAiUnlocked && ai && (
-              <div className="grid md:grid-cols-3 gap-4">
-                <Card className={`p-5 md:col-span-2 rounded-2xl border-2 ${ai.adsense_ready ? 'border-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/20' : 'border-amber-300 bg-amber-50/50 dark:bg-amber-950/20'}`}>
-                  <div className="flex items-start gap-3">
-                    <Zap className={`h-5 w-5 flex-shrink-0 mt-0.5 ${ai.adsense_ready ? 'text-emerald-500' : 'text-amber-500'}`} />
-                    <div>
-                      <p className="font-bold text-foreground text-sm mb-1">When to Apply</p>
-                      <p className="text-sm text-foreground font-semibold">{ai.application_timeline}</p>
-                      {ai.application_timeline_reason && (
-                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{ai.application_timeline_reason}</p>
-                      )}
-                    </div>
+            {/* When to Apply — always shown, richer when unlocked */}
+            <Card className={`p-5 rounded-2xl border-2 ${
+              isAiUnlocked && ai
+                ? ai.adsense_ready ? 'border-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/20' : 'border-amber-300 bg-amber-50/50 dark:bg-amber-950/20'
+                : finalScore >= 70 ? 'border-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/20' : 'border-amber-300 bg-amber-50/50 dark:bg-amber-950/20'
+            }`}>
+              <div className="flex items-start justify-between gap-4 flex-wrap">
+                <div className="flex items-start gap-3 flex-1">
+                  <Zap className={`h-5 w-5 flex-shrink-0 mt-0.5 ${finalScore >= 70 ? 'text-emerald-500' : 'text-amber-500'}`} />
+                  <div>
+                    <p className="font-bold text-foreground text-sm mb-1">When to Apply</p>
+                    <p className="text-sm text-foreground font-semibold">
+                      {isAiUnlocked && ai ? ai.application_timeline
+                        : finalScore >= 80 ? 'Your site looks ready — apply to AdSense now.'
+                        : finalScore >= 65 ? 'Apply in 1–2 weeks after fixing the issues below.'
+                        : finalScore >= 50 ? 'Apply in 3–4 weeks after improving content and fixing policy issues.'
+                        : 'Wait 6–8 weeks — significant work needed before applying.'}
+                    </p>
+                    {isAiUnlocked && ai?.application_timeline_reason && (
+                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{ai.application_timeline_reason}</p>
+                    )}
                   </div>
-                </Card>
-                <Card className="p-5 rounded-2xl border-border/60 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors" onClick={() => setActiveTab('plan')}>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Calendar className="h-4 w-4 text-primary" />
-                    <p className="font-bold text-sm text-foreground">Action Plan</p>
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-3">Your custom roadmap to approval.</p>
-                  <Button variant="ghost" size="sm" className="w-full text-xs font-bold gap-1.5 h-8">
-                    View Plan <ArrowRight className="h-3 w-3" />
-                  </Button>
-                </Card>
+                </div>
+                <button onClick={() => setActiveTab('plan')} className="text-xs font-bold text-primary hover:underline flex items-center gap-1 flex-shrink-0">
+                  View Plan <ArrowRight className="h-3 w-3" />
+                </button>
               </div>
-            )}
+            </Card>
 
             {/* Mandatory Pages Checklist */}
             {data.site_structure && (
@@ -482,18 +475,36 @@ export default function ResultsPage() {
               </Card>
             )}
 
-            {/* Missing pages alert (Keep as secondary warning if anything missing) */}
-            {missingPages.length > 0 && (
-              <Card className="p-5 border-red-200 dark:border-red-800/50 bg-red-50/50 dark:bg-red-950/20 rounded-2xl">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-semibold text-foreground text-sm mb-1">Missing Required Pages — Fix Immediately</p>
-                    <p className="text-xs text-muted-foreground">AdSense will reject your application without these pages present.</p>
-                  </div>
-                </div>
-              </Card>
-            )}
+            {/* Issues — always shown, richer when unlocked */}
+            <Card className="p-5 border-border/60 rounded-2xl">
+              <p className="text-xs font-black uppercase tracking-widest text-foreground mb-3 flex items-center gap-2">
+                <Lightbulb className="h-3.5 w-3.5 text-amber-500" />
+                {isAiUnlocked && ai && ai.top_issues.length > 0 ? 'Top Issues Found' : 'Quick Wins — Fix These First'}
+              </p>
+              <div className="space-y-2">
+                {isAiUnlocked && ai && ai.top_issues.length > 0 ? (
+                  ai.top_issues.map((issue, i) => <IssueRow key={i} text={issue} type="critical" />)
+                ) : (
+                  (() => {
+                    const wins: { text: string; type: 'critical' | 'warning' | 'info' }[] = []
+                    if (!data.site_structure?.has_privacy)    wins.push({ text: 'Add a Privacy Policy page — required for AdSense approval', type: 'critical' })
+                    if (!data.site_structure?.has_about)      wins.push({ text: 'Add an About Us page — builds trust with Google reviewers', type: 'critical' })
+                    if (!data.site_structure?.has_contact)    wins.push({ text: 'Add a Contact page — AdSense requires a way to reach you', type: 'critical' })
+                    if (!data.site_structure?.has_terms)      wins.push({ text: 'Add a Terms of Service page — shows site legitimacy', type: 'warning' })
+                    if (!data.site_structure?.has_disclaimer) wins.push({ text: 'Add a Disclaimer page — important for finance/health niches', type: 'warning' })
+                    const noH1 = data.pages.filter(p => p.headings.h1.length === 0).length
+                    if (noH1 > 0) wins.push({ text: `${noH1} page${noH1 > 1 ? 's' : ''} missing H1 tags — add a clear heading to each`, type: 'warning' })
+                    const noMeta = data.pages.filter(p => !p.meta_description).length
+                    if (noMeta > 0) wins.push({ text: `${noMeta} page${noMeta > 1 ? 's' : ''} missing meta descriptions`, type: 'warning' })
+                    const thin = data.pages.filter(p => p.word_count < 300 && p.word_count > 0).length
+                    if (thin > 0) wins.push({ text: `${thin} page${thin > 1 ? 's' : ''} under 300 words — expand to 600+ words`, type: 'warning' })
+                    if (articleCount < 15) wins.push({ text: `Only ${articleCount} articles — publish at least 25 before applying`, type: 'critical' })
+                    if (wins.length === 0) wins.push({ text: 'Basic structure looks good! Unlock the AI report for deep content & policy analysis.', type: 'info' })
+                    return wins.slice(0, 6).map((w, i) => <IssueRow key={i} text={w.text} type={w.type} />)
+                  })()
+                )}
+              </div>
+            </Card>
 
             {/* Domain Age Alert */}
             {data.site_structure?.domain_age_years !== undefined && data.site_structure.domain_age_years < 0.5 && (
@@ -548,35 +559,7 @@ export default function ResultsPage() {
               )
             })()}
 
-            {/* Quick Wins — always visible, no AI needed */}
-            {!isAiUnlocked && (() => {
-              const wins: { icon: React.ReactNode; text: string; type: 'critical' | 'warning' | 'info' }[] = []
-              if (!data.site_structure?.has_privacy)   wins.push({ icon: null, text: 'Add a Privacy Policy page — required for AdSense approval', type: 'critical' })
-              if (!data.site_structure?.has_about)     wins.push({ icon: null, text: 'Add an About Us page — builds trust with Google reviewers', type: 'critical' })
-              if (!data.site_structure?.has_contact)   wins.push({ icon: null, text: 'Add a Contact page — AdSense requires a way to reach you', type: 'critical' })
-              if (!data.site_structure?.has_terms)     wins.push({ icon: null, text: 'Add a Terms of Service page — shows site legitimacy', type: 'warning' })
-              if (!data.site_structure?.has_disclaimer) wins.push({ icon: null, text: 'Add a Disclaimer page — especially important for finance/health niches', type: 'warning' })
-              const noH1Pages = data.pages.filter(p => p.headings.h1.length === 0).length
-              if (noH1Pages > 0) wins.push({ icon: null, text: `${noH1Pages} page${noH1Pages > 1 ? 's' : ''} missing H1 tags — add a clear heading to each page`, type: 'warning' })
-              const noMetaPages = data.pages.filter(p => !p.meta_description).length
-              if (noMetaPages > 0) wins.push({ icon: null, text: `${noMetaPages} page${noMetaPages > 1 ? 's' : ''} missing meta descriptions — add unique 150-char descriptions`, type: 'warning' })
-              const thinPages = data.pages.filter(p => p.word_count < 300 && p.word_count > 0).length
-              if (thinPages > 0) wins.push({ icon: null, text: `${thinPages} page${thinPages > 1 ? 's' : ''} with under 300 words — expand content to 600+ words minimum`, type: 'warning' })
-              if (articleCount < 15) wins.push({ icon: null, text: `Only ${articleCount} articles detected — publish at least 25 before applying`, type: 'critical' })
-              if (wins.length === 0) wins.push({ icon: null, text: 'Basic structure looks good! Unlock the AI report for deep content & policy analysis.', type: 'info' })
-              return (
-                <Card className="p-5 border-border/60 rounded-2xl">
-                  <p className="text-xs font-black uppercase tracking-widest text-foreground mb-3 flex items-center gap-2">
-                    <Lightbulb className="h-3.5 w-3.5 text-amber-500" /> Quick Wins — Fix These First
-                  </p>
-                  <div className="space-y-2">
-                    {wins.slice(0, 6).map((w, i) => <IssueRow key={i} text={w.text} type={w.type} />)}
-                  </div>
-                </Card>
-              )
-            })()}
-
-            {/* Category cards */}
+            {/* Category cards — always shown, richer when unlocked */}
             <div className="grid md:grid-cols-3 gap-4">              {/* Content Quality */}
               <Card className="p-5 border-border/60 rounded-2xl space-y-3">
                 <div className="flex items-center justify-between">
