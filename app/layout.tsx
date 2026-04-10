@@ -60,6 +60,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://adsenseai.in',
   },
+  other: {
+    'monetag': 'c092ffbcd84afc2e9a6dd1b8a7c4fced',
+  },
 }
 
 export const viewport: Viewport = {
