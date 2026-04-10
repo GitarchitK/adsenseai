@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Zap, CheckCircle2, TrendingUp, Clock, Users } from 'lucide-react'
+import { CheckCircle2, TrendingUp, Clock, Users, Zap } from 'lucide-react'
 
 const benefits = [
   { icon: TrendingUp, text: '94% approval rate for users who score 80+' },
@@ -21,8 +21,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="relative z-10 flex flex-col h-full p-12">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/15 backdrop-blur-sm group-hover:bg-white/20 transition-colors">
-              <Zap className="h-5 w-5 text-white" />
+            <div className="flex items-center justify-center w-9 h-9 rounded-xl overflow-hidden">
+              <img src="/icon.svg" alt="AdSenseAI" className="w-full h-full object-cover" />
             </div>
             <span className="font-bold text-white text-lg tracking-tight">AdSenseAI</span>
           </Link>
@@ -87,8 +87,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {/* Mobile header */}
         <header className="lg:hidden border-b border-border px-6 py-4 flex-shrink-0">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-primary text-primary-foreground">
-              <Zap className="h-4 w-4" />
+            <div className="flex items-center justify-center w-8 h-8 rounded-xl overflow-hidden">
+              <img src="/icon.svg" alt="AdSenseAI" className="w-full h-full object-cover" />
             </div>
             <span className="font-bold text-foreground">AdSenseAI</span>
           </Link>
