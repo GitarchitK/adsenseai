@@ -145,6 +145,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <meta name="monetag" content="c092ffbcd84afc2e9a6dd1b8a7c4fced" />
         <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(s){s.dataset.zone='10860084',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`
+          }}
+        />
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
