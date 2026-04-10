@@ -303,10 +303,10 @@ export default function ResultsPage() {
   const uxScore      = ai?.ux_score      ?? det?.ux_score      ?? 0
   const trustScore   = ai?.trust_score   ?? det?.trust_score   ?? 0
   const missingPages = det?.missing_pages ?? []
-  const isAiUnlocked = !!ai || !!data.isAiUnlocked
-  // Scores before unlock are structural estimates from crawl data (word count, H1s, meta, required pages)
-  // Scores after unlock are AI-analyzed (content quality, policy compliance, originality, etc.)
-  const scoresAreEstimates = !isAiUnlocked
+  // Full unlock = paid ₹19 or Pro — gives fix list + action plan
+  const isAiUnlocked = !!(data.isAiUnlocked || (ai && (ai as AIReport).fix_suggestions?.length > 0))
+  // Preview = AI ran but fix list is locked — overview still shows real AI scores
+  const hasAiPreview = !!ai
   const articleCount = countArticles(data.pages)
   const avgWords     = data.pages.length ? Math.round(data.pages.reduce((s, p) => s + p.word_count, 0) / data.pages.length) : 0
   const crawlSecs    = (data.crawl_time_ms / 1000).toFixed(1)
@@ -394,20 +394,13 @@ export default function ResultsPage() {
                   <div className="text-center sm:text-left space-y-2">
                     <p className={`text-xs font-black uppercase tracking-[0.2em] ${sc(finalScore)}`}>AdSense Readiness</p>
                     <h2 className="text-2xl font-black text-foreground">{statusLabel}</h2>
-                    {isAiUnlocked && ai ? (
-                      <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">{ai.content.summary}</p>
-                    ) : (
-                      <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-                        {finalScore >= 80 ? "Strong site — ready to apply for AdSense."
-                          : finalScore >= 60 ? "Potential detected. Fix key issues before applying."
-                          : "Significant issues found. AdSense will likely reject in current state."}
-                      </p>
-                    )}
-                    {scoresAreEstimates && (
-                      <div className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-200 dark:border-amber-800/40">
-                        <AlertTriangle className="h-3 w-3" /> Structural estimate — unlock AI for full analysis
-                      </div>
-                    )}
+                    <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+                      {hasAiPreview && ai?.content?.summary
+                        ? ai.content.summary
+                        : finalScore >= 80 ? "Strong site — ready to apply for AdSense."
+                        : finalScore >= 60 ? "Potential detected. Fix key issues before applying."
+                        : "Significant issues found. AdSense will likely reject in current state."}
+                    </p>
                     {isAiUnlocked && ai && (
                       <div className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full ${
                         ai.adsense_ready ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
@@ -419,10 +412,9 @@ export default function ResultsPage() {
                   </div>
                 </div>
                 <div className="space-y-4 bg-muted/20 p-5 rounded-2xl border border-border/40">
-                  {scoresAreEstimates && (
+                  {!hasAiPreview && (
                     <p className="text-[10px] text-amber-600 dark:text-amber-400 italic">Based on site structure only. Unlock AI for content & policy scores.</p>
-                  )}
-                  <WeightBar label="Content Quality"   score={qualityScore} weight="35% weight" plain={qualityScore >= 80 ? 'Great writing' : qualityScore >= 60 ? 'Needs work' : 'Too thin/generic'} />
+                  )}                  <WeightBar label="Content Quality"   score={qualityScore} weight="35% weight" plain={qualityScore >= 80 ? 'Great writing' : qualityScore >= 60 ? 'Needs work' : 'Too thin/generic'} />
                   <WeightBar label="Policy Compliance" score={policyScore}  weight="30% weight" plain={policyScore >= 80 ? 'No violations' : policyScore >= 60 ? 'Minor issues' : 'Violations found'} />
                   <WeightBar label="SEO Performance"   score={seoScore}     weight="15% weight" plain={seoScore >= 80 ? 'Well optimised' : seoScore >= 60 ? 'Partially done' : 'Missing basics'} />
                   <WeightBar label="User Experience"   score={uxScore}      weight="10% weight" plain={uxScore >= 80 ? 'Easy to use' : uxScore >= 60 ? 'Some friction' : 'Hard to navigate'} />
@@ -443,13 +435,13 @@ export default function ResultsPage() {
                   <div>
                     <p className="font-bold text-foreground text-sm mb-1">When to Apply</p>
                     <p className="text-sm text-foreground font-semibold">
-                      {isAiUnlocked && ai ? ai.application_timeline
+                      {hasAiPreview && ai ? ai.application_timeline
                         : finalScore >= 80 ? 'Your site looks ready — apply to AdSense now.'
                         : finalScore >= 65 ? 'Apply in 1–2 weeks after fixing the issues below.'
                         : finalScore >= 50 ? 'Apply in 3–4 weeks after improving content and fixing policy issues.'
                         : 'Wait 6–8 weeks — significant work needed before applying.'}
                     </p>
-                    {isAiUnlocked && ai?.application_timeline_reason && (
+                    {hasAiPreview && ai?.application_timeline_reason && (
                       <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{ai.application_timeline_reason}</p>
                     )}
                   </div>
@@ -498,10 +490,10 @@ export default function ResultsPage() {
             <Card className="p-5 border-border/60 rounded-2xl">
               <p className="text-xs font-black uppercase tracking-widest text-foreground mb-3 flex items-center gap-2">
                 <Lightbulb className="h-3.5 w-3.5 text-amber-500" />
-                {isAiUnlocked && ai && ai.top_issues.length > 0 ? 'Top Issues Found' : 'Quick Wins — Fix These First'}
+                {hasAiPreview && ai && ai.top_issues && ai.top_issues.length > 0 ? 'Top Issues Found' : 'Quick Wins — Fix These First'}
               </p>
               <div className="space-y-2">
-                {isAiUnlocked && ai && ai.top_issues.length > 0 ? (
+                {hasAiPreview && ai && ai.top_issues && ai.top_issues.length > 0 ? (
                   ai.top_issues.map((issue, i) => <IssueRow key={i} text={issue} type="critical" />)
                 ) : (
                   (() => {
@@ -592,7 +584,7 @@ export default function ResultsPage() {
                   <div className={`h-full rounded-full ${bc(qualityScore)}`} style={{ width: `${qualityScore}%` }} />
                 </div>
                 <ul className="space-y-1.5 text-xs text-muted-foreground">
-                  {isAiUnlocked && ai ? <>
+                  {hasAiPreview && ai ? <>
                     <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc(ai.content.originality_score)}`} />Originality: {ai.content.originality_score}/100</li>
                     <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc(ai.content.readability_score)}`} />Readability: {ai.content.readability_score}/100</li>
                     <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${ai.content.spam_score > 50 ? 'bg-red-500' : 'bg-emerald-500'}`} />Spam score: {ai.content.spam_score}/100</li>
@@ -616,7 +608,7 @@ export default function ResultsPage() {
                   <div className={`h-full rounded-full ${bc(policyScore)}`} style={{ width: `${policyScore}%` }} />
                 </div>
                 <ul className="space-y-1.5 text-xs text-muted-foreground">
-                  {isAiUnlocked && ai ? <>
+                  {hasAiPreview && ai ? <>
                     <li className="flex items-center gap-2">{ai.policy.adult_content ? <AlertCircle className="h-3 w-3 text-red-500 flex-shrink-0" /> : <CheckCircle2 className="h-3 w-3 text-emerald-500 flex-shrink-0" />}{ai.policy.adult_content ? 'Adult content detected' : 'No adult content'}</li>
                     <li className="flex items-center gap-2">{ai.policy.copyright_risk ? <AlertCircle className="h-3 w-3 text-red-500 flex-shrink-0" /> : <CheckCircle2 className="h-3 w-3 text-emerald-500 flex-shrink-0" />}{ai.policy.copyright_risk ? 'Copyright risk found' : 'Low copyright risk'}</li>
                     <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${ai.policy.violations.length > 0 ? 'bg-red-500' : 'bg-emerald-500'}`} />{ai.policy.violations.length} violation{ai.policy.violations.length !== 1 ? 's' : ''} found</li>
@@ -639,10 +631,10 @@ export default function ResultsPage() {
                   <div className={`h-full rounded-full ${bc(seoScore)}`} style={{ width: `${seoScore}%` }} />
                 </div>
                 <ul className="space-y-1.5 text-xs text-muted-foreground">
-                  {isAiUnlocked && ai ? <>
-                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc(ai.seo_authority.topical_authority_score)}`} />Topical authority: {ai.seo_authority.topical_authority_score}/100</li>
-                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc(ai.seo_authority.semantic_coverage_score)}`} />Semantic coverage: {ai.seo_authority.semantic_coverage_score}/100</li>
-                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc(ai.technical_health.structural_integrity)}`} />Technical health: {ai.technical_health.structural_integrity}/100</li>
+                  {hasAiPreview && ai && (ai as AIReport).seo_authority ? <>
+                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc((ai as AIReport).seo_authority.topical_authority_score)}`} />Topical authority: {(ai as AIReport).seo_authority.topical_authority_score}/100</li>
+                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc((ai as AIReport).seo_authority.semantic_coverage_score)}`} />Semantic coverage: {(ai as AIReport).seo_authority.semantic_coverage_score}/100</li>
+                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc((ai as AIReport).technical_health.structural_integrity)}`} />Technical health: {(ai as AIReport).technical_health.structural_integrity}/100</li>
                   </> : <>
                     <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 flex-shrink-0" />{data.pages.filter(p => p.meta_description).length}/{data.total_pages} pages have meta</li>
                     <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 flex-shrink-0" />{data.pages.filter(p => p.headings.h1.length > 0).length}/{data.total_pages} pages have H1</li>
@@ -652,7 +644,7 @@ export default function ResultsPage() {
             </div>
 
             {/* E-E-A-T + Monetization (AI only) */}
-            {isAiUnlocked && ai && (
+            {hasAiPreview && ai && (ai as AIReport).eeat && (
               <div className="grid md:grid-cols-2 gap-4">
                 <Card className="p-5 border-border/60 rounded-2xl space-y-3">
                   <div className="flex items-center gap-2 mb-1">
