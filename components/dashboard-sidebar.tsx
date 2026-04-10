@@ -51,8 +51,8 @@ export function DashboardSidebar() {
 
       {/* Logo */}
       <div className="flex items-center gap-2.5 px-5 h-16 border-b border-sidebar-border flex-shrink-0">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground flex-shrink-0">
-          <Zap className="h-4 w-4" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl overflow-hidden flex-shrink-0">
+          <img src="/icon.svg" alt="AdSenseAI" className="w-full h-full object-cover" />
         </div>
         <span className="font-bold text-sidebar-foreground text-[15px]">
           AdSense<span className="text-primary">AI</span>
