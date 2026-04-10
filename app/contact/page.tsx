@@ -2,6 +2,13 @@ import { Navbar } from '@/components/navbar'
 import { SiteFooter } from '@/components/site-footer'
 import { Mail, MessageSquare, Clock } from 'lucide-react'
 import { ContactForm } from './contact-form'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Contact AdSenseAI — AdSense Checker Support',
+  description: 'Get help with AdSenseAI\'s AdSense checker and website audit tool. Contact our support team for questions about your AdSense audit results.',
+  alternates: { canonical: 'https://adsenseai.in/contact' },
+}
 
 export default function ContactPage() {
   return (

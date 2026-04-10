@@ -1,5 +1,13 @@
 import { Navbar } from '@/components/navbar'
 import { SiteFooter } from '@/components/site-footer'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy — AdSenseAI AdSense Checker',
+  description: 'Privacy Policy for AdSenseAI, the free AdSense checker and website audit tool.',
+  alternates: { canonical: 'https://adsenseai.in/privacy' },
+  robots: { index: false },
+}
 
 export default function PrivacyPage() {
   const updated = 'January 1, 2025'

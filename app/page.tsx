@@ -249,12 +249,12 @@ export default function Home() {
               </div>
 
               <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-[1.04] mb-7">
-                Get Your Website<br />
-                <span className="gradient-text">Adsense Ready</span>
+                Free AdSense Checker<br />
+                <span className="gradient-text">&amp; Website Audit</span>
               </h1>
 
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed mb-10">
-                Stop leaving money on the table. Our AI auditor scans your site for AdSense readiness, policy risks, and revenue gaps in under 30 seconds.
+                The fastest AdSense approval checker online. Our AI audits your site for content quality, policy compliance, and SEO — then tells you exactly what to fix to get approved in under 30 seconds.
               </p>
 
               <div className="max-w-xl mb-12">
@@ -376,8 +376,8 @@ export default function Home() {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
               <p className="text-xs font-bold text-primary uppercase tracking-widest mb-3">How It Works</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">From URL to revenue roadmap in 4 steps</h2>
-              <p className="text-muted-foreground max-w-xl mx-auto">Stop guessing and start earning. Paste your URL and get your monetization strategy in under 30 seconds.</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">How Our AdSense Checker Works — 4 Steps</h2>
+              <p className="text-muted-foreground max-w-xl mx-auto">Run a free AdSense audit on any website. Paste your URL and get your full AdSense approval report in under 30 seconds.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {steps.map(({ n, title, desc }) => (
@@ -429,8 +429,8 @@ export default function Home() {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
               <p className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Features</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Everything you need to get approved</h2>
-              <p className="text-muted-foreground max-w-xl mx-auto">Built specifically for publishers who want to monetize with Google AdSense — not a generic SEO tool.</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Everything our AdSense audit checks</h2>
+              <p className="text-muted-foreground max-w-xl mx-auto">Built specifically for publishers who want to pass the AdSense approval check — not a generic SEO tool.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {features.map(({ icon: Icon, color, bg, title, desc }) => (
