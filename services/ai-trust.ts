@@ -14,16 +14,16 @@ export interface TrustUXResult {
   ux_issues: string[]       // UX problems detected
 }
 
-const SYSTEM_PROMPT = `You are a UX and web trust expert evaluating websites for Google AdSense approval.
+const SYSTEM_PROMPT = `You are a UX and web trust expert evaluating websites for Google AdSense approval. Write for non-technical website owners.
 
 Analyze the provided website data and return a JSON object with EXACTLY these fields:
-- trust_score (0-100): How trustworthy and professional the site appears. Consider: about/contact pages, clear authorship, consistent branding, privacy policy.
-- ux_score (0-100): User experience quality. Consider: navigation clarity, content structure, heading hierarchy, internal linking, page depth.
-- design_feedback (string): 2-3 sentences of specific, actionable feedback on professionalism and UX.
-- trust_signals (array of strings): Positive trust indicators found on the site. Empty array if none.
-- ux_issues (array of strings): Specific UX problems that could hurt AdSense approval. Empty array if none.
+- trust_score (0-100): How trustworthy and professional the site appears to Google's reviewers.
+- ux_score (0-100): How easy the site is to use and navigate.
+- design_feedback (string): 2-3 sentences in plain English. Tell them what impression their site gives and the single most important thing to improve.
+- trust_signals (array of strings): Positive things found — written as "Your site has X, which shows Y." Empty array if none.
+- ux_issues (array of strings): Each issue written as: what the problem is + why it matters + how to fix it in one sentence. Empty array if none.
 
-Focus on signals that Google's AdSense review team would evaluate.`
+Write like a knowledgeable friend, not a technical report. Avoid jargon.`
 
 function buildTrustContext(pages: CrawledPage[], structure: SiteStructure, domain: string): string {
   const avgWords = pages.length

@@ -50,6 +50,7 @@ export interface AIReport {
 
   // New deep analysis fields
   application_timeline: string    // e.g. "Apply in 15 days" or "Apply Now"
+  application_timeline_reason: string  // plain-English explanation of why
   strategic_roadmap: string[]     // advanced growth/approval tips
   approval_workflow: WorkflowStep[] // day-by-day or week-by-week plan
 
@@ -66,7 +67,17 @@ export interface FixSuggestion {
   category: 'Content' | 'Policy' | 'SEO' | 'UX' | 'Trust'
   title: string
   description: string
+  technical_detail?: string   // for developers
   impact: 'high' | 'medium' | 'low'
+}
+
+// New fields on AIReport for plain-English explanations
+export interface ScoreExplanation {
+  score: number
+  label: string          // e.g. "Good", "Needs Work", "Critical"
+  plain_english: string  // e.g. "Your articles are easy to read and well-structured"
+  technical: string      // e.g. "Flesch-Kincaid grade 8, avg sentence length 18 words"
+  what_to_do: string     // e.g. "Keep writing like this — no changes needed"
 }
 
 // ── Scoring formula ───────────────────────────────────────────────────────────
@@ -140,33 +151,35 @@ function buildTopIssues(
 
 // ── AI Strategic Advice (Fixes, Timeline, Roadmap) ────────────────────────────
 
-const STRATEGIC_SYSTEM_PROMPT = `You are a Google AdSense approval specialist and Senior SEO.
-Given a full website audit summary, provide four things:
-1. Actionable fix suggestions (array of objects).
-2. Application Timeline: A specific recommendation on when the user should apply (e.g., "Apply immediately", "Apply in 14 days after fixes", "Wait 2 months").
-3. Strategic Roadmap: 4-5 high-level strategic tips for long-term AdSense success and growth.
-4. Approval Workflow: A step-by-step plan (7-10 steps) for the next 30 days to get approved.
+const STRATEGIC_SYSTEM_PROMPT = `You are a Google AdSense approval specialist writing for TWO audiences at once:
+1. A blogger or website owner with no technical background
+2. A developer who wants the technical details
 
-Return a JSON object with:
-- suggestions (array): Each item { category: "Content"|"Policy"|"SEO"|"UX"|"Trust", title, description, impact: "high"|"medium"|"low" }
-- application_timeline (string): Precise timeframe for application.
-- strategic_roadmap (array of strings): High-level growth/strategy tips.
-- approval_workflow (array of objects): Each item { timeframe: "Day 1-3"|"Week 1" etc, task, details }.
+Rules for every piece of text you write:
+- Write in plain English first. Avoid jargon. If you must use a technical term, explain it in brackets.
+- Be specific — reference actual data from the site (scores, page counts, URLs).
+- Be direct — tell them exactly what to do, not just what's wrong.
+- Tone: friendly, honest, like a knowledgeable friend explaining over coffee.
 
-Be specific and practical. Base the timeline and workflow on the severity of the issues found.
-IMPORTANT: The user wants a 1-month plan. If the site is already good, the plan should focus on polishing and scaling. If the site is poor, it should be a recovery roadmap.
+Given a full website audit summary, return a JSON object with:
+- suggestions (array): Each item {
+    category: "Content"|"Policy"|"SEO"|"UX"|"Trust",
+    title: string (plain English, max 8 words),
+    description: string (2-3 sentences: what's wrong + exactly how to fix it, no jargon),
+    technical_detail: string (1 sentence with the specific metric/score for developers),
+    impact: "high"|"medium"|"low"
+  }
+- application_timeline (string): One clear sentence. E.g. "Your site needs about 3 weeks of fixes before applying."
+- application_timeline_reason (string): 2-3 sentences explaining WHY in plain English.
+- strategic_roadmap (array of strings): 4-5 tips. Each tip must be one actionable sentence a non-tech person can follow.
+- approval_workflow (array of objects): 7-10 steps. Each { timeframe, task, details } where details is 2-3 plain-English sentences with specific actions.
 
-Data provided:
-- Domain age: if provided, use it to judge site maturity.
-- Content: quality, originality, spam, readability.
-- Policy: adult, copyright, violations.
-- Trust: required pages (About, Privacy, Contact, Terms, Disclaimer), UX.
-- SEO: authority, semantic coverage, technical health.
-- Monetization: revenue potential, niche, cpc.`
+Be specific. Reference actual URLs, scores, and page counts from the data provided.`
 
 interface StrategicAdvice {
   suggestions: FixSuggestion[]
   application_timeline: string
+  application_timeline_reason: string
   strategic_roadmap: string[]
   approval_workflow: WorkflowStep[]
 }
@@ -234,62 +247,71 @@ function buildFallbackAdvice(
   const suggestions: FixSuggestion[] = []
 
   if (policy.adult_content || policy.dangerous_content)
-    suggestions.push({ category: 'Policy', title: 'Remove Policy-Violating Content', description: 'Adult or dangerous content was detected. Remove it immediately — AdSense will reject your site.', impact: 'high' })
+    suggestions.push({ category: 'Policy', title: 'Remove Policy-Violating Content', description: 'Adult or dangerous content was found on your site. Google will automatically reject your AdSense application if this content is present. Remove or replace it before applying.', technical_detail: `adult_content=${policy.adult_content}, dangerous_content=${policy.dangerous_content}`, impact: 'high' })
   if (policy.copyright_risk)
-    suggestions.push({ category: 'Policy', title: 'Fix Copyright Issues', description: 'Potential copyright violations detected. Replace copied content with original writing.', impact: 'high' })
+    suggestions.push({ category: 'Policy', title: 'Fix Copied Content', description: 'Some content appears to be copied from other websites. Google requires original content — rewrite these articles in your own words with your own insights.', technical_detail: `copyright_risk=true, policy_risk_score=${policy.policy_risk_score}`, impact: 'high' })
   if (policy.violations.length > 0)
-    suggestions.push({ category: 'Policy', title: 'Resolve Policy Violations', description: `${policy.violations.length} policy violation(s) found: ${policy.violations.slice(0, 2).join(', ')}. Fix these before applying.`, impact: 'high' })
+    suggestions.push({ category: 'Policy', title: 'Fix Policy Violations', description: `${policy.violations.length} issue(s) were found that violate Google's rules: ${policy.violations.slice(0, 2).join(', ')}. Fix these before applying — they are automatic rejection triggers.`, technical_detail: `violations=[${policy.violations.join(', ')}]`, impact: 'high' })
   if (content.originality_score < 60)
-    suggestions.push({ category: 'Content', title: 'Improve Content Originality', description: `Originality score is ${content.originality_score}/100. Rewrite generic articles with unique insights, personal experience, and original research.`, impact: 'high' })
+    suggestions.push({ category: 'Content', title: 'Make Your Content More Original', description: `Your content scored ${content.originality_score}/100 for originality. This means your articles feel generic or similar to what's already on the internet. Add your personal experience, unique examples, and original research to each article.`, technical_detail: `originality_score=${content.originality_score}/100`, impact: 'high' })
   if (content.readability_score < 60)
-    suggestions.push({ category: 'Content', title: 'Improve Readability', description: `Readability score is ${content.readability_score}/100. Use shorter sentences, clear headings, and simpler language.`, impact: 'medium' })
+    suggestions.push({ category: 'Content', title: 'Make Your Writing Easier to Read', description: `Readability score is ${content.readability_score}/100. Your articles may be using long sentences or complex words. Break paragraphs into 2-3 sentences, use simple words, and add subheadings every 200-300 words.`, technical_detail: `readability_score=${content.readability_score}/100 (target: 70+)`, impact: 'medium' })
   if (content.spam_score > 50)
-    suggestions.push({ category: 'Content', title: 'Reduce Keyword Stuffing', description: `Spam score is ${content.spam_score}/100. Remove excessive keyword repetition and write naturally.`, impact: 'high' })
+    suggestions.push({ category: 'Content', title: 'Stop Repeating Keywords', description: `Spam score is ${content.spam_score}/100. You're using the same keywords too many times in your articles. Write naturally — Google's AI can tell when you're stuffing keywords, and it hurts your approval chances.`, technical_detail: `spam_score=${content.spam_score}/100 (target: below 30)`, impact: 'high' })
   if (seo.topical_authority_score < 60)
-    suggestions.push({ category: 'SEO', title: 'Build Topical Authority', description: `Topical authority is ${seo.topical_authority_score}/100. Publish more in-depth articles covering your niche thoroughly.`, impact: 'medium' })
+    suggestions.push({ category: 'SEO', title: 'Write More Articles on Your Topic', description: `Your site's topical authority score is ${seo.topical_authority_score}/100. This means Google doesn't yet see your site as an expert on your topic. Publish 10-15 more in-depth articles covering different aspects of your niche.`, technical_detail: `topical_authority_score=${seo.topical_authority_score}/100, semantic_coverage=${seo.semantic_coverage_score}/100`, impact: 'medium' })
   if (tech.structural_integrity < 60)
-    suggestions.push({ category: 'SEO', title: 'Fix Technical SEO Issues', description: `Technical health is ${tech.structural_integrity}/100. Add missing H1 tags, meta descriptions, and fix broken links.`, impact: 'medium' })
+    suggestions.push({ category: 'SEO', title: 'Fix Basic Page Structure Issues', description: `Technical health is ${tech.structural_integrity}/100. Some pages are missing important elements like page titles (H1 tags) and meta descriptions. These are like labels that tell Google what each page is about — every page needs them.`, technical_detail: `structural_integrity=${tech.structural_integrity}/100, technical_issues=[${tech.technical_issues.slice(0,2).join(', ')}]`, impact: 'medium' })
   if (trust.trust_score < 60)
-    suggestions.push({ category: 'Trust', title: 'Strengthen Trust Signals', description: `Trust score is ${trust.trust_score}/100. Add an About page, author bios, and ensure Privacy Policy and Contact pages are present.`, impact: 'high' })
+    suggestions.push({ category: 'Trust', title: 'Add Missing Trust Pages', description: `Trust score is ${trust.trust_score}/100. Google wants to see that your site is run by a real person or business. Make sure you have an About page (who you are), Contact page (how to reach you), and Privacy Policy (required by AdSense).`, technical_detail: `trust_score=${trust.trust_score}/100, ux_score=${trust.ux_score}/100`, impact: 'high' })
   trust.ux_issues.forEach(issue =>
-    suggestions.push({ category: 'UX', title: 'Fix UX Issue', description: issue, impact: 'medium' })
+    suggestions.push({ category: 'UX', title: 'Fix User Experience Issue', description: `${issue} — This affects how easy your site is to use, which Google considers during review.`, impact: 'medium' })
   )
 
   // Always have at least 3 suggestions
   if (suggestions.length === 0) {
     suggestions.push(
-      { category: 'Content', title: 'Increase Article Depth', description: 'Aim for 800+ words per article with original insights, examples, and structured headings.', impact: 'medium' },
-      { category: 'SEO', title: 'Add Meta Descriptions', description: 'Ensure every page has a unique, descriptive meta description (150–160 characters).', impact: 'medium' },
-      { category: 'Trust', title: 'Publish Consistently', description: 'Post 2–3 high-quality articles per week to demonstrate an active, maintained site.', impact: 'low' }
+      { category: 'Content', title: 'Make Articles Longer and Deeper', description: 'Aim for 800+ words per article. Each article should fully answer the question a reader came to your site with — include examples, steps, and your personal take.', technical_detail: 'target: 800+ words, depth_score > 70', impact: 'medium' },
+      { category: 'SEO', title: 'Add Meta Descriptions to Every Page', description: 'A meta description is a 1-2 sentence summary that appears in Google search results. Every page needs one. Keep it under 160 characters and make it describe exactly what the page is about.', technical_detail: 'meta_description missing on some pages, target: 150-160 chars', impact: 'medium' },
+      { category: 'Trust', title: 'Publish New Articles Regularly', description: 'Post 2-3 new articles every week. Google wants to see that your site is active and growing — a site that hasn\'t been updated in months looks abandoned.', technical_detail: 'publishing_frequency: target 2-3/week', impact: 'low' }
     )
   }
 
-  const timeline = finalScore >= 80 ? 'Apply to AdSense now — your site meets the requirements.'
-    : finalScore >= 65 ? 'Apply in 1–2 weeks after fixing the high-impact issues listed above.'
-    : finalScore >= 50 ? 'Apply in 3–4 weeks after addressing content quality and policy issues.'
-    : 'Wait 6–8 weeks. Focus on building content volume and fixing critical issues first.'
+  const timeline = finalScore >= 80 ? 'Your site is ready — apply to AdSense now.'
+    : finalScore >= 65 ? 'Apply in 1–2 weeks after fixing the high-priority issues above.'
+    : finalScore >= 50 ? 'Apply in 3–4 weeks after improving your content quality and fixing policy issues.'
+    : 'Wait 6–8 weeks. Your site needs significant work before Google will approve it.'
+
+  const timelineReason = finalScore >= 80
+    ? 'Your scores are strong across all categories. A quick review of the fix list and you\'re ready to submit.'
+    : finalScore >= 65
+    ? 'A few important issues need fixing first. Once resolved, your site should meet AdSense\'s minimum requirements.'
+    : finalScore >= 50
+    ? 'Your content quality and/or policy compliance needs improvement. Rushing the application now will likely result in rejection.'
+    : 'Multiple critical issues were found. Applying now would almost certainly result in rejection. Use this time to build a stronger foundation.'
 
   const workflow: WorkflowStep[] = finalScore >= 75 ? [
-    { timeframe: 'Day 1–2', task: 'Fix High-Impact Issues', details: 'Address any policy violations and high-impact fixes from the Fix List tab.' },
-    { timeframe: 'Day 3–5', task: 'Polish Content', details: 'Review your top 5 articles — improve readability, add images, and strengthen conclusions.' },
-    { timeframe: 'Day 6–7', task: 'Final Check & Apply', details: 'Verify all required pages exist (Privacy, About, Contact), then submit your AdSense application.' },
+    { timeframe: 'Day 1–2', task: 'Fix High-Priority Issues', details: 'Go through the Fix List tab and address every "high" priority item. These are the things most likely to get your application rejected.' },
+    { timeframe: 'Day 3–5', task: 'Polish Your Best Articles', details: 'Pick your top 5 articles and improve them. Add more detail, fix any grammar issues, and make sure each one has a clear title (H1) and a meta description.' },
+    { timeframe: 'Day 6–7', task: 'Check Required Pages & Apply', details: 'Confirm you have Privacy Policy, About, and Contact pages. Then go to adsense.google.com and submit your application.' },
   ] : [
-    { timeframe: 'Week 1', task: 'Fix Critical Issues', details: 'Resolve all policy violations, remove thin content, and ensure Privacy Policy, About, and Contact pages exist.' },
-    { timeframe: 'Week 2', task: 'Improve Content Quality', details: `Rewrite your ${Math.min(5, Math.round((100 - content.originality_score) / 10))} lowest-quality articles. Target 800+ words with original insights.` },
-    { timeframe: 'Week 3', task: 'Build Content Volume', details: 'Publish 3–5 new high-quality articles. Aim for 25+ total articles before applying.' },
-    { timeframe: 'Week 4', task: 'SEO & Trust Signals', details: 'Add meta descriptions to all pages, fix missing H1 tags, and improve internal linking between related articles.' },
-    { timeframe: 'Week 5–6', task: 'Re-scan & Apply', details: 'Run a fresh scan to verify your score is 70+, then submit your AdSense application.' },
+    { timeframe: 'Week 1', task: 'Fix Critical Issues First', details: 'Address all policy violations and missing required pages (Privacy Policy, About, Contact). These are non-negotiable — AdSense will reject without them.' },
+    { timeframe: 'Week 2', task: 'Improve Your Weakest Articles', details: `Rewrite your ${Math.min(5, Math.round((100 - content.originality_score) / 10))} lowest-quality articles. Each should be 600+ words, written in your own voice, with a clear structure (intro, sections with headings, conclusion).` },
+    { timeframe: 'Week 3', task: 'Publish New Content', details: 'Publish 3–5 new high-quality articles. Each should be at least 700 words and cover a specific topic your audience cares about. Aim for 25+ total articles on your site.' },
+    { timeframe: 'Week 4', task: 'Fix Technical Issues', details: 'Add meta descriptions to every page (a 1-2 sentence summary of what the page is about). Make sure every page has a main heading (H1 tag). Link related articles to each other.' },
+    { timeframe: 'Week 5–6', task: 'Re-scan & Apply', details: 'Run a fresh scan on AdSenseAI to check your new score. If it\'s 70+, submit your AdSense application at adsense.google.com.' },
   ]
 
   return {
     suggestions,
     application_timeline: timeline,
+    application_timeline_reason: timelineReason,
     strategic_roadmap: [
-      'Focus on one niche — topical authority matters more than broad coverage.',
-      'Publish consistently: 2–3 articles per week signals an active site to Google.',
-      'Add author bios and cite sources to boost E-E-A-T signals.',
-      'Ensure fast page load times — Core Web Vitals affect AdSense approval.',
-      'Build internal links between related articles to improve crawlability and authority.',
+      'Stick to one topic — a site about "cooking" is stronger than a site about "cooking, travel, and fitness" because Google sees it as more of an expert.',
+      'Post 2-3 new articles every week — Google wants to see an active site, not one that was built and abandoned.',
+      'Add your name and a short bio to your articles — Google values content from real, identifiable people.',
+      'Make sure your site loads fast on mobile — over 60% of readers are on phones, and slow sites get penalized.',
+      'Link your articles to each other — when you mention a topic you\'ve written about before, link to that article.',
     ],
     approval_workflow: workflow,
   }
@@ -347,6 +369,7 @@ export async function generateAIReport(crawl: CrawlResponse): Promise<AIReport> 
     top_issues,
     fix_suggestions: advice.suggestions,
     application_timeline: advice.application_timeline,
+    application_timeline_reason: advice.application_timeline_reason ?? '',
     strategic_roadmap: advice.strategic_roadmap,
     approval_workflow: advice.approval_workflow,
     generated_at: new Date().toISOString(),

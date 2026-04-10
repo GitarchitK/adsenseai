@@ -87,7 +87,7 @@ function ScoreRing({ score, status }: { score: number; status: string }) {
   )
 }
 
-function WeightBar({ label, score, weight }: { label: string; score: number; weight: string }) {
+function WeightBar({ label, score, weight, plain }: { label: string; score: number; weight: string; plain?: string }) {
   return (
     <div className="flex items-center gap-3">
       <div className="w-36 flex-shrink-0">
@@ -97,7 +97,10 @@ function WeightBar({ label, score, weight }: { label: string; score: number; wei
       <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
         <div className={`h-full rounded-full transition-all duration-700 ${bc(score)}`} style={{ width: `${score}%` }} />
       </div>
-      <span className={`text-sm font-bold font-mono w-8 text-right tabular-nums ${sc(score)}`}>{score}</span>
+      <div className="text-right flex-shrink-0 w-16">
+        <span className={`text-sm font-bold font-mono tabular-nums ${sc(score)}`}>{score}</span>
+        {plain && <p className="text-[9px] text-muted-foreground leading-tight">{plain}</p>}
+      </div>
     </div>
   )
 }
@@ -408,11 +411,11 @@ export default function ResultsPage() {
                   </div>
                 </div>
                 <div className="space-y-4 bg-muted/20 p-5 rounded-2xl border border-border/40">
-                  <WeightBar label="Content Quality"   score={qualityScore} weight="35% weight" />
-                  <WeightBar label="Policy Compliance" score={policyScore}  weight="30% weight" />
-                  <WeightBar label="SEO Performance"   score={seoScore}     weight="15% weight" />
-                  <WeightBar label="User Experience"   score={uxScore}      weight="10% weight" />
-                  <WeightBar label="Trust Signals"     score={trustScore}   weight="10% weight" />
+                  <WeightBar label="Content Quality"   score={qualityScore} weight="35% weight" plain={qualityScore >= 80 ? 'Great writing' : qualityScore >= 60 ? 'Needs work' : 'Too thin/generic'} />
+                  <WeightBar label="Policy Compliance" score={policyScore}  weight="30% weight" plain={policyScore >= 80 ? 'No violations' : policyScore >= 60 ? 'Minor issues' : 'Violations found'} />
+                  <WeightBar label="SEO Performance"   score={seoScore}     weight="15% weight" plain={seoScore >= 80 ? 'Well optimised' : seoScore >= 60 ? 'Partially done' : 'Missing basics'} />
+                  <WeightBar label="User Experience"   score={uxScore}      weight="10% weight" plain={uxScore >= 80 ? 'Easy to use' : uxScore >= 60 ? 'Some friction' : 'Hard to navigate'} />
+                  <WeightBar label="Trust Signals"     score={trustScore}   weight="10% weight" plain={trustScore >= 80 ? 'Looks legit' : trustScore >= 60 ? 'Needs pages' : 'Missing pages'} />
                 </div>
               </div>
             </Card>
@@ -425,7 +428,10 @@ export default function ResultsPage() {
                     <Zap className={`h-5 w-5 flex-shrink-0 mt-0.5 ${ai.adsense_ready ? 'text-emerald-500' : 'text-amber-500'}`} />
                     <div>
                       <p className="font-bold text-foreground text-sm mb-1">When to Apply</p>
-                      <p className="text-sm text-muted-foreground">{ai.application_timeline}</p>
+                      <p className="text-sm text-foreground font-semibold">{ai.application_timeline}</p>
+                      {ai.application_timeline_reason && (
+                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{ai.application_timeline_reason}</p>
+                      )}
                     </div>
                   </div>
                 </Card>
@@ -775,6 +781,9 @@ export default function ResultsPage() {
                                   <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-md">{fix.category}</span>
                                 </div>
                                 <p className="text-xs text-muted-foreground leading-relaxed">{fix.description}</p>
+                                {fix.technical_detail && (
+                                  <p className="text-[10px] text-muted-foreground/50 font-mono mt-1.5 bg-muted/40 px-2 py-1 rounded-md leading-relaxed">{fix.technical_detail}</p>
+                                )}
                               </div>
                             </Card>
                           ))}
