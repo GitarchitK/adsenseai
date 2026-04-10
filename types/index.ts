@@ -95,6 +95,8 @@ export interface CrawlResponse {
   domain: string;
   crawl_time_ms: number;
   error?: string;
+  sitemap_urls?: string[];        // full list of URLs discovered from sitemap (may exceed crawled pages)
+  sitemap_total?: number;         // total URLs found in sitemap
 }
 
 // ── Per-article analysis types ────────────────────────────────────────────────

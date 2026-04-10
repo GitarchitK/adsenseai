@@ -188,11 +188,12 @@ async function generateStrategicAdvice(
 AdSense Score: ${finalScore}/100
 Domain: ${crawl.domain}
 Domain Age: ${structure.domain_age_years ?? 'unknown'} years
-Pages Scanned: ${crawl.total_pages}
+Pages Crawled: ${crawl.total_pages}
+Sitemap Total: ${crawl.sitemap_total ?? crawl.total_pages} URLs discovered
 Required Pages: Privacy=${structure.has_privacy}, About=${structure.has_about}, Contact=${structure.has_contact}, Terms=${structure.has_terms}, Disclaimer=${structure.has_disclaimer}
 
-Top 20 Crawled URLs (Sitemap):
-${sitemapUrls}
+Full Sitemap URLs (up to 100):
+${(crawl.sitemap_urls ?? crawl.pages.map(p => p.url)).slice(0, 100).join('\n')}
 
 Content: quality=${content.overall_quality_score}, originality=${content.originality_score}, readability=${content.readability_score}, spam=${content.spam_score}
 Policy: risk=${policy.policy_risk_score}, adult=${policy.adult_content}, copyright=${policy.copyright_risk}, violations=${policy.violations.length}
@@ -207,6 +208,9 @@ Details:
 - Technical Issues: ${tech.technical_issues.join(', ') || 'none'}
 - Missing Topics: ${seo.missing_topics.join(', ') || 'none'}
 - Violations: ${policy.violations.join(', ') || 'none'}
+
+Top 30 pages by word count:
+${[...crawl.pages].sort((a,b) => b.word_count - a.word_count).slice(0, 30).map(p => `  ${p.word_count}w | ${p.title || 'No title'} | ${p.url}`).join('\n')}
 `.trim()
 
   // Build a deterministic fallback based on actual scores so it's never empty

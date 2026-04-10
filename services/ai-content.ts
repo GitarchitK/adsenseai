@@ -27,22 +27,35 @@ Be strict but fair. AdSense requires high-quality, original content.`
 
 /**
  * Builds a compact content summary from crawled pages for the prompt.
- * Keeps token usage reasonable by capping content per page.
+ * Uses all pages but caps content per page to keep tokens reasonable.
  */
 function buildContentSummary(pages: CrawledPage[]): string {
-  const lines: string[] = [`Total pages: ${pages.length}`, '']
+  const lines: string[] = [`Total pages crawled: ${pages.length}`, '']
 
-  pages.slice(0, 12).forEach((page, i) => {
+  // Sort: prioritize articles (longer content) over utility pages
+  const sorted = [...pages].sort((a, b) => b.word_count - a.word_count)
+
+  // Include up to 30 pages with content snippets
+  sorted.slice(0, 30).forEach((page, i) => {
     lines.push(`--- Page ${i + 1}: ${page.title || 'Untitled'} ---`)
     lines.push(`URL: ${page.url}`)
     lines.push(`Word count: ${page.word_count}`)
     if (page.meta_description) lines.push(`Meta: ${page.meta_description}`)
     if (page.headings.h1.length) lines.push(`H1: ${page.headings.h1.join(', ')}`)
-    if (page.headings.h2.length) lines.push(`H2s: ${page.headings.h2.slice(0, 3).join(', ')}`)
-    // Include a snippet of actual content
-    lines.push(`Content snippet: ${page.content.slice(0, 600)}`)
+    if (page.headings.h2.length) lines.push(`H2s: ${page.headings.h2.slice(0, 4).join(', ')}`)
+    // More content for longer articles, less for short pages
+    const snippetLen = page.word_count > 500 ? 800 : 300
+    lines.push(`Content snippet: ${page.content.slice(0, snippetLen)}`)
     lines.push('')
   })
+
+  // For remaining pages, just include URL + word count as a summary table
+  if (sorted.length > 30) {
+    lines.push('--- Additional pages (summary only) ---')
+    sorted.slice(30).forEach(page => {
+      lines.push(`${page.url} | ${page.word_count}w | ${page.title || 'No title'}`)
+    })
+  }
 
   return lines.join('\n')
 }

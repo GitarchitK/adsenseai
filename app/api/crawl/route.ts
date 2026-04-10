@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
     const monthKey = new Date().toISOString().slice(0, 7)
     const scansThisMonth = profile.scansMonthKey === monthKey ? profile.scansThisMonth : 0
     const userPlan = profile.plan || 'free'
+    const isPro = userPlan === 'pro'
 
     if (!canRunScan(userPlan, scansThisMonth)) {
       return NextResponse.json({
@@ -54,7 +55,8 @@ export async function POST(request: NextRequest) {
     catch { return NextResponse.json({ success: false, error: 'Invalid URL.' }, { status: 400 }) }
 
     // ── Crawl ───────────────────────────────────────────────────────────────
-    const crawler = new WebsiteCrawler(normalizedUrl, { maxPages: 50, timeout: 60000 })
+    const maxPages = isPro ? 150 : 60
+    const crawler = new WebsiteCrawler(normalizedUrl, { maxPages, timeout: 60000, fullSitemap: true })
     const crawlResult = await crawler.crawl()
 
     if (!crawlResult.success) {
@@ -65,7 +67,6 @@ export async function POST(request: NextRequest) {
     const scores = computeScores(crawlResult)
 
     // ── AI report (Pro only) ────────────────────────────────────────────────
-    const isPro = userPlan === 'pro'
     let aiReport = null
 
     if (isPro && process.env.OPENAI_API_KEY) {

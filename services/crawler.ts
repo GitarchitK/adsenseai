@@ -22,6 +22,7 @@ import {
 interface CrawlOptions {
   maxPages?: number;
   timeout?: number;
+  fullSitemap?: boolean; // if true, collect all sitemap URLs even beyond maxPages
 }
 
 /**
@@ -34,6 +35,7 @@ export class WebsiteCrawler {
   private pagesToVisit: string[] = [];
   private crawledPages: CrawledPage[] = [];
   private sitemapMetadata = new Map<string, SitemapEntry>();
+  private allSitemapUrls: string[] = [];  // full sitemap URL list
   private domain: string = '';
   private startTime: number = 0;
 
@@ -41,8 +43,9 @@ export class WebsiteCrawler {
     this.url = normalizeUrl(url);
     this.domain = getDomain(url);
     this.options = {
-      maxPages: options.maxPages || 50,
+      maxPages: options.maxPages || 100,
       timeout: options.timeout || 30000,
+      fullSitemap: options.fullSitemap ?? true,
     };
   }
 
@@ -58,6 +61,7 @@ export class WebsiteCrawler {
       // Step 1: Discover sitemap URLs
       const sitemapEntries = await this.discoverSitemapUrls();
       this.sitemapMetadata = new Map(sitemapEntries.map((entry) => [entry.url, entry]));
+      this.allSitemapUrls = sitemapEntries.map(e => e.url);
       console.log(`[Crawler] Found ${sitemapEntries.length} URLs from sitemap`);
 
       // Step 2: Fetch homepage and extract initial links
@@ -133,6 +137,8 @@ export class WebsiteCrawler {
         total_pages: this.crawledPages.length,
         domain: this.domain,
         crawl_time_ms: crawlTime,
+        sitemap_urls: this.allSitemapUrls,
+        sitemap_total: this.allSitemapUrls.length,
       };
     } catch (error) {
       console.error('[Crawler] Crawl error:', error);

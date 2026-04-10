@@ -355,7 +355,7 @@ export default function ResultsPage() {
 
         {/* ── Quick stats ── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <StatPill icon={<FileText className="h-4 w-4" />} label="Pages Crawled" value={data.total_pages} />
+          <StatPill icon={<FileText className="h-4 w-4" />} label="Pages Crawled" value={data.total_pages} sub={data.sitemap_total && data.sitemap_total > data.total_pages ? `of ${data.sitemap_total} found` : undefined} />
           <StatPill icon={<BookOpen className="h-4 w-4" />} label="Articles Found" value={articleCount} sub={articleCount >= 25 ? '✓ Good' : `/ 25 needed`} />
           <StatPill icon={<Eye className="h-4 w-4" />}      label="Avg Word Count" value={avgWords} sub="words" />
           <StatPill icon={<Target className="h-4 w-4" />}   label="Readiness Score" value={`${finalScore}/100`} />
