@@ -6,8 +6,8 @@ import { Card } from '@/components/ui/card'
 import {
   ArrowLeft, ArrowRight, AlertCircle, CheckCircle2, AlertTriangle,
   ShieldCheck, Search, Sparkles, UserCheck, FileText, Lightbulb,
-  Globe, Lock, Crown, Zap, Calendar, TrendingUp, BarChart3,
-  BookOpen, Clock, Eye, Link2, Brain, Target, DollarSign,
+  Globe, Lock, Zap, Calendar, TrendingUp, BarChart3,
+  BookOpen, Clock, Eye, Link2, Brain, Target, DollarSign, Copy, CheckCheck,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useProfile } from '@/hooks/use-profile'
@@ -22,6 +22,7 @@ interface CrawlResult extends CrawlResponse {
   scan_id?: string
   plan?: string
   crawl_data?: CrawlResponse | null
+  isAiUnlocked?: boolean
 }
 
 // ── Colour helpers ────────────────────────────────────────────────────────────
@@ -138,6 +139,7 @@ export default function ResultsPage() {
   const [unlockError, setUnlockError] = useState('')
   const [aiReport, setAiReport] = useState<AIReport | null>(null)
   const [activeTab, setActiveTab] = useState<'overview' | 'issues' | 'plan' | 'pages'>('overview')
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     try {
@@ -258,6 +260,14 @@ export default function ResultsPage() {
       name: 'AdSenseAI', description: 'Pro Plan — ₹199/month', order_id: order.orderId,
       handler: async () => { window.location.href = '/dashboard?upgraded=1' },
       prefill: {}, theme: { color: '#7c3aed' },
+    })
+  }
+
+  const copyChecklist = (fixes: AIReport['fix_suggestions']) => {
+    const text = fixes.map((f, i) => `${i + 1}. [${f.impact.toUpperCase()}] ${f.title}\n   ${f.description}`).join('\n\n')
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
     })
   }
 
@@ -532,9 +542,36 @@ export default function ResultsPage() {
               )
             })()}
 
+            {/* Quick Wins — always visible, no AI needed */}
+            {!isAiUnlocked && (() => {
+              const wins: { icon: React.ReactNode; text: string; type: 'critical' | 'warning' | 'info' }[] = []
+              if (!data.site_structure?.has_privacy)   wins.push({ icon: null, text: 'Add a Privacy Policy page — required for AdSense approval', type: 'critical' })
+              if (!data.site_structure?.has_about)     wins.push({ icon: null, text: 'Add an About Us page — builds trust with Google reviewers', type: 'critical' })
+              if (!data.site_structure?.has_contact)   wins.push({ icon: null, text: 'Add a Contact page — AdSense requires a way to reach you', type: 'critical' })
+              if (!data.site_structure?.has_terms)     wins.push({ icon: null, text: 'Add a Terms of Service page — shows site legitimacy', type: 'warning' })
+              if (!data.site_structure?.has_disclaimer) wins.push({ icon: null, text: 'Add a Disclaimer page — especially important for finance/health niches', type: 'warning' })
+              const noH1Pages = data.pages.filter(p => p.headings.h1.length === 0).length
+              if (noH1Pages > 0) wins.push({ icon: null, text: `${noH1Pages} page${noH1Pages > 1 ? 's' : ''} missing H1 tags — add a clear heading to each page`, type: 'warning' })
+              const noMetaPages = data.pages.filter(p => !p.meta_description).length
+              if (noMetaPages > 0) wins.push({ icon: null, text: `${noMetaPages} page${noMetaPages > 1 ? 's' : ''} missing meta descriptions — add unique 150-char descriptions`, type: 'warning' })
+              const thinPages = data.pages.filter(p => p.word_count < 300 && p.word_count > 0).length
+              if (thinPages > 0) wins.push({ icon: null, text: `${thinPages} page${thinPages > 1 ? 's' : ''} with under 300 words — expand content to 600+ words minimum`, type: 'warning' })
+              if (articleCount < 15) wins.push({ icon: null, text: `Only ${articleCount} articles detected — publish at least 25 before applying`, type: 'critical' })
+              if (wins.length === 0) wins.push({ icon: null, text: 'Basic structure looks good! Unlock the AI report for deep content & policy analysis.', type: 'info' })
+              return (
+                <Card className="p-5 border-border/60 rounded-2xl">
+                  <p className="text-xs font-black uppercase tracking-widest text-foreground mb-3 flex items-center gap-2">
+                    <Lightbulb className="h-3.5 w-3.5 text-amber-500" /> Quick Wins — Fix These First
+                  </p>
+                  <div className="space-y-2">
+                    {wins.slice(0, 6).map((w, i) => <IssueRow key={i} text={w.text} type={w.type} />)}
+                  </div>
+                </Card>
+              )
+            })()}
+
             {/* Category cards */}
-            <div className="grid md:grid-cols-3 gap-4">
-              {/* Content Quality */}
+            <div className="grid md:grid-cols-3 gap-4">              {/* Content Quality */}
               <Card className="p-5 border-border/60 rounded-2xl space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -682,6 +719,16 @@ export default function ResultsPage() {
           <div className="space-y-6 animate-in fade-in duration-300">
             {isAiUnlocked && ai ? (
               <>
+                {/* Header with copy button */}
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-bold text-foreground">{ai.fix_suggestions.length} fixes identified</p>
+                  {ai.fix_suggestions.length > 0 && (
+                    <Button variant="outline" size="sm" className="gap-2 text-xs h-8 rounded-xl" onClick={() => copyChecklist(ai.fix_suggestions)}>
+                      {copied ? <><CheckCheck className="h-3.5 w-3.5 text-emerald-500" /> Copied!</> : <><Copy className="h-3.5 w-3.5" /> Copy Checklist</>}
+                    </Button>
+                  )}
+                </div>
+
                 {/* Top issues from AI */}
                 {ai.top_issues.length > 0 && (
                   <div className="space-y-2">
@@ -839,13 +886,45 @@ export default function ResultsPage() {
                 </div>
               </>
             ) : (
-              <div className="py-20 text-center space-y-4 max-w-sm mx-auto">
-                <div className="h-14 w-14 rounded-3xl bg-primary/10 flex items-center justify-center mx-auto">
-                  {isPro ? <div className="h-6 w-6 rounded-full border-2 border-primary border-t-transparent animate-spin" /> : <Calendar className="h-7 w-7 text-primary" />}
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-xl font-black text-foreground">Free Action Checklist</h2>
+                  <p className="text-sm text-muted-foreground mt-1">Complete these steps before applying to AdSense.</p>
                 </div>
-                <p className="text-xl font-black text-foreground">{isPro ? 'Building Your Plan...' : 'Unlock Your Action Plan'}</p>
-                <p className="text-sm text-muted-foreground">{isPro ? 'Your roadmap is being generated.' : 'Get a custom day-by-day roadmap to AdSense approval.'}</p>
-                {!isPro && <Button onClick={handleUnlock} disabled={isUnlocking} className="w-full gap-2 h-12 rounded-xl font-bold"><Lock className="h-4 w-4" /> Unlock Plan — ₹19</Button>}
+
+                {/* Free checklist based on crawl data */}
+                <div className="space-y-3">
+                  {[
+                    { done: !!data.site_structure?.has_privacy,    label: 'Add a Privacy Policy page', detail: 'Required by AdSense. Use a free generator if needed.' },
+                    { done: !!data.site_structure?.has_about,      label: 'Add an About Us page', detail: 'Explains who you are and builds reviewer trust.' },
+                    { done: !!data.site_structure?.has_contact,    label: 'Add a Contact page', detail: 'AdSense requires a way for users to reach you.' },
+                    { done: !!data.site_structure?.has_terms,      label: 'Add Terms of Service', detail: 'Shows your site is professionally managed.' },
+                    { done: !!data.site_structure?.has_disclaimer, label: 'Add a Disclaimer page', detail: 'Important for finance, health, and affiliate sites.' },
+                    { done: articleCount >= 25,                    label: `Publish 25+ articles (you have ${articleCount})`, detail: 'Google wants to see a content-rich site before approving.' },
+                    { done: data.pages.filter(p => p.headings.h1.length === 0).length === 0, label: 'Add H1 tags to all pages', detail: `${data.pages.filter(p => p.headings.h1.length === 0).length} pages currently missing H1.` },
+                    { done: data.pages.filter(p => !p.meta_description).length === 0,        label: 'Add meta descriptions to all pages', detail: `${data.pages.filter(p => !p.meta_description).length} pages currently missing meta descriptions.` },
+                    { done: avgWords >= 600,                       label: 'Ensure avg 600+ words per article', detail: `Your current average is ${avgWords} words.` },
+                  ].map((item, i) => (
+                    <div key={i} className={`flex items-start gap-3 p-4 rounded-xl border transition-colors ${item.done ? 'border-emerald-200 dark:border-emerald-800/40 bg-emerald-50/50 dark:bg-emerald-950/20' : 'border-border/60 bg-muted/20'}`}>
+                      <div className={`h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${item.done ? 'bg-emerald-500' : 'border-2 border-muted-foreground/30'}`}>
+                        {item.done && <CheckCircle2 className="h-3.5 w-3.5 text-white" />}
+                      </div>
+                      <div>
+                        <p className={`text-sm font-bold ${item.done ? 'line-through text-muted-foreground' : 'text-foreground'}`}>{item.label}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{item.detail}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <Card className="p-5 border-primary/20 bg-primary/5 rounded-2xl">
+                  <p className="font-bold text-sm text-foreground mb-1 flex items-center gap-2"><Lock className="h-4 w-4 text-primary" /> Want a personalised day-by-day plan?</p>
+                  <p className="text-xs text-muted-foreground mb-3">Unlock the AI report to get a custom 30-day roadmap, strategic tips, and missing topic suggestions.</p>
+                  <Button onClick={handleUnlock} disabled={isUnlocking} className="gap-2 h-10 rounded-xl font-bold text-sm">
+                    {isUnlocking ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Zap className="h-4 w-4" />}
+                    Unlock Full Plan — ₹19
+                  </Button>
+                </Card>
               </div>
             )}
           </div>
@@ -856,34 +935,54 @@ export default function ResultsPage() {
         {/* ══════════════════════════════════════════════════════════════════ */}
         {activeTab === 'pages' && (
           <div className="space-y-4 animate-in fade-in duration-300">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-3">
               <p className="font-semibold text-foreground">
                 Pages Crawled <span className="text-muted-foreground font-normal text-sm">({data.total_pages})</span>
               </p>
-              {data.total_pages > 8 && (
-                <Link href={`/dashboard/articles?scanId=${data.scan_id || ''}`}>
-                  <Button variant="ghost" size="sm" className="text-xs text-primary font-bold gap-1.5">
-                    Deep Article Analysis <ArrowRight className="h-3 w-3" />
-                  </Button>
-                </Link>
-              )}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">
+                  {data.pages.filter(p => p.headings.h1.length > 0 && p.meta_description && p.word_count >= 500).length} / {data.total_pages} pages fully optimised
+                </span>
+                {data.total_pages > 8 && (
+                  <Link href={`/dashboard/articles?scanId=${data.scan_id || ''}`}>
+                    <Button variant="ghost" size="sm" className="text-xs text-primary font-bold gap-1.5">
+                      Deep Article Analysis <ArrowRight className="h-3 w-3" />
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            </div>
+
+            {/* Page health summary */}
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { label: 'Missing H1', count: data.pages.filter(p => p.headings.h1.length === 0).length, color: 'text-red-600 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800/40' },
+                { label: 'No Meta Desc', count: data.pages.filter(p => !p.meta_description).length, color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/40' },
+                { label: 'Thin Content', count: data.pages.filter(p => p.word_count > 0 && p.word_count < 300).length, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800/40' },
+              ].map(s => (
+                <div key={s.label} className={`p-3 rounded-xl border text-center ${s.bg}`}>
+                  <p className={`text-2xl font-black tabular-nums ${s.color}`}>{s.count}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">{s.label}</p>
+                </div>
+              ))}
             </div>
 
             <div className="grid md:grid-cols-2 gap-3">
-              {data.pages.slice(0, 12).map((page, i) => {
+              {data.pages.slice(0, 20).map((page, i) => {
                 const hasH1 = page.headings.h1.length > 0
                 const hasMeta = !!page.meta_description
-                const wordStatus = page.word_count >= 500 ? 'good' : page.word_count >= 300 ? 'warn' : 'low'
+                const wordStatus = page.word_count >= 600 ? 'good' : page.word_count >= 300 ? 'warn' : 'low'
+                const score = (hasH1 ? 33 : 0) + (hasMeta ? 33 : 0) + (wordStatus === 'good' ? 34 : wordStatus === 'warn' ? 17 : 0)
                 return (
-                  <Card key={i} className="p-4 border-border/60 rounded-xl hover:border-primary/30 transition-colors">
+                  <Card key={i} className={`p-4 border-border/60 rounded-xl hover:border-primary/30 transition-colors ${score < 50 ? 'border-l-2 border-l-red-400' : score < 80 ? 'border-l-2 border-l-amber-400' : 'border-l-2 border-l-emerald-400'}`}>
                     <div className="flex items-start gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
-                        <FileText className="h-4 w-4 text-muted-foreground" />
+                      <div className={`h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-black ${score >= 80 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : score >= 50 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'}`}>
+                        {score}
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-bold text-foreground truncate">{page.title || 'No Title'}</p>
                         <p className="text-[10px] text-muted-foreground truncate font-mono mt-0.5">{page.url}</p>
-                        <div className="flex items-center gap-2 mt-2 flex-wrap">
+                        <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                             wordStatus === 'good' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
                             : wordStatus === 'warn' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
@@ -891,7 +990,7 @@ export default function ResultsPage() {
                           }`}>{page.word_count}w</span>
                           {!hasH1 && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">No H1</span>}
                           {!hasMeta && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">No Meta</span>}
-                          {hasH1 && hasMeta && page.word_count >= 500 && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">Good</span>}
+                          {hasH1 && hasMeta && wordStatus === 'good' && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">Optimised</span>}
                         </div>
                       </div>
                     </div>
@@ -899,6 +998,10 @@ export default function ResultsPage() {
                 )
               })}
             </div>
+
+            {data.total_pages > 20 && (
+              <p className="text-center text-xs text-muted-foreground">Showing 20 of {data.total_pages} pages</p>
+            )}
 
             <Link href={`/dashboard/articles?scanId=${data.scan_id || ''}`} className="block">
               <Card className="p-4 border-dashed border-border/60 rounded-xl text-center hover:bg-muted/30 transition-colors">
