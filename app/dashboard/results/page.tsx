@@ -304,6 +304,9 @@ export default function ResultsPage() {
   const trustScore   = ai?.trust_score   ?? det?.trust_score   ?? 0
   const missingPages = det?.missing_pages ?? []
   const isAiUnlocked = !!ai || !!data.isAiUnlocked
+  // Scores before unlock are structural estimates from crawl data (word count, H1s, meta, required pages)
+  // Scores after unlock are AI-analyzed (content quality, policy compliance, originality, etc.)
+  const scoresAreEstimates = !isAiUnlocked
   const articleCount = countArticles(data.pages)
   const avgWords     = data.pages.length ? Math.round(data.pages.reduce((s, p) => s + p.word_count, 0) / data.pages.length) : 0
   const crawlSecs    = (data.crawl_time_ms / 1000).toFixed(1)
@@ -400,9 +403,25 @@ export default function ResultsPage() {
                           : "Significant issues found. AdSense will likely reject in current state."}
                       </p>
                     )}
+                    {scoresAreEstimates && (
+                      <div className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-200 dark:border-amber-800/40">
+                        <AlertTriangle className="h-3 w-3" /> Structural estimate — unlock AI for full analysis
+                      </div>
+                    )}
+                    {isAiUnlocked && ai && (
+                      <div className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full ${
+                        ai.adsense_ready ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+                          : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'}`}>
+                        {ai.adsense_ready ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}
+                        {ai.adsense_ready ? 'AdSense Ready' : 'Fix Recommended'}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-4 bg-muted/20 p-5 rounded-2xl border border-border/40">
+                  {scoresAreEstimates && (
+                    <p className="text-[10px] text-amber-600 dark:text-amber-400 italic">Based on site structure only. Unlock AI for content & policy scores.</p>
+                  )}
                   <WeightBar label="Content Quality"   score={qualityScore} weight="35% weight" plain={qualityScore >= 80 ? 'Great writing' : qualityScore >= 60 ? 'Needs work' : 'Too thin/generic'} />
                   <WeightBar label="Policy Compliance" score={policyScore}  weight="30% weight" plain={policyScore >= 80 ? 'No violations' : policyScore >= 60 ? 'Minor issues' : 'Violations found'} />
                   <WeightBar label="SEO Performance"   score={seoScore}     weight="15% weight" plain={seoScore >= 80 ? 'Well optimised' : seoScore >= 60 ? 'Partially done' : 'Missing basics'} />
