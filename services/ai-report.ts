@@ -391,6 +391,286 @@ function buildFallbackAdvice(
   }
 }
 
+// ── Deterministic fix list — built from real crawl data ──────────────────────
+// This replaces AI-generated suggestions with data-driven fixes that are
+// 100% grounded in what was actually found on the scanned site.
+
+function buildFixList(
+  crawl: CrawlResponse,
+  content: ContentQualityResult,
+  policy: PolicyComplianceResult,
+  trust: TrustUXResult,
+  seo: SEOAuthorityResult,
+  tech: TechnicalHealthResult,
+): FixSuggestion[] {
+  const fixes: FixSuggestion[] = []
+  const domain = crawl.domain
+  const pages = crawl.pages
+  const s = crawl.site_structure
+
+  const thinPages = pages.filter(p => p.word_count > 0 && p.word_count < 300)
+  const borderlinePages = pages.filter(p => p.word_count >= 300 && p.word_count < 500)
+  const noH1Pages = pages.filter(p => p.headings.h1.length === 0)
+  const noMetaPages = pages.filter(p => !p.meta_description)
+  const avgWords = pages.length ? Math.round(pages.reduce((s, p) => s + p.word_count, 0) / pages.length) : 0
+
+  // ── POLICY (highest priority) ──────────────────────────────────────────────
+
+  if (policy.adult_content) {
+    fixes.push({
+      category: 'Policy', impact: 'high',
+      title: 'Remove Adult Content — Instant Rejection',
+      description: `Adult or explicit content was detected on ${domain}. Google will automatically reject your AdSense application without review. Find and remove all adult-oriented content before applying.`,
+      technical_detail: `adult_content=true, policy_risk_score=${policy.policy_risk_score}/100`,
+    })
+  }
+
+  if (policy.dangerous_content) {
+    fixes.push({
+      category: 'Policy', impact: 'high',
+      title: 'Remove Dangerous/Harmful Content',
+      description: `Content promoting violence, illegal activity, or harmful products was detected on ${domain}. This is an automatic AdSense rejection trigger. Remove or rewrite the flagged content immediately.`,
+      technical_detail: `dangerous_content=true`,
+    })
+  }
+
+  if (policy.copyright_risk) {
+    fixes.push({
+      category: 'Policy', impact: 'high',
+      title: 'Fix Copied or Scraped Content',
+      description: `Some content on ${domain} appears to be copied from other sources. Google requires 100% original content. Rewrite any copied articles in your own words — don't just paraphrase, add your own insights and examples.`,
+      technical_detail: `copyright_risk=true, policy_risk_score=${policy.policy_risk_score}/100`,
+    })
+  }
+
+  policy.violations.forEach(v => {
+    fixes.push({
+      category: 'Policy', impact: 'high',
+      title: 'Fix Policy Violation',
+      description: `${v} — This was found on ${domain} and will cause AdSense to reject your application. Fix this before submitting.`,
+      technical_detail: `violation="${v}"`,
+    })
+  })
+
+  // ── REQUIRED PAGES ─────────────────────────────────────────────────────────
+
+  if (!s.has_privacy) {
+    fixes.push({
+      category: 'Trust', impact: 'high',
+      title: 'Add a Privacy Policy Page',
+      description: `${domain} is missing a Privacy Policy page — this is required by Google AdSense and your application will be rejected without it. Create a page at /privacy-policy explaining what data you collect and how you use it. You can use the Privacy Policy Generator in AI Tools.`,
+      technical_detail: `has_privacy=false`,
+    })
+  }
+
+  if (!s.has_about) {
+    fixes.push({
+      category: 'Trust', impact: 'high',
+      title: 'Add an About Page',
+      description: `${domain} is missing an About page. Google's reviewers want to know who runs the site. Create a page at /about with your name, background, and why you created this site. Even 150 words is enough.`,
+      technical_detail: `has_about=false`,
+    })
+  }
+
+  if (!s.has_contact) {
+    fixes.push({
+      category: 'Trust', impact: 'high',
+      title: 'Add a Contact Page',
+      description: `${domain} is missing a Contact page. AdSense requires a way for users to reach you. Create a page at /contact with at least an email address or contact form.`,
+      technical_detail: `has_contact=false`,
+    })
+  }
+
+  if (!s.has_terms) {
+    fixes.push({
+      category: 'Trust', impact: 'medium',
+      title: 'Add a Terms of Service Page',
+      description: `${domain} is missing a Terms of Service page. While not strictly required, it significantly improves your approval chances by showing Google your site is professionally managed. Add a /terms page.`,
+      technical_detail: `has_terms=false`,
+    })
+  }
+
+  if (!s.has_disclaimer) {
+    fixes.push({
+      category: 'Trust', impact: 'medium',
+      title: 'Add a Disclaimer Page',
+      description: `${domain} is missing a Disclaimer page. This is especially important if your site covers finance, health, legal, or affiliate topics. Add a /disclaimer page clarifying that your content is for informational purposes only.`,
+      technical_detail: `has_disclaimer=false`,
+    })
+  }
+
+  // ── THIN CONTENT ───────────────────────────────────────────────────────────
+
+  if (thinPages.length > 0) {
+    const examples = thinPages.slice(0, 3).map(p => `${p.url} (${p.word_count}w)`).join(', ')
+    fixes.push({
+      category: 'Content', impact: 'high',
+      title: `Expand ${thinPages.length} Thin Page${thinPages.length > 1 ? 's' : ''} (Under 300 Words)`,
+      description: `${thinPages.length} pages on ${domain} have fewer than 300 words — Google considers these "thin content" and may reject your site because of them. Expand each one to at least 600 words with useful, original information. Examples: ${examples}.`,
+      technical_detail: `thin_pages=${thinPages.length}, examples=[${examples}]`,
+    })
+  }
+
+  if (borderlinePages.length > 0 && thinPages.length === 0) {
+    fixes.push({
+      category: 'Content', impact: 'medium',
+      title: `Strengthen ${borderlinePages.length} Short Pages (300–500 Words)`,
+      description: `${borderlinePages.length} pages on ${domain} are between 300–500 words — borderline for AdSense. Aim for 600+ words per article by adding more detail, examples, and original insights. Your current average is ${avgWords} words/page.`,
+      technical_detail: `borderline_pages=${borderlinePages.length}, avg_word_count=${avgWords}`,
+    })
+  }
+
+  // ── CONTENT QUALITY ────────────────────────────────────────────────────────
+
+  if (content.originality_score < 50) {
+    fixes.push({
+      category: 'Content', impact: 'high',
+      title: 'Rewrite Generic Content — Low Originality',
+      description: `Content originality scored ${content.originality_score}/100 on ${domain}. Your articles feel too similar to what's already on the internet. Add your personal experience, unique data, original opinions, and specific examples that only you could write.`,
+      technical_detail: `originality_score=${content.originality_score}/100 (target: 70+)`,
+    })
+  } else if (content.originality_score < 70) {
+    fixes.push({
+      category: 'Content', impact: 'medium',
+      title: 'Improve Content Originality',
+      description: `Content originality scored ${content.originality_score}/100 on ${domain}. Some articles feel generic. Add more personal insights, real examples, and unique perspectives to differentiate your content from competitors.`,
+      technical_detail: `originality_score=${content.originality_score}/100 (target: 70+)`,
+    })
+  }
+
+  if (content.readability_score < 50) {
+    fixes.push({
+      category: 'Content', impact: 'high',
+      title: 'Simplify Your Writing — Hard to Read',
+      description: `Readability scored ${content.readability_score}/100 on ${domain}. Your articles are difficult to read — likely due to long sentences, complex words, or dense paragraphs. Break text into short paragraphs (2-3 sentences), use simple words, and add subheadings every 200-300 words.`,
+      technical_detail: `readability_score=${content.readability_score}/100 (target: 65+)`,
+    })
+  } else if (content.readability_score < 65) {
+    fixes.push({
+      category: 'Content', impact: 'medium',
+      title: 'Improve Article Readability',
+      description: `Readability scored ${content.readability_score}/100 on ${domain}. Some articles could be easier to read. Use shorter sentences, add more subheadings, and break up long paragraphs.`,
+      technical_detail: `readability_score=${content.readability_score}/100 (target: 65+)`,
+    })
+  }
+
+  if (content.spam_score > 60) {
+    fixes.push({
+      category: 'Content', impact: 'high',
+      title: 'Stop Keyword Stuffing — High Spam Score',
+      description: `Spam score is ${content.spam_score}/100 on ${domain} — this is high. You're repeating the same keywords too many times. Write naturally, use synonyms, and focus on answering the reader's question rather than targeting keywords. Google's AI detects this and penalizes it.`,
+      technical_detail: `spam_score=${content.spam_score}/100 (target: below 30)`,
+    })
+  } else if (content.spam_score > 40) {
+    fixes.push({
+      category: 'Content', impact: 'medium',
+      title: 'Reduce Keyword Repetition',
+      description: `Spam score is ${content.spam_score}/100 on ${domain}. Some keyword repetition detected. Use natural language and vary your phrasing — don't repeat the same phrase more than 2-3 times per article.`,
+      technical_detail: `spam_score=${content.spam_score}/100 (target: below 30)`,
+    })
+  }
+
+  // ── TECHNICAL SEO ──────────────────────────────────────────────────────────
+
+  if (noH1Pages.length > 0) {
+    const examples = noH1Pages.slice(0, 3).map(p => p.url).join(', ')
+    fixes.push({
+      category: 'SEO', impact: noH1Pages.length > 5 ? 'high' : 'medium',
+      title: `Add H1 Headings to ${noH1Pages.length} Page${noH1Pages.length > 1 ? 's' : ''}`,
+      description: `${noH1Pages.length} pages on ${domain} are missing a main heading (H1 tag). Every page needs one clear title at the top — it tells Google what the page is about. Examples: ${examples}.`,
+      technical_detail: `pages_missing_h1=${noH1Pages.length}, examples=[${examples}]`,
+    })
+  }
+
+  if (noMetaPages.length > 0) {
+    const examples = noMetaPages.slice(0, 3).map(p => p.url).join(', ')
+    fixes.push({
+      category: 'SEO', impact: noMetaPages.length > 5 ? 'high' : 'medium',
+      title: `Add Meta Descriptions to ${noMetaPages.length} Page${noMetaPages.length > 1 ? 's' : ''}`,
+      description: `${noMetaPages.length} pages on ${domain} are missing meta descriptions — the short summaries shown in Google search results. Write a 1-2 sentence description for each page (under 160 characters). Examples: ${examples}.`,
+      technical_detail: `pages_missing_meta=${noMetaPages.length}, examples=[${examples}]`,
+    })
+  }
+
+  if (tech.technical_issues.length > 0) {
+    tech.technical_issues.slice(0, 3).forEach(issue => {
+      fixes.push({
+        category: 'SEO', impact: 'medium',
+        title: 'Fix Technical Issue',
+        description: `${issue} — Found on ${domain}. Technical issues like this can hurt your SEO and AdSense approval chances.`,
+        technical_detail: `technical_issue="${issue}"`,
+      })
+    })
+  }
+
+  // ── SEO AUTHORITY ──────────────────────────────────────────────────────────
+
+  if (seo.topical_authority_score < 50) {
+    fixes.push({
+      category: 'SEO', impact: 'high',
+      title: 'Build Topical Authority — Too Broad',
+      description: `Topical authority scored ${seo.topical_authority_score}/100 on ${domain}. Your site covers too many unrelated topics, or doesn't go deep enough on any one topic. Pick one niche and publish 15-20 in-depth articles covering it from every angle.${seo.missing_topics.length > 0 ? ` Missing topics: ${seo.missing_topics.slice(0, 4).join(', ')}.` : ''}`,
+      technical_detail: `topical_authority=${seo.topical_authority_score}/100, semantic_coverage=${seo.semantic_coverage_score}/100`,
+    })
+  } else if (seo.topical_authority_score < 70) {
+    fixes.push({
+      category: 'SEO', impact: 'medium',
+      title: 'Strengthen Topical Coverage',
+      description: `Topical authority scored ${seo.topical_authority_score}/100 on ${domain}. Publish more articles covering different aspects of your niche.${seo.missing_topics.length > 0 ? ` Topics to cover: ${seo.missing_topics.slice(0, 4).join(', ')}.` : ''}`,
+      technical_detail: `topical_authority=${seo.topical_authority_score}/100`,
+    })
+  }
+
+  if (seo.internal_linking_advice && seo.internal_linking_advice.length > 10) {
+    fixes.push({
+      category: 'SEO', impact: 'low',
+      title: 'Improve Internal Linking',
+      description: `${seo.internal_linking_advice} On ${domain}, link related articles to each other — when you mention a topic you've covered before, add a link to that article.`,
+      technical_detail: `internal_linking_score=needs_improvement`,
+    })
+  }
+
+  // ── TRUST & UX ─────────────────────────────────────────────────────────────
+
+  if (trust.trust_score < 50) {
+    fixes.push({
+      category: 'Trust', impact: 'high',
+      title: 'Strengthen Site Trust Signals',
+      description: `Trust scored ${trust.trust_score}/100 on ${domain}. Google's reviewers look for signs that a real person or business runs the site. Add author bios to your articles, make sure your About page is detailed, and consider adding a photo.`,
+      technical_detail: `trust_score=${trust.trust_score}/100`,
+    })
+  }
+
+  trust.ux_issues.forEach(issue => {
+    fixes.push({
+      category: 'UX', impact: 'medium',
+      title: 'Fix UX Issue',
+      description: `${issue} — Found on ${domain}. User experience issues like this affect how easy your site is to use, which Google considers during AdSense review.`,
+      technical_detail: `ux_issue="${issue}"`,
+    })
+  })
+
+  // ── DOMAIN AGE ─────────────────────────────────────────────────────────────
+
+  if (s.domain_age_years !== undefined && s.domain_age_years < 0.5) {
+    fixes.push({
+      category: 'Trust', impact: 'medium',
+      title: `New Domain — Wait for Maturity (${s.domain_age_years} years old)`,
+      description: `${domain} is only ${s.domain_age_years} years old. Google AdSense often prefers sites that are at least 6 months old. Keep publishing quality content and apply once your domain is more established.`,
+      technical_detail: `domain_age_years=${s.domain_age_years}`,
+    })
+  }
+
+  // Sort: critical policy first, then by impact
+  const order = { high: 0, medium: 1, low: 2 }
+  return fixes.sort((a, b) => {
+    // Policy violations always first
+    if (a.category === 'Policy' && b.category !== 'Policy') return -1
+    if (b.category === 'Policy' && a.category !== 'Policy') return 1
+    return order[a.impact] - order[b.impact]
+  })
+}
+
 // ── Main assembler ────────────────────────────────────────────────────────────
 
 export async function generateAIReport(crawl: CrawlResponse): Promise<AIReport> {
@@ -441,7 +721,7 @@ export async function generateAIReport(crawl: CrawlResponse): Promise<AIReport> 
     seo_authority,
     technical_health,
     top_issues,
-    fix_suggestions: advice.suggestions,
+    fix_suggestions: buildFixList(crawl, content, policy, trust, seo_authority, technical_health),
     application_timeline: advice.application_timeline,
     application_timeline_reason: advice.application_timeline_reason ?? '',
     strategic_roadmap: advice.strategic_roadmap,
