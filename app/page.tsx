@@ -249,12 +249,12 @@ export default function Home() {
               </div>
 
               <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-[1.04] mb-7">
-                Free AdSense Checker<br />
-                <span className="gradient-text">&amp; Website Audit</span>
+                AdSense Approval<br />
+                <span className="gradient-text">Checker & Audit</span>
               </h1>
 
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed mb-10">
-                The fastest AdSense approval checker online. Our AI audits your site for content quality, policy compliance, and SEO — then tells you exactly what to fix to get approved in under 30 seconds.
+                The #1 free AdSense approval checker. Our AI audits your website for content quality, policy compliance, and SEO — then tells you exactly what to fix to get Google AdSense approved in under 30 seconds.
               </p>
 
               <div className="max-w-xl mb-12">

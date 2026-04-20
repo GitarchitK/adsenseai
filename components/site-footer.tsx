@@ -7,6 +7,12 @@ const footerLinks = {
     { href: '/pricing',   label: 'Pricing' },
     { href: '/dashboard', label: 'Dashboard' },
   ],
+  'AdSense Guides': [
+    { href: '/blog', label: 'All Guides' },
+    { href: '/blog/how-to-check-adsense-approval', label: 'How to Check Approval' },
+    { href: '/blog/adsense-approval-requirements', label: 'Approval Requirements' },
+    { href: '/blog/why-adsense-keeps-rejecting-my-site', label: 'Why AdSense Rejects Sites' },
+  ],
   'AdSense Resources': [
     { href: 'https://support.google.com/adsense/answer/160544', label: 'AdSense Help Center' },
     { href: 'https://support.google.com/adsense/answer/6150124', label: 'Program Policies' },
@@ -32,7 +38,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-border/60 bg-muted/20">
       <div className="container mx-auto px-6 py-14">
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-7 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
