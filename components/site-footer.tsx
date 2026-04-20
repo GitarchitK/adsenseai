@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Zap } from 'lucide-react'
 
 const footerLinks = {
   Product: [
@@ -22,7 +21,7 @@ const footerLinks = {
   Company: [
     { href: '/about',   label: 'About Us' },
     { href: '/contact', label: 'Contact' },
-    { href: '/sitemap', label: 'Sitemap' },
+    { href: '/blog',    label: 'Guides' },
   ],
   Legal: [
     { href: '/privacy', label: 'Privacy Policy' },
@@ -87,7 +86,7 @@ export function SiteFooter() {
           <div className="flex gap-5 text-xs text-muted-foreground">
             <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
             <Link href="/terms"   className="hover:text-foreground transition-colors">Terms</Link>
-            <Link href="/sitemap" className="hover:text-foreground transition-colors">Sitemap</Link>
+            <Link href="/blog"    className="hover:text-foreground transition-colors">Guides</Link>
             <Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link>
           </div>
         </div>
