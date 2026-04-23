@@ -50,7 +50,8 @@ export function Navbar() {
             <img src="/icon.svg" alt="AdSenseAI" className="w-full h-full object-cover" />
           </div>
           <span className="font-semibold text-foreground text-[15px]">
-            AdSense Approval <span className="text-primary">Checker AI</span>
+            <span className="md:hidden">AdSense <span className="text-primary">Checker</span></span>
+            <span className="hidden md:inline">AdSense Approval <span className="text-primary">Checker AI</span></span>
           </span>
         </Link>
 
