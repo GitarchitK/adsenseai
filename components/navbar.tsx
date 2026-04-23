@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Moon, Sun, Zap, LayoutDashboard, LogOut } from 'lucide-react'
+import { Moon, Sun, LayoutDashboard, LogOut, User } from 'lucide-react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { signOut } from '@/lib/auth'
@@ -54,7 +54,7 @@ export function Navbar() {
           </span>
         </Link>
 
-        {/* Nav links */}
+        {/* Nav links — desktop only */}
         <div className="hidden md:flex items-center gap-1">
           <Link href="/#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/60">
             Features
@@ -70,6 +70,7 @@ export function Navbar() {
             <>
               {isLoggedIn ? (
                 <>
+                  {/* Desktop */}
                   <Link href="/dashboard">
                     <Button variant="ghost" size="sm" className="gap-2 text-sm font-medium hidden md:inline-flex">
                       <LayoutDashboard className="h-4 w-4" /> Dashboard
@@ -83,15 +84,30 @@ export function Navbar() {
                   >
                     <LogOut className="h-4 w-4" /> Sign Out
                   </Button>
+                  {/* Mobile — dashboard icon */}
+                  <Link href="/dashboard" className="md:hidden">
+                    <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-medium h-8 px-3">
+                      <LayoutDashboard className="h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Button>
+                  </Link>
                 </>
               ) : (
                 <>
+                  {/* Desktop */}
                   <Link href="/auth/login" className="hidden md:block">
                     <Button variant="ghost" size="sm" className="text-sm font-medium">Sign In</Button>
                   </Link>
                   <Link href="/auth/signup" className="hidden md:block">
                     <Button size="sm" className="text-sm font-medium shadow-sm">
                       Get Started Free
+                    </Button>
+                  </Link>
+                  {/* Mobile — login button */}
+                  <Link href="/auth/login" className="md:hidden">
+                    <Button size="sm" className="gap-1.5 text-xs font-bold h-8 px-3 rounded-lg shadow-sm">
+                      <User className="h-3.5 w-3.5" />
+                      Login
                     </Button>
                   </Link>
                 </>
