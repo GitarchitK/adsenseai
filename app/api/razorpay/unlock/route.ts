@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createReportUnlockOrder, verifyPaymentSignature } from '@/lib/razorpay'
+import { createReportUnlockOrder, verifyReportUnlockPayment } from '@/lib/razorpay'
 import { getAuthenticatedProfile, getScanById, unlockScanAiReport } from '@/lib/auth-server'
 import { adminDb } from '@/lib/firebase-admin'
 import { generateAIReport } from '@/services/ai-report'
@@ -59,10 +59,38 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing payment details.' }, { status: 400 })
     }
 
-    if (!verifyPaymentSignature({ orderId, paymentId, signature })) {
+    // Scan must exist and belong to this user (do not accept arbitrary client crawlData for unlock).
+    const scan = await getScanById(scanId, profile.uid)
+    if (!scan) return NextResponse.json({ error: 'Scan not found.' }, { status: 404 })
+
+    // Idempotency: if already unlocked, return stored report.
+    if (scan.isAiUnlocked) {
+      return NextResponse.json({ success: true, ai_report: scan.aiReport ?? null })
+    }
+
+    // Idempotency: if this paymentId was already processed, avoid double-writing.
+    const existing = await adminDb.collection('payments')
+      .where('paymentId', '==', paymentId)
+      .where('plan', '==', 'report_unlock')
+      .limit(1)
+      .get()
+    if (!existing.empty) {
+      const latest = await getScanById(scanId, profile.uid)
+      return NextResponse.json({ success: true, ai_report: latest?.aiReport ?? null })
+    }
+
+    const verification = await verifyReportUnlockPayment({
+      userId: profile.uid,
+      scanId,
+      orderId,
+      paymentId,
+      signature,
+    })
+
+    if (!verification.ok) {
       await adminDb.collection('payment_events').add({
         type: 'unlock_verification_failed', userId: profile.uid,
-        orderId, paymentId, scanId, createdAt: new Date().toISOString(),
+        orderId, paymentId, scanId, reason: verification.reason, createdAt: new Date().toISOString(),
       })
       return NextResponse.json({ error: 'Payment verification failed.' }, { status: 400 })
     }
@@ -88,8 +116,7 @@ export async function POST(request: NextRequest) {
     console.log(`[Payment] Saved unlock payment ${paymentRef.id} for scan ${scanId}`)
 
     // Try to get crawl data from DB first, fallback to client-provided data
-    const scan = await getScanById(scanId, profile.uid)
-    const effectiveCrawlData = scan?.crawlData || crawlData
+    const effectiveCrawlData = scan.crawlData || crawlData
 
     // Generate AI report — sanitize crawlData to a clean CrawlResponse
     let aiReport = null

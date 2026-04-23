@@ -14,3 +14,9 @@ next.user-config.*
 node_modules
 .next/
 .DS_Store
+
+# Firebase / deployment artifacts (should not be committed)
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log

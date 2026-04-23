@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { isAdminInitialized, adminAuth } from '@/lib/firebase-admin'
 
 // GET /api/debug — diagnose Firebase Admin setup
-// DELETE THIS FILE before deploying to production
 export async function GET(request: NextRequest) {
+  if (process.env.NODE_ENV !== 'development') {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  }
+
   const initialized = isAdminInitialized()
 
   const info: Record<string, unknown> = {

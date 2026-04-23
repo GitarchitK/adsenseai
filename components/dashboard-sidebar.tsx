@@ -55,7 +55,7 @@ export function DashboardSidebar() {
           <img src="/icon.svg" alt="AdSenseAI" className="w-full h-full object-cover" />
         </div>
         <span className="font-bold text-sidebar-foreground text-[15px]">
-          AdSense<span className="text-primary">AI</span>
+          AdSense Approval <span className="text-primary">Checker AI</span>
         </span>
       </div>
 

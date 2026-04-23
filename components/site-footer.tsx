@@ -44,7 +44,7 @@ export function SiteFooter() {
               <div className="flex h-8 w-8 items-center justify-center rounded-xl overflow-hidden">
                 <img src="/icon.svg" alt="AdSenseAI" className="w-full h-full object-cover" />
               </div>
-              <span className="font-black text-foreground">AdSenseAI</span>
+              <span className="font-black text-foreground">AdSense Approval <span className="text-primary">Checker AI</span></span>
             </Link>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-[180px] mb-2">
               AI-powered AdSense readiness analysis for publishers.

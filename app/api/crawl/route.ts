@@ -12,7 +12,8 @@ export const maxDuration = 120
 export async function POST(request: NextRequest) {
   try {
     // ── Rate limit ──────────────────────────────────────────────────────────
-    const ip = request.headers.get('x-forwarded-for') ?? 'anonymous'
+    const forwardedFor = request.headers.get('x-forwarded-for')
+    const ip = forwardedFor ? forwardedFor.split(',')[0]?.trim() : 'anonymous'
     const { allowed } = await checkRateLimit(ip)
     if (!allowed) {
       return NextResponse.json({ success: false, error: 'Too many requests.' }, { status: 429 })
@@ -146,6 +147,10 @@ export async function POST(request: NextRequest) {
       aiReport:     aiReport as unknown as Record<string, unknown> | null,  // full report saved always
       isAiUnlocked: isPro,
     })
+
+    if (!scanId) {
+      return NextResponse.json({ success: false, error: 'Failed to save scan.' }, { status: 500 })
+    }
 
     return NextResponse.json({
       ...crawlResult,

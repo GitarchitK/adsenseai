@@ -286,7 +286,9 @@ export class WebsiteCrawler {
         signal: controller.signal,
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 AdSenseReadinessAnalyzer/1.0',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         },
+        redirect: 'follow',
       });
 
       clearTimeout(timeoutId);
@@ -294,6 +296,28 @@ export class WebsiteCrawler {
       if (!response.ok) {
         console.warn(`[Crawler] Page returned status ${response.status}: ${url}`);
         return null;
+      }
+
+      const contentType = response.headers.get('content-type') ?? ''
+      const isTextual =
+        contentType.includes('text/') ||
+        contentType.includes('application/xml') ||
+        contentType.includes('application/xhtml+xml') ||
+        contentType.includes('application/json')
+
+      if (!isTextual) {
+        console.warn(`[Crawler] Skipping non-text content (${contentType}) ${url}`);
+        return null
+      }
+
+      const contentLength = response.headers.get('content-length')
+      if (contentLength) {
+        const bytes = Number(contentLength)
+        // Avoid downloading huge responses (images, large PDFs mislabeled, etc.)
+        if (Number.isFinite(bytes) && bytes > 2_000_000) {
+          console.warn(`[Crawler] Skipping large response (${bytes} bytes) ${url}`)
+          return null
+        }
       }
 
       return await response.text();
@@ -315,16 +339,25 @@ export class WebsiteCrawler {
     const plainText = stripHtmlTags(html);
     const cleanedContent = cleanTextContent(plainText);
 
+    const metaDescription = extractMetaDescription(html)
+    const lastmod = this.sitemapMetadata.get(url)?.lastmod
+
+    // Firestore rejects `undefined` values; only set optional fields when present.
     const crawledPage: CrawledPage = {
       url,
       title: extractTitle(html, url),
-      meta_description: extractMetaDescription(html),
       content: cleanedContent,
       word_count: countWords(cleanedContent),
-      lastmod: this.sitemapMetadata.get(url)?.lastmod,
       headings: extractHeadings(html),
       links: extractLinks(html, url),
     };
+
+    if (typeof metaDescription === 'string' && metaDescription.trim().length > 0) {
+      crawledPage.meta_description = metaDescription
+    }
+    if (typeof lastmod === 'string' && lastmod.trim().length > 0) {
+      crawledPage.lastmod = lastmod
+    }
 
     return crawledPage;
   }

@@ -24,7 +24,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <div className="flex items-center justify-center w-9 h-9 rounded-xl overflow-hidden">
               <img src="/icon.svg" alt="AdSenseAI" className="w-full h-full object-cover" />
             </div>
-            <span className="font-bold text-white text-lg tracking-tight">AdSenseAI</span>
+            <span className="font-bold text-white text-lg tracking-tight">AdSense Approval Checker AI</span>
           </Link>
 
           {/* Main content */}
@@ -90,7 +90,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <div className="flex items-center justify-center w-8 h-8 rounded-xl overflow-hidden">
               <img src="/icon.svg" alt="AdSenseAI" className="w-full h-full object-cover" />
             </div>
-            <span className="font-bold text-foreground">AdSenseAI</span>
+            <span className="font-bold text-foreground">AdSense Approval Checker AI</span>
           </Link>
         </header>
 

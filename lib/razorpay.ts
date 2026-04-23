@@ -58,6 +58,56 @@ export function verifyPaymentSignature(params: {
   return expected === params.signature
 }
 
+export async function fetchOrder(orderId: string) {
+  return getRazorpay().orders.fetch(orderId)
+}
+
+export async function fetchPayment(paymentId: string) {
+  return getRazorpay().payments.fetch(paymentId)
+}
+
+export async function verifyReportUnlockPayment(params: {
+  userId: string
+  scanId: string
+  orderId: string
+  paymentId: string
+  signature: string
+}): Promise<{ ok: true } | { ok: false; reason: string }> {
+  if (!verifyPaymentSignature({ orderId: params.orderId, paymentId: params.paymentId, signature: params.signature })) {
+    return { ok: false, reason: 'signature_mismatch' }
+  }
+
+  // Extra server-side validation (amount/currency/notes/status) to prevent tampering.
+  try {
+    const [order, payment] = await Promise.all([
+      fetchOrder(params.orderId),
+      fetchPayment(params.paymentId),
+    ])
+
+    const orderNotes = (order as any)?.notes ?? {}
+    const orderType = orderNotes?.type
+    const orderUserId = orderNotes?.userId
+    const orderScanId = orderNotes?.scanId
+
+    if (orderType !== 'report_unlock') return { ok: false, reason: 'order_type_mismatch' }
+    if (orderUserId !== params.userId) return { ok: false, reason: 'order_user_mismatch' }
+    if (orderScanId !== params.scanId) return { ok: false, reason: 'order_scan_mismatch' }
+
+    if ((order as any)?.currency !== CURRENCY) return { ok: false, reason: 'order_currency_mismatch' }
+    if (Number((order as any)?.amount) !== PRICES.report_unlock) return { ok: false, reason: 'order_amount_mismatch' }
+
+    if ((payment as any)?.order_id !== params.orderId) return { ok: false, reason: 'payment_order_mismatch' }
+    if ((payment as any)?.currency !== CURRENCY) return { ok: false, reason: 'payment_currency_mismatch' }
+    if (Number((payment as any)?.amount) !== PRICES.report_unlock) return { ok: false, reason: 'payment_amount_mismatch' }
+    if ((payment as any)?.status !== 'captured') return { ok: false, reason: 'payment_not_captured' }
+
+    return { ok: true }
+  } catch (err) {
+    console.error('[Razorpay] verifyReportUnlockPayment fetch failed:', err)
+    return { ok: false, reason: 'razorpay_fetch_failed' }
+  }
+}
+
 export function verifyWebhookSignature(rawBody: string, signature: string): boolean {
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET
   if (!secret) {
