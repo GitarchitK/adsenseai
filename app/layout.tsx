@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     apple: '/apple-icon.png',
   },
   alternates: {
-    canonical: 'https://adsenseai.in',
+    canonical: 'https://adsensechecker.in',
   },
 }
 
@@ -77,9 +77,9 @@ const jsonLd = {
   '@graph': [
     {
       '@type': 'WebApplication',
-      '@id': 'https://adsenseai.in/#webapp',
+      '@id': 'https://adsensechecker.in/#webapp',
       name: 'AdSense Approval Checker AI',
-      url: 'https://adsenseai.in',
+      url: 'https://adsensechecker.in',
       description: 'Free AdSense approval checker. AI-powered website audit tool that scans your site for content quality, policy compliance, SEO, and trust signals to check AdSense eligibility.',
       applicationCategory: 'BusinessApplication',
       operatingSystem: 'Web',
@@ -101,10 +101,10 @@ const jsonLd = {
     },
     {
       '@type': 'Organization',
-      '@id': 'https://adsenseai.in/#org',
+      '@id': 'https://adsensechecker.in/#org',
       name: 'AdSense Approval Checker AI',
-      url: 'https://adsenseai.in',
-      logo: 'https://adsenseai.in/icon.svg',
+      url: 'https://adsensechecker.in',
+      logo: 'https://adsensechecker.in/icon.svg',
       sameAs: [],
     },
     {

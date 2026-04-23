@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Privacy Policy — AdSenseAI AdSense Checker',
   description: 'Privacy Policy for AdSenseAI, the free AdSense checker and website audit tool.',
-  alternates: { canonical: 'https://adsenseai.in/privacy' },
+  alternates: { canonical: 'https://adsensechecker.in/privacy' },
   robots: { index: false },
 }
 
@@ -59,7 +59,7 @@ To get approved for Google AdSense, you must comply with Google's [Program Polic
             },
             {
               title: '6. Data Retention',
-              content: `We retain your account data for as long as your account is active. Scan results are stored indefinitely so you can access your history. You may request deletion of your data at any time by contacting support@adsenseai.in.`,
+              content: `We retain your account data for as long as your account is active. Scan results are stored indefinitely so you can access your history. You may request deletion of your data at any time by contacting support@adsensechecker.in.`,
             },
             {
               title: '7. Your Rights',
@@ -68,7 +68,7 @@ To get approved for Google AdSense, you must comply with Google's [Program Polic
 • Request correction of inaccurate data
 • Request deletion of your account and data
 • Export your scan history
-Contact us at support@adsenseai.in to exercise these rights.`,
+Contact us at support@adsensechecker.in to exercise these rights.`,
             },
             {
               title: '8. Security',
@@ -91,7 +91,7 @@ We are not affiliated with Google or Google AdSense. For AdSense support, visit 
             },
             {
               title: '11. Contact',
-              content: `For privacy-related questions, contact us at: privacy@adsenseai.in`,
+              content: `For privacy-related questions, contact us at: privacy@adsensechecker.in`,
             },
           ].map(({ title, content }) => (
             <div key={title}>

@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Contact AdSenseAI — AdSense Checker Support',
   description: 'Get help with AdSenseAI\'s AdSense checker and website audit tool. Contact our support team for questions about your AdSense audit results.',
-  alternates: { canonical: 'https://adsenseai.in/contact' },
+  alternates: { canonical: 'https://adsensechecker.in/contact' },
 }
 
 export default function ContactPage() {
@@ -43,8 +43,8 @@ export default function ContactPage() {
             </div>
             <div className="space-y-4">
               {[
-                { icon: Mail,          title: 'Email',         value: 'support@adsenseai.in',  desc: 'For general inquiries and support' },
-                { icon: MessageSquare, title: 'Billing',       value: 'billing@adsenseai.in',  desc: 'For payment and subscription issues' },
+                { icon: Mail,          title: 'Email',         value: 'support@adsensechecker.in',  desc: 'For general inquiries and support' },
+                { icon: MessageSquare, title: 'Billing',       value: 'billing@adsensechecker.in',  desc: 'For payment and subscription issues' },
                 { icon: Clock,         title: 'Response time', value: 'Within 24 hours',       desc: 'Monday to Saturday, 9am–6pm IST' },
               ].map(({ icon: Icon, title, value, desc }) => (
                 <div key={title} className="flex items-start gap-4 p-4 rounded-2xl border border-border/60 bg-card">

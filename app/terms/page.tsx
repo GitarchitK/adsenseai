@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Terms of Service — AdSense Approval Checker AI',
   description: 'Terms of Service for AdSense Approval Checker AI. Read our terms before using our free AdSense approval checker and website audit tool.',
-  alternates: { canonical: 'https://adsenseai.in/terms' },
+  alternates: { canonical: 'https://adsensechecker.in/terms' },
   robots: { index: false },
 }
 
@@ -71,7 +71,7 @@ Pro Plan (₹199/month): Monthly subscription. You may cancel at any time. No re
             },
             {
               title: '11. Contact',
-              content: 'For questions about these Terms, contact us at: legal@adsenseai.in',
+              content: 'For questions about these Terms, contact us at: legal@adsensechecker.in',
             },
           ].map(({ title, content }) => (
             <div key={title}>

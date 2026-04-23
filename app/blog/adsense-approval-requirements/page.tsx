@@ -9,12 +9,12 @@ export const metadata: Metadata = {
   title: 'Google AdSense Approval Requirements 2025 — Complete Checklist',
   description: 'Complete list of Google AdSense approval requirements for 2025. Check every requirement your website must meet before applying — content, policy, pages, SEO, and more.',
   keywords: ['adsense approval requirements', 'adsense requirements 2025', 'google adsense requirements', 'adsense approval checklist', 'adsense approval checker'],
-  alternates: { canonical: 'https://adsenseai.in/blog/adsense-approval-requirements' },
+  alternates: { canonical: 'https://adsensechecker.in/blog/adsense-approval-requirements' },
   openGraph: {
     type: 'article',
     title: 'Google AdSense Approval Requirements 2025 — Complete Checklist',
     description: 'Complete list of Google AdSense approval requirements for 2025.',
-    url: 'https://adsenseai.in/blog/adsense-approval-requirements',
+    url: 'https://adsensechecker.in/blog/adsense-approval-requirements',
     siteName: 'AdSense Approval Checker AI',
   },
 }
@@ -24,21 +24,21 @@ const articleSchema = {
   '@type': 'Article',
   headline: 'Google AdSense Approval Requirements 2025 — Complete Checklist',
   description: 'Complete list of Google AdSense approval requirements for 2025.',
-  url: 'https://adsenseai.in/blog/adsense-approval-requirements',
+  url: 'https://adsensechecker.in/blog/adsense-approval-requirements',
   datePublished: '2025-01-01',
   dateModified: '2025-04-23',
-  author: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsenseai.in' },
-  publisher: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsenseai.in' },
-  mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://adsenseai.in/blog/adsense-approval-requirements' },
+  author: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsensechecker.in' },
+  publisher: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsensechecker.in' },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://adsensechecker.in/blog/adsense-approval-requirements' },
 }
 
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://adsenseai.in' },
-    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://adsenseai.in/blog' },
-    { '@type': 'ListItem', position: 3, name: 'AdSense Approval Requirements', item: 'https://adsenseai.in/blog/adsense-approval-requirements' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://adsensechecker.in' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://adsensechecker.in/blog' },
+    { '@type': 'ListItem', position: 3, name: 'AdSense Approval Requirements', item: 'https://adsensechecker.in/blog/adsense-approval-requirements' },
   ],
 }
 

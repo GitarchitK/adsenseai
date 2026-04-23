@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 
-const BASE = 'https://adsenseai.in'
+const BASE = 'https://adsensechecker.in'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

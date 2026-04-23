@@ -9,12 +9,12 @@ export const metadata: Metadata = {
   title: 'How to Fix AdSense "Low Value Content" Rejection — Complete Guide',
   description: '"Low value content" is the #1 reason Google rejects AdSense applications. Learn exactly what it means and how to fix it to get approved.',
   keywords: ['adsense low value content', 'fix adsense low value content', 'adsense low value content rejection', 'adsense approval checker', 'adsense content requirements'],
-  alternates: { canonical: 'https://adsenseai.in/blog/adsense-low-value-content-fix' },
+  alternates: { canonical: 'https://adsensechecker.in/blog/adsense-low-value-content-fix' },
   openGraph: {
     type: 'article',
     title: 'How to Fix AdSense "Low Value Content" Rejection',
     description: '"Low value content" is the #1 AdSense rejection reason. Here\'s how to fix it.',
-    url: 'https://adsenseai.in/blog/adsense-low-value-content-fix',
+    url: 'https://adsensechecker.in/blog/adsense-low-value-content-fix',
     siteName: 'AdSense Approval Checker AI',
   },
 }
@@ -23,20 +23,20 @@ const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: 'How to Fix AdSense "Low Value Content" Rejection — Complete Guide',
-  url: 'https://adsenseai.in/blog/adsense-low-value-content-fix',
+  url: 'https://adsensechecker.in/blog/adsense-low-value-content-fix',
   datePublished: '2025-01-15',
   dateModified: '2025-04-23',
-  author: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsenseai.in' },
-  publisher: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsenseai.in' },
+  author: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsensechecker.in' },
+  publisher: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsensechecker.in' },
 }
 
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://adsenseai.in' },
-    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://adsenseai.in/blog' },
-    { '@type': 'ListItem', position: 3, name: 'Fix Low Value Content', item: 'https://adsenseai.in/blog/adsense-low-value-content-fix' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://adsensechecker.in' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://adsensechecker.in/blog' },
+    { '@type': 'ListItem', position: 3, name: 'Fix Low Value Content', item: 'https://adsensechecker.in/blog/adsense-low-value-content-fix' },
   ],
 }
 
