@@ -9,12 +9,12 @@ export const metadata: Metadata = {
   title: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes',
   description: 'AdSense keeps rejecting your website? Here are the 8 most common reasons Google rejects AdSense applications — and exactly how to fix each one. Use our free AdSense approval checker to diagnose your site.',
   keywords: ['adsense keeps rejecting my site', 'why adsense rejected my application', 'adsense rejection reasons', 'adsense approval checker', 'fix adsense rejection'],
-  alternates: { canonical: 'https://adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site' },
+  alternates: { canonical: 'https://www.adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site' },
   openGraph: {
     type: 'article',
     title: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes',
     description: 'The 8 most common reasons Google rejects AdSense applications and how to fix them.',
-    url: 'https://adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site',
+    url: 'https://www.adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site',
     siteName: 'AdSense Approval Checker AI',
   },
 }
@@ -24,21 +24,21 @@ const articleSchema = {
   '@type': 'Article',
   headline: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes',
   description: 'The 8 most common reasons Google rejects AdSense applications and how to fix them.',
-  url: 'https://adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site',
+  url: 'https://www.adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site',
   datePublished: '2025-01-01',
   dateModified: '2025-04-23',
-  author: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsensechecker.in' },
-  publisher: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsensechecker.in' },
-  mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site' },
+  author: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://www.adsensechecker.in' },
+  publisher: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://www.adsensechecker.in' },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://www.adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site' },
 }
 
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://adsensechecker.in' },
-    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://adsensechecker.in/blog' },
-    { '@type': 'ListItem', position: 3, name: 'Why AdSense Keeps Rejecting', item: 'https://adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.adsensechecker.in' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.adsensechecker.in/blog' },
+    { '@type': 'ListItem', position: 3, name: 'Why AdSense Keeps Rejecting', item: 'https://www.adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site' },
   ],
 }
 

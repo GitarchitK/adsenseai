@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Privacy Policy — AdSenseAI AdSense Checker',
   description: 'Privacy Policy for AdSenseAI, the free AdSense checker and website audit tool.',
-  alternates: { canonical: 'https://adsensechecker.in/privacy' },
+  alternates: { canonical: 'https://www.adsensechecker.in/privacy' },
   robots: { index: false },
 }
 

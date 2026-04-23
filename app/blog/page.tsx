@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'AdSense Approval Guides & Resources',
   description: 'Free guides on how to get Google AdSense approved. Learn about AdSense approval requirements, how to check your eligibility, and how to fix common rejection reasons.',
-  alternates: { canonical: 'https://adsensechecker.in/blog' },
+  alternates: { canonical: 'https://www.adsensechecker.in/blog' },
 }
 
 const posts = [

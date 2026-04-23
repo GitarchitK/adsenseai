@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Contact AdSenseAI — AdSense Checker Support',
   description: 'Get help with AdSenseAI\'s AdSense checker and website audit tool. Contact our support team for questions about your AdSense audit results.',
-  alternates: { canonical: 'https://adsensechecker.in/contact' },
+  alternates: { canonical: 'https://www.adsensechecker.in/contact' },
 }
 
 export default function ContactPage() {

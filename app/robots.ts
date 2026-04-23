@@ -9,6 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/dashboard/', '/admin/', '/api/'],
       },
     ],
-    sitemap: 'https://adsensechecker.in/sitemap.xml',
+    sitemap: 'https://www.adsensechecker.in/sitemap.xml',
+    host: 'https://www.adsensechecker.in',
   }
 }

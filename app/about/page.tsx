@@ -6,7 +6,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'About AdSenseAI — Free AdSense Checker & Audit Tool',
   description: 'AdSenseAI is a free AdSense checker and website audit tool built by Navroll Studio. We help publishers get Google AdSense approved faster with AI-powered site audits.',
-  alternates: { canonical: 'https://adsensechecker.in/about' },
+  alternates: { canonical: 'https://www.adsensechecker.in/about' },
 }
 
 export default function AboutPage() {

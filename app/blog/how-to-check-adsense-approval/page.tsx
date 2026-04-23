@@ -9,12 +9,12 @@ export const metadata: Metadata = {
   title: 'How to Check AdSense Approval Status — Complete Guide',
   description: 'Learn how to check if your website is ready for Google AdSense approval. Step-by-step guide covering content requirements, policy compliance, and how to use a free AdSense approval checker.',
   keywords: ['how to check adsense approval', 'adsense approval checker', 'adsense approval status', 'check adsense eligibility'],
-  alternates: { canonical: 'https://adsensechecker.in/blog/how-to-check-adsense-approval' },
+  alternates: { canonical: 'https://www.adsensechecker.in/blog/how-to-check-adsense-approval' },
   openGraph: {
     type: 'article',
     title: 'How to Check AdSense Approval Status — Complete Guide',
     description: 'Learn how to check if your website is ready for Google AdSense approval.',
-    url: 'https://adsensechecker.in/blog/how-to-check-adsense-approval',
+    url: 'https://www.adsensechecker.in/blog/how-to-check-adsense-approval',
     siteName: 'AdSense Approval Checker AI',
   },
 }
@@ -24,21 +24,21 @@ const articleSchema = {
   '@type': 'Article',
   headline: 'How to Check AdSense Approval Status — Complete Guide',
   description: 'Learn how to check if your website is ready for Google AdSense approval.',
-  url: 'https://adsensechecker.in/blog/how-to-check-adsense-approval',
+  url: 'https://www.adsensechecker.in/blog/how-to-check-adsense-approval',
   datePublished: '2025-01-01',
   dateModified: '2025-04-23',
-  author: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsensechecker.in' },
-  publisher: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsensechecker.in' },
-  mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://adsensechecker.in/blog/how-to-check-adsense-approval' },
+  author: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://www.adsensechecker.in' },
+  publisher: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://www.adsensechecker.in' },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://www.adsensechecker.in/blog/how-to-check-adsense-approval' },
 }
 
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://adsensechecker.in' },
-    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://adsensechecker.in/blog' },
-    { '@type': 'ListItem', position: 3, name: 'How to Check AdSense Approval', item: 'https://adsensechecker.in/blog/how-to-check-adsense-approval' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.adsensechecker.in' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.adsensechecker.in/blog' },
+    { '@type': 'ListItem', position: 3, name: 'How to Check AdSense Approval', item: 'https://www.adsensechecker.in/blog/how-to-check-adsense-approval' },
   ],
 }
 
