@@ -235,10 +235,11 @@ export default function Home() {
           <div className="hero-orb-2 absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-violet-500/10 blur-[90px]" />
           <div className="hero-orb-3 absolute top-[30%] right-[20%] w-[300px] h-[300px] rounded-full bg-indigo-400/8 blur-[80px]" />
         </div>
-        <div className="relative container mx-auto px-6 pt-24 pb-36 md:pt-32 md:pb-48">
+        <div className="relative container mx-auto px-6 pt-6 pb-16 md:pt-32 md:pb-48">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="text-left">
-              <div className="flex flex-wrap items-center gap-3 mb-8">
+              {/* Badges — hidden on mobile to save space */}
+              <div className="hidden sm:flex flex-wrap items-center gap-3 mb-8">
                 <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/8 px-4 py-1.5 text-xs font-semibold text-primary shadow-sm backdrop-blur-sm">
                   <Sparkles className="h-3.5 w-3.5" />
                   Trusted by 12,000+ publishers worldwide
@@ -248,16 +249,17 @@ export default function Home() {
                 </div>
               </div>
 
-              <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-[1.04] mb-7">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.04] mb-4 md:mb-7">
                 AdSense Approval<br />
                 <span className="gradient-text">Checker & Audit</span>
               </h1>
 
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed mb-10">
+              {/* Shorter description on mobile */}
+              <p className="text-base md:text-xl text-muted-foreground max-w-2xl leading-relaxed mb-6 md:mb-10 line-clamp-2 sm:line-clamp-none">
                 The #1 free AdSense approval checker. Our AI audits your website for content quality, policy compliance, and SEO — then tells you exactly what to fix to get Google AdSense approved in under 30 seconds.
               </p>
 
-              <div className="max-w-xl mb-12">
+              <div className="max-w-xl mb-6 md:mb-12">
                 <HeroScanInput />
               </div>
 
