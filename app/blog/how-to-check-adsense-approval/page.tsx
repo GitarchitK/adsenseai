@@ -10,11 +10,54 @@ export const metadata: Metadata = {
   description: 'Learn how to check if your website is ready for Google AdSense approval. Step-by-step guide covering content requirements, policy compliance, and how to use a free AdSense approval checker.',
   keywords: ['how to check adsense approval', 'adsense approval checker', 'adsense approval status', 'check adsense eligibility'],
   alternates: { canonical: 'https://adsenseai.in/blog/how-to-check-adsense-approval' },
+  openGraph: {
+    type: 'article',
+    title: 'How to Check AdSense Approval Status — Complete Guide',
+    description: 'Learn how to check if your website is ready for Google AdSense approval.',
+    url: 'https://adsenseai.in/blog/how-to-check-adsense-approval',
+    siteName: 'AdSense Approval Checker AI',
+  },
+}
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'How to Check AdSense Approval Status — Complete Guide',
+  description: 'Learn how to check if your website is ready for Google AdSense approval.',
+  url: 'https://adsenseai.in/blog/how-to-check-adsense-approval',
+  datePublished: '2025-01-01',
+  dateModified: '2025-04-23',
+  author: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsenseai.in' },
+  publisher: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsenseai.in' },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://adsenseai.in/blog/how-to-check-adsense-approval' },
+}
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://adsenseai.in' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://adsenseai.in/blog' },
+    { '@type': 'ListItem', position: 3, name: 'How to Check AdSense Approval', item: 'https://adsenseai.in/blog/how-to-check-adsense-approval' },
+  ],
+}
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    { '@type': 'Question', name: 'How do I check if my website is AdSense ready?', acceptedAnswer: { '@type': 'Answer', text: 'Use AdSenseAI\'s free AdSense approval checker. Enter your URL, wait 30 seconds, and get a score from 0-100 with specific fixes.' } },
+    { '@type': 'Question', name: 'What score do I need to get AdSense approved?', acceptedAnswer: { '@type': 'Answer', text: 'A score of 70+ on AdSenseAI\'s checker indicates your site is likely ready for AdSense approval. Scores of 80+ have a high approval rate.' } },
+    { '@type': 'Question', name: 'What does Google check for AdSense approval?', acceptedAnswer: { '@type': 'Answer', text: 'Google checks content quality, policy compliance, required pages (Privacy Policy, About, Contact), site structure, and SEO signals like H1 tags and meta descriptions.' } },
+  ],
 }
 
 export default function HowToCheckAdsenseApproval() {
   return (
     <div className="min-h-screen bg-background">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <Navbar />
       <article className="container mx-auto px-6 py-16 max-w-3xl">
         <div className="mb-10">

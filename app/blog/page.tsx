@@ -24,6 +24,12 @@ const posts = [
     tag: 'Checklist',
   },
   {
+    href: '/blog/adsense-low-value-content-fix',
+    title: 'How to Fix AdSense "Low Value Content" Rejection',
+    desc: '"Low value content" is the #1 AdSense rejection reason. Here are 5 specific fixes to get approved.',
+    tag: 'Fix Guide',
+  },
+  {
     href: '/blog/why-adsense-keeps-rejecting-my-site',
     title: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes',
     desc: 'The 8 most common AdSense rejection reasons and exactly how to fix each one.',

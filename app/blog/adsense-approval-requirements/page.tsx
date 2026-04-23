@@ -10,6 +10,46 @@ export const metadata: Metadata = {
   description: 'Complete list of Google AdSense approval requirements for 2025. Check every requirement your website must meet before applying — content, policy, pages, SEO, and more.',
   keywords: ['adsense approval requirements', 'adsense requirements 2025', 'google adsense requirements', 'adsense approval checklist', 'adsense approval checker'],
   alternates: { canonical: 'https://adsenseai.in/blog/adsense-approval-requirements' },
+  openGraph: {
+    type: 'article',
+    title: 'Google AdSense Approval Requirements 2025 — Complete Checklist',
+    description: 'Complete list of Google AdSense approval requirements for 2025.',
+    url: 'https://adsenseai.in/blog/adsense-approval-requirements',
+    siteName: 'AdSense Approval Checker AI',
+  },
+}
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Google AdSense Approval Requirements 2025 — Complete Checklist',
+  description: 'Complete list of Google AdSense approval requirements for 2025.',
+  url: 'https://adsenseai.in/blog/adsense-approval-requirements',
+  datePublished: '2025-01-01',
+  dateModified: '2025-04-23',
+  author: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsenseai.in' },
+  publisher: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsenseai.in' },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://adsenseai.in/blog/adsense-approval-requirements' },
+}
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://adsenseai.in' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://adsenseai.in/blog' },
+    { '@type': 'ListItem', position: 3, name: 'AdSense Approval Requirements', item: 'https://adsenseai.in/blog/adsense-approval-requirements' },
+  ],
+}
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    { '@type': 'Question', name: 'What are the requirements for Google AdSense approval?', acceptedAnswer: { '@type': 'Answer', text: 'Google AdSense requires: original content (20-30+ articles, 600+ words each), Privacy Policy page, About page, Contact page, HTTPS, mobile-friendly design, and no policy violations.' } },
+    { '@type': 'Question', name: 'How many articles do I need for AdSense approval?', acceptedAnswer: { '@type': 'Answer', text: 'Most publishers need at least 20-30 quality articles before applying for AdSense. Each article should be at least 600 words of original content.' } },
+    { '@type': 'Question', name: 'Is a Privacy Policy required for AdSense?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, a Privacy Policy page is required for Google AdSense approval. It must explain what data you collect and how you use it.' } },
+  ],
 }
 
 const requirements = [
@@ -60,6 +100,9 @@ const requirements = [
 export default function AdsenseApprovalRequirements() {
   return (
     <div className="min-h-screen bg-background">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <Navbar />
       <article className="container mx-auto px-6 py-16 max-w-3xl">
         <div className="mb-10">

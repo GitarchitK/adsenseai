@@ -10,7 +10,7 @@ const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono'
 export const metadata: Metadata = {
   title: {
     default: 'AdSense Approval Checker — Free AI Website Audit Tool | AdSenseAI',
-    template: '%s | AdSenseAI',
+    template: '%s | AdSense Approval Checker AI',
   },
   description: 'Free AdSense approval checker. Instantly check if your website meets Google AdSense requirements. AI scans content quality, policy compliance, SEO & trust signals — get your approval score in 30 seconds.',
   keywords: [
@@ -78,30 +78,31 @@ const jsonLd = {
     {
       '@type': 'WebApplication',
       '@id': 'https://adsenseai.in/#webapp',
-      name: 'AdSenseAI',
+      name: 'AdSense Approval Checker AI',
       url: 'https://adsenseai.in',
-      description: 'Free AdSense checker and website audit tool. AI-powered AdSense approval checker that scans your site for content quality, policy compliance, SEO, and trust signals.',
+      description: 'Free AdSense approval checker. AI-powered website audit tool that scans your site for content quality, policy compliance, SEO, and trust signals to check AdSense eligibility.',
       applicationCategory: 'BusinessApplication',
       operatingSystem: 'Web',
       offers: {
         '@type': 'Offer',
         price: '0',
         priceCurrency: 'INR',
-        description: 'Free AdSense readiness check',
+        description: 'Free AdSense approval check',
       },
       featureList: [
-        'AdSense eligibility checker',
+        'AdSense approval checker',
         'Website content audit',
         'Policy compliance check',
         'SEO analysis',
         'Trust signal detection',
         'AI-powered fix suggestions',
+        'AdSense eligibility checker',
       ],
     },
     {
       '@type': 'Organization',
       '@id': 'https://adsenseai.in/#org',
-      name: 'AdSenseAI',
+      name: 'AdSense Approval Checker AI',
       url: 'https://adsenseai.in',
       logo: 'https://adsenseai.in/icon.svg',
       sameAs: [],

@@ -10,6 +10,36 @@ export const metadata: Metadata = {
   description: 'AdSense keeps rejecting your website? Here are the 8 most common reasons Google rejects AdSense applications — and exactly how to fix each one. Use our free AdSense approval checker to diagnose your site.',
   keywords: ['adsense keeps rejecting my site', 'why adsense rejected my application', 'adsense rejection reasons', 'adsense approval checker', 'fix adsense rejection'],
   alternates: { canonical: 'https://adsenseai.in/blog/why-adsense-keeps-rejecting-my-site' },
+  openGraph: {
+    type: 'article',
+    title: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes',
+    description: 'The 8 most common reasons Google rejects AdSense applications and how to fix them.',
+    url: 'https://adsenseai.in/blog/why-adsense-keeps-rejecting-my-site',
+    siteName: 'AdSense Approval Checker AI',
+  },
+}
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes',
+  description: 'The 8 most common reasons Google rejects AdSense applications and how to fix them.',
+  url: 'https://adsenseai.in/blog/why-adsense-keeps-rejecting-my-site',
+  datePublished: '2025-01-01',
+  dateModified: '2025-04-23',
+  author: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsenseai.in' },
+  publisher: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://adsenseai.in' },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://adsenseai.in/blog/why-adsense-keeps-rejecting-my-site' },
+}
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://adsenseai.in' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://adsenseai.in/blog' },
+    { '@type': 'ListItem', position: 3, name: 'Why AdSense Keeps Rejecting', item: 'https://adsenseai.in/blog/why-adsense-keeps-rejecting-my-site' },
+  ],
 }
 
 const reasons = [
@@ -66,6 +96,8 @@ const reasons = [
 export default function WhyAdsenseKeepsRejectingMySite() {
   return (
     <div className="min-h-screen bg-background">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Navbar />
       <article className="container mx-auto px-6 py-16 max-w-3xl">
         <div className="mb-10">

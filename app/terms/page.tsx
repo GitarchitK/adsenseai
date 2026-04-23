@@ -1,5 +1,13 @@
 import { Navbar } from '@/components/navbar'
 import { SiteFooter } from '@/components/site-footer'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Terms of Service — AdSense Approval Checker AI',
+  description: 'Terms of Service for AdSense Approval Checker AI. Read our terms before using our free AdSense approval checker and website audit tool.',
+  alternates: { canonical: 'https://adsenseai.in/terms' },
+  robots: { index: false },
+}
 
 export default function TermsPage() {
   const updated = 'January 1, 2025'
