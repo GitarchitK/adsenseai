@@ -10,9 +10,17 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const [status, setStatus] = useState<'loading' | 'auth' | 'unauth'>('loading')
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setStatus('auth')
+        // Fire welcome email (server checks if already sent — safe to call every login)
+        try {
+          const token = await user.getIdToken()
+          fetch('/api/welcome-email', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+          }).catch(() => {}) // non-blocking, ignore errors
+        } catch {}
       } else {
         setStatus('unauth')
         router.replace('/auth/login')
