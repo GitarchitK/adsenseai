@@ -11,42 +11,18 @@ export const metadata: Metadata = {
 }
 
 const posts = [
-  {
-    href: '/blog/how-to-check-adsense-approval',
-    title: 'How to Check AdSense Approval: The Complete Guide for 2025',
-    desc: 'Learn exactly how to check if your website is ready for Google AdSense approval — and what to fix if it\'s not.',
-    tag: 'AdSense Guide',
-  },
-  {
-    href: '/blog/adsense-approval-requirements',
-    title: 'Google AdSense Approval Requirements 2025 — Complete Checklist',
-    desc: 'Every requirement your website must meet before applying for AdSense, with a critical vs recommended breakdown.',
-    tag: 'Checklist',
-  },
-  {
-    href: '/blog/how-many-articles-for-adsense-approval',
-    title: 'How Many Articles Do You Need for AdSense Approval in 2025?',
-    desc: 'The exact number of articles you need — and the quality standards they must meet to pass AdSense review.',
-    tag: 'AdSense Guide',
-  },
-  {
-    href: '/blog/adsense-approval-time',
-    title: 'How Long Does AdSense Approval Take in 2025? (Real Timeline)',
-    desc: 'The real AdSense review timeline, what happens during review, and how to get approved faster.',
-    tag: 'AdSense Guide',
-  },
-  {
-    href: '/blog/adsense-low-value-content-fix',
-    title: 'How to Fix AdSense "Low Value Content" Rejection',
-    desc: '"Low value content" is the #1 AdSense rejection reason. Here are 5 specific fixes to get approved.',
-    tag: 'Fix Guide',
-  },
-  {
-    href: '/blog/why-adsense-keeps-rejecting-my-site',
-    title: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes',
-    desc: 'The 8 most common AdSense rejection reasons and exactly how to fix each one.',
-    tag: 'Troubleshooting',
-  },
+  { href: '/blog/adsense-approval-checker-tool-free', title: 'Best Free AdSense Approval Checker Tool You Must Try', desc: 'Discover a powerful free AdSense approval checker that reveals exactly what\'s missing for approval.', tag: 'AdSense Tools' },
+  { href: '/blog/ai-adsense-approval-checker', title: 'AI AdSense Approval Checker That Predicts Approval Chances', desc: 'How AI-powered checkers evaluate your website like Google does — with advanced signals and real-time suggestions.', tag: 'AI Tools' },
+  { href: '/blog/how-to-check-adsense-approval', title: 'How to Check AdSense Approval: The Complete Guide for 2025', desc: 'Learn exactly how to check if your website is ready for Google AdSense approval — and what to fix if it\'s not.', tag: 'AdSense Guide' },
+  { href: '/blog/adsense-approval-requirements', title: 'Google AdSense Approval Requirements 2025 — Complete Checklist', desc: 'Every requirement your website must meet before applying for AdSense, with a critical vs recommended breakdown.', tag: 'Checklist' },
+  { href: '/blog/adsense-rejected-how-to-fix', title: 'AdSense Rejected? Here Is How to Fix Your Website Fast', desc: 'Got rejected by AdSense? Identify common issues, improve content quality, and reapply with confidence.', tag: 'Fix Guide' },
+  { href: '/blog/optimize-website-for-adsense-approval', title: 'How to Optimize Your Website for AdSense Approval', desc: 'Improve content quality, site design, and technical SEO to increase your AdSense approval chances.', tag: 'Optimization' },
+  { href: '/blog/adsense-approval-success-case-study', title: 'Real AdSense Approval Success Case Studies Explained', desc: 'Learn from real publishers who went from rejected to approved — with the exact issues they fixed.', tag: 'Case Studies' },
+  { href: '/blog/monetize-website-without-adsense', title: 'How to Monetize Your Website Without AdSense Approval', desc: 'Discover alternative platforms and revenue streams to earn while working toward AdSense approval.', tag: 'Monetization' },
+  { href: '/blog/how-many-articles-for-adsense-approval', title: 'How Many Articles Do You Need for AdSense Approval in 2025?', desc: 'The exact number of articles you need — and the quality standards they must meet to pass AdSense review.', tag: 'AdSense Guide' },
+  { href: '/blog/adsense-approval-time', title: 'How Long Does AdSense Approval Take in 2025? (Real Timeline)', desc: 'The real AdSense review timeline, what happens during review, and how to get approved faster.', tag: 'AdSense Guide' },
+  { href: '/blog/adsense-low-value-content-fix', title: 'How to Fix AdSense "Low Value Content" Rejection', desc: '"Low value content" is the #1 AdSense rejection reason. Here are 5 specific fixes to get approved.', tag: 'Fix Guide' },
+  { href: '/blog/why-adsense-keeps-rejecting-my-site', title: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes', desc: 'The 8 most common AdSense rejection reasons and exactly how to fix each one.', tag: 'Troubleshooting' },
 ]
 
 export default function BlogPage() {
