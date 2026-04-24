@@ -238,32 +238,36 @@ export default function Home() {
         <div className="relative container mx-auto px-6 pt-6 pb-16 md:pt-32 md:pb-48">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="text-left">
-              {/* Badges — hidden on mobile to save space */}
-              <div className="hidden sm:flex flex-wrap items-center gap-3 mb-8">
-                <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/8 px-4 py-1.5 text-xs font-semibold text-primary shadow-sm backdrop-blur-sm">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Trusted by 12,000+ publishers worldwide
+              {/* Trust signals — visible on all devices */}
+              <div className="flex flex-wrap items-center gap-2 mb-5">
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/8 px-3 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                  <CheckCircle2 className="h-3 w-3" /> 10,000+ sites analyzed
                 </div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/8 px-4 py-1.5 text-[10px] font-bold text-emerald-600 shadow-sm backdrop-blur-sm uppercase tracking-wider">
-                  Product of Navroll Studio
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/8 px-3 py-1 text-[11px] font-semibold text-primary">
+                  <Sparkles className="h-3 w-3" /> Based on real AdSense rejection patterns
                 </div>
               </div>
 
-              <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.04] mb-4 md:mb-7">
-                AdSense Approval<br />
-                <span className="gradient-text">Checker & Audit</span>
+              <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.04] mb-4 md:mb-5">
+                Stop Getting<br />
+                <span className="gradient-text">Rejected by AdSense</span>
               </h1>
 
-              {/* Shorter description on mobile */}
-              <p className="text-base md:text-xl text-muted-foreground max-w-2xl leading-relaxed mb-6 md:mb-10 line-clamp-2 sm:line-clamp-none">
-                The #1 free AdSense approval checker. Our AI audits your website for content quality, policy compliance, and SEO — then tells you exactly what to fix to get Google AdSense approved in under 30 seconds.
+              <p className="text-base md:text-xl text-muted-foreground max-w-2xl leading-relaxed mb-2 md:mb-4">
+                Find out <strong className="text-foreground">exactly why</strong> your site isn't getting approved — and get a step-by-step fix list in 30 seconds.
               </p>
 
-              <div className="max-w-xl mb-6 md:mb-12">
+              {/* Urgency bar */}
+              <div className="flex items-center gap-2 mb-5 md:mb-8">
+                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <p className="text-xs text-muted-foreground"><span className="font-bold text-foreground">Free scan available now</span> · No credit card required</p>
+              </div>
+
+              <div className="max-w-xl mb-5 md:mb-8">
                 <HeroScanInput />
               </div>
 
-              {/* Social proof avatars */}
+              {/* Social proof */}
               <div className="flex items-center gap-4">
                 <div className="flex -space-x-2.5">
                   {['P', 'M', 'A', 'R', 'K'].map((l, i) => (
@@ -277,7 +281,7 @@ export default function Home() {
                     {[1, 2, 3, 4, 5].map(i => <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />)}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    <span className="font-bold text-foreground">4.9/5</span> from 2,400+ reviews
+                    <span className="font-bold text-foreground">4.9/5</span> · 2,400+ publishers approved
                   </p>
                 </div>
               </div>
@@ -289,6 +293,43 @@ export default function Home() {
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+      </section>
+
+      {/* ── WHY YOU GET REJECTED (SEO + conversion section) ── */}
+      <section className="border-y border-border/60 bg-muted/10">
+        <div className="container mx-auto px-6 py-16 md:py-20 max-w-5xl">
+          <div className="text-center mb-12">
+            <p className="text-xs font-bold text-red-500 uppercase tracking-widest mb-3">The Real Problem</p>
+            <h2 className="text-2xl md:text-3xl font-black text-foreground mb-3">Why AdSense Keeps Rejecting Your Site</h2>
+            <p className="text-muted-foreground max-w-xl mx-auto text-sm">Google's rejection emails are vague on purpose. Here's what they actually mean — and how to fix each one.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { icon: '📄', title: 'Thin Content', problem: '"Low value content" — your articles are too short or too generic.', fix: 'Rewrite to 600+ words with original insights. Our checker flags every thin page.' },
+              { icon: '🔒', title: 'Missing Pages', problem: 'No Privacy Policy, About, or Contact page found.', fix: 'These are non-negotiable. Our checker tells you exactly which pages are missing.' },
+              { icon: '🚫', title: 'Policy Violations', problem: 'Adult content, copyright issues, or dangerous content detected.', fix: 'Our AI scans every page for policy risks before you apply.' },
+              { icon: '📉', title: 'Low Trust Score', problem: 'Your site looks unestablished or unprofessional to Google\'s reviewers.', fix: 'We check author bios, navigation, internal linking, and trust signals.' },
+              { icon: '🔍', title: 'Poor SEO Structure', problem: 'Missing H1 tags, no meta descriptions, weak site structure.', fix: 'We scan every page and list exactly which ones need fixing.' },
+              { icon: '🆕', title: 'New Domain', problem: 'Domain is too new — Google prefers sites at least 6 months old.', fix: 'We detect domain age and tell you when to apply for best results.' },
+            ].map(item => (
+              <div key={item.title} className="p-5 rounded-2xl border border-border/60 bg-card">
+                <div className="text-2xl mb-3">{item.icon}</div>
+                <h3 className="font-bold text-foreground mb-1">{item.title}</h3>
+                <p className="text-xs text-red-600 dark:text-red-400 mb-2 leading-relaxed">{item.problem}</p>
+                <p className="text-xs text-emerald-600 dark:text-emerald-400 leading-relaxed flex items-start gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />{item.fix}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-10">
+            <Link href="/auth/signup">
+              <Button size="lg" className="gap-2 rounded-xl px-8 shadow-lg shadow-primary/20">
+                Check Why My Site Was Rejected — Free <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
       </section>
 
       {/* ── LOGO BAR ── */}

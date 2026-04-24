@@ -24,6 +24,18 @@ const posts = [
     tag: 'Checklist',
   },
   {
+    href: '/blog/how-many-articles-for-adsense-approval',
+    title: 'How Many Articles Do You Need for AdSense Approval in 2025?',
+    desc: 'The exact number of articles you need — and the quality standards they must meet to pass AdSense review.',
+    tag: 'AdSense Guide',
+  },
+  {
+    href: '/blog/adsense-approval-time',
+    title: 'How Long Does AdSense Approval Take in 2025? (Real Timeline)',
+    desc: 'The real AdSense review timeline, what happens during review, and how to get approved faster.',
+    tag: 'AdSense Guide',
+  },
+  {
     href: '/blog/adsense-low-value-content-fix',
     title: 'How to Fix AdSense "Low Value Content" Rejection',
     desc: '"Low value content" is the #1 AdSense rejection reason. Here are 5 specific fixes to get approved.',

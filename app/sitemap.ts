@@ -41,6 +41,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: `${BASE}/blog/how-many-articles-for-adsense-approval`,
+      lastModified: new Date('2025-04-23'),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${BASE}/blog/adsense-approval-time`,
+      lastModified: new Date('2025-04-23'),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
       url: `${BASE}/blog/why-adsense-keeps-rejecting-my-site`,
       lastModified: new Date('2025-04-23'),
       changeFrequency: 'monthly',

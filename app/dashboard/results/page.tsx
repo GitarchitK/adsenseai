@@ -352,7 +352,7 @@ export default function ResultsPage() {
             ) : (
               <Button onClick={handleUnlock} disabled={isUnlocking} className="gap-2 bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 rounded-xl px-5">
                 {isUnlocking ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Lock className="h-4 w-4" />}
-                Unlock Full AI Report — ₹19
+                Get Exact Fixes to Get Approved — ₹19
               </Button>
             )}
             {unlockError && <p className="text-xs text-red-500 mt-2 text-right">{unlockError}</p>}
@@ -802,9 +802,9 @@ export default function ResultsPage() {
                 <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center mx-auto">
                   {isPro ? <div className="h-6 w-6 rounded-full border-2 border-primary border-t-transparent animate-spin" /> : <Lock className="h-7 w-7 text-muted-foreground/50" />}
                 </div>
-                <p className="font-black text-foreground text-lg">{isPro ? 'Generating AI Report...' : 'Detailed Fixes Locked'}</p>
-                <p className="text-sm text-muted-foreground">{isPro ? 'Your prioritized fix list will appear here shortly.' : 'Unlock the AI report to see specific, prioritized fixes for your site.'}</p>
-                {!isPro && <Button onClick={handleUnlock} disabled={isUnlocking} className="gap-2 px-8"><Lock className="h-4 w-4" /> Unlock — ₹19</Button>}
+                <p className="font-black text-foreground text-lg">{isPro ? 'Generating AI Report...' : 'Your Fix List is Ready'}</p>
+                <p className="text-sm text-muted-foreground">{isPro ? 'Your prioritized fix list will appear here shortly.' : 'See exactly what\'s blocking your AdSense approval — with specific fixes for each issue.'}</p>
+                {!isPro && <Button onClick={handleUnlock} disabled={isUnlocking} className="gap-2 px-8"><Lock className="h-4 w-4" /> Get My Fix List — ₹19</Button>}
               </div>
             )}
           </div>
@@ -925,7 +925,7 @@ export default function ResultsPage() {
                   <p className="text-xs text-muted-foreground mb-3">Unlock the AI report to get a custom 30-day roadmap, strategic tips, and missing topic suggestions.</p>
                   <Button onClick={handleUnlock} disabled={isUnlocking} className="gap-2 h-10 rounded-xl font-bold text-sm">
                     {isUnlocking ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Zap className="h-4 w-4" />}
-                    Unlock Full Plan — ₹19
+                    Get My 30-Day Approval Roadmap — ₹19
                   </Button>
                 </Card>
               </div>
