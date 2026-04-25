@@ -13,10 +13,10 @@ const footerLinks = {
     { href: '/blog/why-adsense-keeps-rejecting-my-site', label: 'Why AdSense Rejects Sites' },
   ],
   'AdSense Resources': [
-    { href: 'https://support.google.com/adsense/answer/160544', label: 'AdSense Help Center' },
-    { href: 'https://support.google.com/adsense/answer/6150124', label: 'Program Policies' },
-    { href: 'https://support.google.com/adsense/answer/6140686', label: 'AdSense Approval Guide' },
-    { href: 'https://support.google.com/adsense/answer/2652284', label: 'Ad Placement Tips' },
+    { href: 'https://support.google.com/adsense/?hl=en#topic=16344192', label: 'AdSense Help Center' },
+    { href: 'https://support.google.com/adsense/answer/48182?hl=en', label: 'Program Policies' },
+    { href: 'https://support.google.com/adsense/answer/9724?hl=en', label: 'AdSense Approval Guide' },
+    { href: 'https://support.google.com/adsense/answer/1346295?hl=en', label: 'Ad Placement Tips' },
   ],
   Company: [
     { href: '/about',   label: 'About Us' },
@@ -24,8 +24,9 @@ const footerLinks = {
     { href: '/blog',    label: 'Guides' },
   ],
   Legal: [
-    { href: '/privacy', label: 'Privacy Policy' },
-    { href: '/terms',   label: 'Terms of Service' },
+    { href: '/privacy',    label: 'Privacy Policy' },
+    { href: '/terms',      label: 'Terms of Service' },
+    { href: '/disclaimer', label: 'Disclaimer' },
   ],
   Account: [
     { href: '/auth/login',  label: 'Sign In' },
@@ -81,15 +82,19 @@ export function SiteFooter() {
 
         <div className="border-t border-border/60 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} AdSenseAI. All rights reserved. Made with ❤️ in India.
+            © {new Date().getFullYear()} AdSense Checker AI by Navroll Studio. All rights reserved. Made with ❤️ in India.
           </p>
-          <div className="flex gap-5 text-xs text-muted-foreground">
-            <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
-            <Link href="/terms"   className="hover:text-foreground transition-colors">Terms</Link>
-            <Link href="/blog"    className="hover:text-foreground transition-colors">Guides</Link>
-            <Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link>
+          <div className="flex flex-wrap gap-5 text-xs text-muted-foreground justify-center">
+            <Link href="/privacy"    className="hover:text-foreground transition-colors">Privacy</Link>
+            <Link href="/terms"     className="hover:text-foreground transition-colors">Terms</Link>
+            <Link href="/disclaimer" className="hover:text-foreground transition-colors">Disclaimer</Link>
+            <Link href="/blog"      className="hover:text-foreground transition-colors">Guides</Link>
+            <Link href="/contact"   className="hover:text-foreground transition-colors">Contact</Link>
           </div>
         </div>
+        <p className="text-center text-[10px] text-muted-foreground/50 mt-4">
+          This site uses Google AdSense. Google uses cookies to serve ads based on your prior visits. <Link href="/privacy" className="underline hover:text-muted-foreground">Learn more</Link>. AdSense Checker AI is not affiliated with Google LLC.
+        </p>
       </div>
     </footer>
   )

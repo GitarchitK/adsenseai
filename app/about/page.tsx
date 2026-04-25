@@ -4,8 +4,8 @@ import { Zap, Target, Users, Shield, TrendingUp } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'About AdSenseAI — Free AdSense Checker & Audit Tool',
-  description: 'AdSenseAI is a free AdSense checker and website audit tool built by Navroll Studio. We help publishers get Google AdSense approved faster with AI-powered site audits.',
+  title: 'About AdSense Checker AI — Free AdSense Approval Checker Tool',
+  description: 'AdSense Checker AI is a free AdSense approval checker built by Navroll Studio. We help bloggers and publishers get Google AdSense approved faster with AI-powered website audits.',
   alternates: { canonical: 'https://www.adsensechecker.in/about' },
 }
 

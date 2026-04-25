@@ -3,10 +3,9 @@ import { SiteFooter } from '@/components/site-footer'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — AdSense Approval Checker AI',
-  description: 'Terms of Service for AdSense Approval Checker AI. Read our terms before using our free AdSense approval checker and website audit tool.',
+  title: 'Terms of Service — AdSense Checker AI',
+  description: 'Terms of Service for AdSense Checker AI. Read our terms before using our free AdSense approval checker and website audit tool.',
   alternates: { canonical: 'https://www.adsensechecker.in/terms' },
-  robots: { index: false },
 }
 
 export default function TermsPage() {

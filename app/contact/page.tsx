@@ -5,8 +5,8 @@ import { ContactForm } from './contact-form'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Contact AdSenseAI — AdSense Checker Support',
-  description: 'Get help with AdSenseAI\'s AdSense checker and website audit tool. Contact our support team for questions about your AdSense audit results.',
+  title: 'Contact AdSense Checker AI — Support & Help',
+  description: 'Contact AdSense Checker AI support team. Get help with your AdSense approval checker results, billing questions, or technical issues.',
   alternates: { canonical: 'https://www.adsensechecker.in/contact' },
 }
 
