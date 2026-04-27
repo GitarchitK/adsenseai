@@ -3,6 +3,8 @@ import type { MetadataRoute } from 'next'
 const BASE = 'https://www.adsensechecker.in'
 
 const blogPosts = [
+  'how-to-use-adsense-checker-ai',
+  'adsense-readiness-score-explained',
   'adsense-approval-checker-tool-free',
   'ai-adsense-approval-checker',
   'how-to-check-adsense-approval',

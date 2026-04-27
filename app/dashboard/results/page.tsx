@@ -350,10 +350,13 @@ export default function ResultsPage() {
                 Generating Report...
               </div>
             ) : (
-              <Button onClick={handleUnlock} disabled={isUnlocking} className="gap-2 bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 rounded-xl px-5">
-                {isUnlocking ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Lock className="h-4 w-4" />}
-                Get Exact Fixes to Get Approved — ₹19
-              </Button>
+              <div className="flex flex-col items-end gap-1.5">
+                <Button onClick={handleUnlock} disabled={isUnlocking} className="gap-2 bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 rounded-xl px-5">
+                  {isUnlocking ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Lock className="h-4 w-4" />}
+                  Get Exact Fixes to Get Approved — ₹19
+                </Button>
+                <p className="text-[10px] text-muted-foreground">One-time · Instant · No subscription</p>
+              </div>
             )}
             {unlockError && <p className="text-xs text-red-500 mt-2 text-right">{unlockError}</p>}
           </div>
@@ -798,13 +801,44 @@ export default function ResultsPage() {
                 )}
               </>
             ) : (
-              <div className="py-20 text-center space-y-4 max-w-sm mx-auto">
-                <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center mx-auto">
-                  {isPro ? <div className="h-6 w-6 rounded-full border-2 border-primary border-t-transparent animate-spin" /> : <Lock className="h-7 w-7 text-muted-foreground/50" />}
+              <div className="space-y-4">
+                {/* Blurred teaser of what's locked */}
+                <div className="relative">
+                  <div className="space-y-3 blur-sm pointer-events-none select-none" aria-hidden>
+                    {[
+                      { title: 'Fix Thin Content on 8 Pages', impact: 'high', cat: 'Content', desc: 'Pages under 300 words detected. Expand each to 600+ words...' },
+                      { title: 'Add Missing Privacy Policy Page', impact: 'high', cat: 'Policy', desc: 'Required by AdSense. Create a page at /privacy-policy...' },
+                      { title: 'Add H1 Tags to 12 Pages', impact: 'medium', cat: 'SEO', desc: 'Pages missing main headings. Add a descriptive H1 to each...' },
+                    ].map((fix, i) => (
+                      <div key={i} className="p-4 border border-border/60 rounded-2xl flex items-start gap-3 bg-card">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <div className="h-4 w-32 bg-muted rounded" />
+                            <div className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${fix.impact === 'high' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{fix.impact}</div>
+                          </div>
+                          <div className="h-3 w-full bg-muted/60 rounded mt-1" />
+                          <div className="h-3 w-3/4 bg-muted/40 rounded mt-1" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Overlay */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-background/80 backdrop-blur-[2px] rounded-2xl">
+                    <div className="text-center space-y-2 max-w-xs">
+                      <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
+                        <Lock className="h-6 w-6 text-primary" />
+                      </div>
+                      <p className="font-black text-foreground text-lg">Your Fix List is Ready</p>
+                      <p className="text-sm text-muted-foreground">We found specific issues on <strong>{data.domain}</strong>. Unlock to see every fix with exact page URLs.</p>
+                    </div>
+                    <Button onClick={handleUnlock} disabled={isUnlocking} size="lg" className="gap-2 px-8 shadow-lg shadow-primary/20">
+                      {isUnlocking ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Lock className="h-4 w-4" />}
+                      Get My Fix List — ₹19
+                    </Button>
+                    <p className="text-[11px] text-muted-foreground">One-time payment · Instant access · No subscription</p>
+                  </div>
                 </div>
-                <p className="font-black text-foreground text-lg">{isPro ? 'Generating AI Report...' : 'Your Fix List is Ready'}</p>
-                <p className="text-sm text-muted-foreground">{isPro ? 'Your prioritized fix list will appear here shortly.' : 'See exactly what\'s blocking your AdSense approval — with specific fixes for each issue.'}</p>
-                {!isPro && <Button onClick={handleUnlock} disabled={isUnlocking} className="gap-2 px-8"><Lock className="h-4 w-4" /> Get My Fix List — ₹19</Button>}
               </div>
             )}
           </div>

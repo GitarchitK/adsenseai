@@ -11,6 +11,8 @@ export const metadata: Metadata = {
 }
 
 const posts = [
+  { href: '/blog/how-to-use-adsense-checker-ai', title: 'How to Use AdSense Checker AI — Step-by-Step Guide', desc: 'Complete tutorial on how to scan your website, read your report, and fix issues to get AdSense approved.', tag: 'Tutorial' },
+  { href: '/blog/adsense-readiness-score-explained', title: 'AdSense Readiness Score Explained — What Your Score Means', desc: 'How your score is calculated, what each category measures, and what score you need to get approved.', tag: 'Score Guide' },
   { href: '/blog/adsense-approval-checker-tool-free', title: 'Best Free AdSense Approval Checker Tool You Must Try', desc: 'Discover a powerful free AdSense approval checker that reveals exactly what\'s missing for approval.', tag: 'AdSense Tools' },
   { href: '/blog/ai-adsense-approval-checker', title: 'AI AdSense Approval Checker That Predicts Approval Chances', desc: 'How AI-powered checkers evaluate your website like Google does — with advanced signals and real-time suggestions.', tag: 'AI Tools' },
   { href: '/blog/how-to-check-adsense-approval', title: 'How to Check AdSense Approval: The Complete Guide for 2025', desc: 'Learn exactly how to check if your website is ready for Google AdSense approval — and what to fix if it\'s not.', tag: 'AdSense Guide' },
