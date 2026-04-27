@@ -12,7 +12,7 @@ import { analyzeMonetization, type MonetizationResult } from './ai-monetization'
 import { analyzeEEAT, type EEATResult } from './ai-eeat'
 import { analyzeSEOAuthority, type SEOAuthorityResult } from './ai-seo-authority'
 import { analyzeTechnicalHealth, type TechnicalHealthResult } from './ai-technical'
-import { callOpenAI } from './openai'
+import { callOpenAI, callOpenAIAdvanced } from './openai'
 import type { CrawlResponse } from '@/types'
 
 export type ScoreStatus = 'high' | 'moderate' | 'low'
@@ -273,7 +273,7 @@ ${(crawl.sitemap_urls ?? pages.map(p => p.url)).slice(0, 80).join('\n')}
   // Build a deterministic fallback based on actual scores so it's never empty
   const fallback = buildFallbackAdvice(content, policy, trust, seo, tech, finalScore, crawl)
 
-  return await callOpenAI<StrategicAdvice>(
+  return await callOpenAIAdvanced<StrategicAdvice>(
     STRATEGIC_SYSTEM_PROMPT,
     summary,
     fallback
