@@ -722,29 +722,48 @@ export default function ResultsPage() {
           <div className="space-y-6 animate-in fade-in duration-300">
             {isAiUnlocked && ai ? (
               <>
-                {/* Header with copy button */}
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-bold text-foreground">{ai.fix_suggestions.length} fixes identified</p>
+                {/* Summary bar */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { label: 'Total Fixes', value: ai.fix_suggestions.length, color: 'text-foreground' },
+                    { label: 'Critical', value: ai.fix_suggestions.filter(f => f.impact === 'high').length, color: 'text-red-600 dark:text-red-400' },
+                    { label: 'Medium', value: ai.fix_suggestions.filter(f => f.impact === 'medium').length, color: 'text-amber-600 dark:text-amber-400' },
+                    { label: 'Low', value: ai.fix_suggestions.filter(f => f.impact === 'low').length, color: 'text-muted-foreground' },
+                  ].map(s => (
+                    <div key={s.label} className="p-3 rounded-xl bg-muted/30 border border-border/50 text-center">
+                      <p className={`text-2xl font-black tabular-nums ${s.color}`}>{s.value}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Copy + filter header */}
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <p className="text-sm text-muted-foreground">Fix these issues in order — critical first</p>
                   {ai.fix_suggestions.length > 0 && (
                     <Button variant="outline" size="sm" className="gap-2 text-xs h-8 rounded-xl" onClick={() => copyChecklist(ai.fix_suggestions)}>
-                      {copied ? <><CheckCheck className="h-3.5 w-3.5 text-emerald-500" /> Copied!</> : <><Copy className="h-3.5 w-3.5" /> Copy Checklist</>}
+                      {copied ? <><CheckCheck className="h-3.5 w-3.5 text-emerald-500" /> Copied!</> : <><Copy className="h-3.5 w-3.5" /> Copy All Fixes</>}
                     </Button>
                   )}
                 </div>
 
-                {/* Top issues from AI */}
-                {ai.top_issues.length > 0 && (
+                {/* Policy violations — always first */}
+                {(ai.policy.violations.length > 0 || ai.policy.adult_content || ai.policy.dangerous_content || ai.policy.copyright_risk) && (
                   <div className="space-y-2">
-                    <p className="text-xs font-black uppercase tracking-widest text-red-600 dark:text-red-400 flex items-center gap-2">
-                      <AlertCircle className="h-3.5 w-3.5" /> Critical Issues
-                    </p>
-                    {ai.top_issues.map((issue, i) => <IssueRow key={i} text={issue} type="critical" />)}
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="h-4 w-4 text-red-500" />
+                      <p className="text-xs font-black uppercase tracking-widest text-red-600 dark:text-red-400">Policy Violations — Fix Before Applying</p>
+                    </div>
+                    {ai.policy.adult_content && <IssueRow text="Adult content detected — AdSense will automatically reject your application" type="critical" />}
+                    {ai.policy.dangerous_content && <IssueRow text="Dangerous or harmful content detected — remove immediately" type="critical" />}
+                    {ai.policy.copyright_risk && <IssueRow text="Copyright risk detected — some content may be copied from other sources" type="critical" />}
+                    {ai.policy.violations.map((v, i) => <IssueRow key={i} text={v} type="critical" />)}
                   </div>
                 )}
 
                 {/* Fix suggestions grouped by impact */}
                 {ai.fix_suggestions.length === 0 ? (
-                  <Card className="p-6 border-amber-200 dark:border-amber-800/50 bg-amber-50/50 dark:bg-amber-950/20 rounded-2xl">
+                  <Card className="p-6 border-emerald-200 dark:border-emerald-800/50 bg-emerald-50/50 dark:bg-emerald-950/20 rounded-2xl">
                     <div className="flex items-start gap-3">
                       <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" />
                       <div>
@@ -757,30 +776,44 @@ export default function ResultsPage() {
                   ['high', 'medium', 'low'].map(level => {
                     const fixes = ai.fix_suggestions.filter(f => f.impact === level)
                     if (!fixes.length) return null
+                    const timeEst = level === 'high' ? '1-2 days each' : level === 'medium' ? '2-4 hours each' : '30-60 min each'
                     return (
                       <div key={level} className="space-y-3">
-                        <p className={`text-xs font-black uppercase tracking-widest flex items-center gap-2 ${
-                          level === 'high' ? 'text-red-600 dark:text-red-400' : level === 'medium' ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground'
-                        }`}>
-                          {level === 'high' ? <AlertCircle className="h-3.5 w-3.5" /> : level === 'medium' ? <AlertTriangle className="h-3.5 w-3.5" /> : <Lightbulb className="h-3.5 w-3.5" />}
-                          {level === 'high' ? 'High Impact Fixes' : level === 'medium' ? 'Medium Impact Fixes' : 'Low Impact Improvements'}
-                        </p>
-                        <div className="grid md:grid-cols-2 gap-3">
+                        <div className="flex items-center justify-between">
+                          <p className={`text-xs font-black uppercase tracking-widest flex items-center gap-2 ${
+                            level === 'high' ? 'text-red-600 dark:text-red-400' : level === 'medium' ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground'
+                          }`}>
+                            {level === 'high' ? <AlertCircle className="h-3.5 w-3.5" /> : level === 'medium' ? <AlertTriangle className="h-3.5 w-3.5" /> : <Lightbulb className="h-3.5 w-3.5" />}
+                            {level === 'high' ? `${fixes.length} Critical Fixes` : level === 'medium' ? `${fixes.length} Medium Fixes` : `${fixes.length} Quick Wins`}
+                          </p>
+                          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> {timeEst}
+                          </span>
+                        </div>
+                        <div className="space-y-3">
                           {fixes.map((fix, i) => (
-                            <Card key={i} className="p-4 border-border/60 rounded-2xl flex items-start gap-3 hover:border-primary/40 transition-colors group">
-                              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted group-hover:bg-primary/10 group-hover:text-primary transition-colors flex-shrink-0">
-                                {catIcon(fix.category)}
-                              </div>
-                              <div className="min-w-0">
-                                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                  <p className="font-bold text-sm text-foreground">{fix.title}</p>
-                                  <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-widest flex-shrink-0 ${imp(fix.impact)}`}>{fix.impact}</span>
-                                  <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-md">{fix.category}</span>
+                            <Card key={i} className={`p-4 border-border/60 rounded-2xl hover:border-primary/30 transition-colors ${level === 'high' ? 'border-l-2 border-l-red-400' : level === 'medium' ? 'border-l-2 border-l-amber-400' : ''}`}>
+                              <div className="flex items-start gap-3">
+                                <div className={`flex h-9 w-9 items-center justify-center rounded-xl flex-shrink-0 ${
+                                  level === 'high' ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
+                                  : level === 'medium' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
+                                  : 'bg-muted text-muted-foreground'
+                                }`}>
+                                  {catIcon(fix.category)}
                                 </div>
-                                <p className="text-xs text-muted-foreground leading-relaxed">{fix.description}</p>
-                                {fix.technical_detail && (
-                                  <p className="text-[10px] text-muted-foreground/50 font-mono mt-1.5 bg-muted/40 px-2 py-1 rounded-md leading-relaxed">{fix.technical_detail}</p>
-                                )}
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                                    <p className="font-bold text-sm text-foreground">{fix.title}</p>
+                                    <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-md">{fix.category}</span>
+                                  </div>
+                                  <p className="text-xs text-muted-foreground leading-relaxed mb-2">{fix.description}</p>
+                                  {fix.technical_detail && (
+                                    <div className="flex items-center gap-1.5 mt-1">
+                                      <span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-widest">Technical</span>
+                                      <p className="text-[10px] text-muted-foreground/60 font-mono bg-muted/40 px-2 py-0.5 rounded">{fix.technical_detail}</p>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             </Card>
                           ))}
@@ -790,31 +823,29 @@ export default function ResultsPage() {
                   })
                 )}
 
-                {/* Policy violations */}
-                {ai.policy.violations.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-xs font-black uppercase tracking-widest text-red-600 dark:text-red-400 flex items-center gap-2">
-                      <ShieldCheck className="h-3.5 w-3.5" /> Policy Violations
-                    </p>
-                    {ai.policy.violations.map((v, i) => <IssueRow key={i} text={v} type="critical" />)}
-                  </div>
+                {/* Policy summary */}
+                {ai.policy.policy_summary && (
+                  <Card className="p-4 border-border/60 rounded-xl bg-muted/20">
+                    <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-1.5 flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5" /> Policy Assessment</p>
+                    <p className="text-sm text-foreground leading-relaxed">{ai.policy.policy_summary}</p>
+                  </Card>
                 )}
               </>
             ) : (
               <div className="space-y-4">
-                {/* Blurred teaser of what's locked */}
                 <div className="relative">
                   <div className="space-y-3 blur-sm pointer-events-none select-none" aria-hidden>
                     {[
-                      { title: 'Fix Thin Content on 8 Pages', impact: 'high', cat: 'Content', desc: 'Pages under 300 words detected. Expand each to 600+ words...' },
-                      { title: 'Add Missing Privacy Policy Page', impact: 'high', cat: 'Policy', desc: 'Required by AdSense. Create a page at /privacy-policy...' },
-                      { title: 'Add H1 Tags to 12 Pages', impact: 'medium', cat: 'SEO', desc: 'Pages missing main headings. Add a descriptive H1 to each...' },
+                      { title: 'Fix Thin Content on 8 Pages', impact: 'high', cat: 'Content' },
+                      { title: 'Add Missing Privacy Policy Page', impact: 'high', cat: 'Policy' },
+                      { title: 'Add H1 Tags to 12 Pages', impact: 'medium', cat: 'SEO' },
+                      { title: 'Improve Content Originality Score', impact: 'medium', cat: 'Content' },
                     ].map((fix, i) => (
                       <div key={i} className="p-4 border border-border/60 rounded-2xl flex items-start gap-3 bg-card">
                         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted flex-shrink-0" />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <div className="h-4 w-32 bg-muted rounded" />
+                            <div className="h-4 w-40 bg-muted rounded" />
                             <div className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${fix.impact === 'high' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{fix.impact}</div>
                           </div>
                           <div className="h-3 w-full bg-muted/60 rounded mt-1" />
@@ -823,14 +854,13 @@ export default function ResultsPage() {
                       </div>
                     ))}
                   </div>
-                  {/* Overlay */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-background/80 backdrop-blur-[2px] rounded-2xl">
                     <div className="text-center space-y-2 max-w-xs">
                       <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
                         <Lock className="h-6 w-6 text-primary" />
                       </div>
                       <p className="font-black text-foreground text-lg">Your Fix List is Ready</p>
-                      <p className="text-sm text-muted-foreground">We found specific issues on <strong>{data.domain}</strong>. Unlock to see every fix with exact page URLs.</p>
+                      <p className="text-sm text-muted-foreground">We found specific issues on <strong>{data.domain}</strong>. Unlock to see every fix with exact page URLs and step-by-step instructions.</p>
                     </div>
                     <Button onClick={handleUnlock} disabled={isUnlocking} size="lg" className="gap-2 px-8 shadow-lg shadow-primary/20">
                       {isUnlocking ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Lock className="h-4 w-4" />}
@@ -851,32 +881,46 @@ export default function ResultsPage() {
           <div className="space-y-6 animate-in fade-in duration-300">
             {isAiUnlocked && ai ? (
               <>
+                {/* Header */}
                 <div className="flex flex-col md:flex-row items-start justify-between gap-4">
                   <div>
-                    <h2 className="text-xl font-black text-foreground">AI Action Plan</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Your personalised roadmap to AdSense approval.</p>
+                    <h2 className="text-xl font-black text-foreground">Your 30-Day Approval Roadmap</h2>
+                    <p className="text-sm text-muted-foreground mt-1">Personalised for <strong>{data.domain}</strong> based on your scan results.</p>
                   </div>
-                  <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold text-sm flex-shrink-0">
+                  <div className={`flex items-center gap-2 px-4 py-2 rounded-2xl font-bold text-sm flex-shrink-0 ${
+                    ai.adsense_ready ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                    : 'bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-300'
+                  }`}>
                     <Zap className="h-4 w-4" /> {ai.application_timeline}
                   </div>
                 </div>
 
+                {/* Timeline reason */}
+                {ai.application_timeline_reason && (
+                  <Card className="p-4 border-border/60 rounded-xl bg-muted/20">
+                    <p className="text-sm text-foreground leading-relaxed">{ai.application_timeline_reason}</p>
+                  </Card>
+                )}
+
                 <div className="grid lg:grid-cols-3 gap-6">
                   {/* Workflow steps */}
                   <div className="lg:col-span-2 space-y-3">
+                    <p className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                      <Calendar className="h-3.5 w-3.5" /> Step-by-Step Plan
+                    </p>
                     {ai.approval_workflow.length === 0 ? (
                       <Card className="p-6 border-border/60 rounded-2xl text-center">
                         <Calendar className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
                         <p className="font-semibold text-foreground text-sm mb-1">Plan Unavailable</p>
-                        <p className="text-xs text-muted-foreground">Re-run your scan to generate a fresh action plan with the latest AI analysis.</p>
+                        <p className="text-xs text-muted-foreground">Re-run your scan to generate a fresh action plan.</p>
                       </Card>
                     ) : ai.approval_workflow.map((step, i) => (
                       <Card key={i} className="p-5 border-border/60 rounded-2xl relative overflow-hidden group hover:border-primary/30 transition-colors">
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/20 group-hover:bg-primary transition-colors rounded-l-2xl" />
                         <div className="flex items-start gap-4 pl-2">
                           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary font-black text-sm flex-shrink-0">{i + 1}</div>
-                          <div>
-                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                               <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded-full">{step.timeframe}</span>
                               <p className="font-bold text-sm text-foreground">{step.task}</p>
                             </div>
@@ -889,6 +933,7 @@ export default function ResultsPage() {
 
                   {/* Sidebar */}
                   <div className="space-y-4">
+                    {/* Strategic tips */}
                     <Card className="p-5 border-border/60 rounded-2xl bg-muted/20">
                       <p className="font-bold text-sm text-foreground mb-3 flex items-center gap-2">
                         <Lightbulb className="h-4 w-4 text-amber-500" /> Strategic Tips
@@ -902,19 +947,52 @@ export default function ResultsPage() {
                       </ul>
                     </Card>
 
-                    <Card className="p-5 border-border/60 rounded-2xl">
-                      <p className="font-bold text-sm text-foreground mb-3 flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-violet-500" /> Missing Topics
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {ai.seo_authority.missing_topics.map((t, i) => (
-                          <span key={i} className="text-[11px] bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 px-2.5 py-1 rounded-full font-medium">{t}</span>
-                        ))}
-                      </div>
-                    </Card>
+                    {/* Monetization potential */}
+                    {ai.monetization && (
+                      <Card className="p-5 border-border/60 rounded-2xl">
+                        <p className="font-bold text-sm text-foreground mb-3 flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-emerald-500" /> Revenue Potential
+                        </p>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-xs">
+                            <span className="text-muted-foreground">Niche</span>
+                            <span className="font-bold text-foreground">{ai.monetization.niche}</span>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-muted-foreground">Est. CPC</span>
+                            <span className="font-bold text-emerald-600 dark:text-emerald-400">{ai.monetization.estimated_cpc}</span>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-muted-foreground">Est. CPM</span>
+                            <span className="font-bold text-foreground">{ai.monetization.estimated_cpm}</span>
+                          </div>
+                          {ai.monetization.monthly_revenue_estimate && (
+                            <div className="mt-2 p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40">
+                              <p className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-0.5">After Approval</p>
+                              <p className="text-xs font-bold text-foreground">{ai.monetization.monthly_revenue_estimate}</p>
+                            </div>
+                          )}
+                        </div>
+                      </Card>
+                    )}
 
+                    {/* Missing topics */}
+                    {ai.seo_authority.missing_topics.length > 0 && (
+                      <Card className="p-5 border-border/60 rounded-2xl">
+                        <p className="font-bold text-sm text-foreground mb-3 flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4 text-violet-500" /> Write These Next
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {ai.seo_authority.missing_topics.map((t, i) => (
+                            <span key={i} className="text-[11px] bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 px-2.5 py-1 rounded-full font-medium">{t}</span>
+                          ))}
+                        </div>
+                      </Card>
+                    )}
+
+                    {/* Internal linking */}
                     <Card className="p-5 border-border/60 rounded-2xl">
-                      <p className="font-bold text-sm text-foreground mb-3 flex items-center gap-2">
+                      <p className="font-bold text-sm text-foreground mb-2 flex items-center gap-2">
                         <Link2 className="h-4 w-4 text-blue-500" /> Internal Linking
                       </p>
                       <p className="text-xs text-muted-foreground leading-relaxed">{ai.seo_authority.internal_linking_advice}</p>
@@ -928,8 +1006,6 @@ export default function ResultsPage() {
                   <h2 className="text-xl font-black text-foreground">Free Action Checklist</h2>
                   <p className="text-sm text-muted-foreground mt-1">Complete these steps before applying to AdSense.</p>
                 </div>
-
-                {/* Free checklist based on crawl data */}
                 <div className="space-y-3">
                   {[
                     { done: !!data.site_structure?.has_privacy,    label: 'Add a Privacy Policy page', detail: 'Required by AdSense. Use a free generator if needed.' },
@@ -939,8 +1015,8 @@ export default function ResultsPage() {
                     { done: !!data.site_structure?.has_disclaimer, label: 'Add a Disclaimer page', detail: 'Important for finance, health, and affiliate sites.' },
                     { done: articleCount >= 25,                    label: `Publish 25+ articles (you have ${articleCount})`, detail: 'Google wants to see a content-rich site before approving.' },
                     { done: data.pages.filter(p => p.headings.h1.length === 0).length === 0, label: 'Add H1 tags to all pages', detail: `${data.pages.filter(p => p.headings.h1.length === 0).length} pages currently missing H1.` },
-                    { done: data.pages.filter(p => !p.meta_description).length === 0,        label: 'Add meta descriptions to all pages', detail: `${data.pages.filter(p => !p.meta_description).length} pages currently missing meta descriptions.` },
-                    { done: avgWords >= 600,                       label: 'Ensure avg 600+ words per article', detail: `Your current average is ${avgWords} words.` },
+                    { done: data.pages.filter(p => !p.meta_description).length === 0, label: 'Add meta descriptions to all pages', detail: `${data.pages.filter(p => !p.meta_description).length} pages currently missing meta descriptions.` },
+                    { done: avgWords >= 600, label: 'Ensure avg 600+ words per article', detail: `Your current average is ${avgWords} words.` },
                   ].map((item, i) => (
                     <div key={i} className={`flex items-start gap-3 p-4 rounded-xl border transition-colors ${item.done ? 'border-emerald-200 dark:border-emerald-800/40 bg-emerald-50/50 dark:bg-emerald-950/20' : 'border-border/60 bg-muted/20'}`}>
                       <div className={`h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${item.done ? 'bg-emerald-500' : 'border-2 border-muted-foreground/30'}`}>
@@ -953,7 +1029,6 @@ export default function ResultsPage() {
                     </div>
                   ))}
                 </div>
-
                 <Card className="p-5 border-primary/20 bg-primary/5 rounded-2xl">
                   <p className="font-bold text-sm text-foreground mb-1 flex items-center gap-2"><Lock className="h-4 w-4 text-primary" /> Want a personalised day-by-day plan?</p>
                   <p className="text-xs text-muted-foreground mb-3">Unlock the AI report to get a custom 30-day roadmap, strategic tips, and missing topic suggestions.</p>
