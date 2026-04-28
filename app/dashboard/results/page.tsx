@@ -312,10 +312,10 @@ export default function ResultsPage() {
   const crawlSecs    = (data.crawl_time_ms / 1000).toFixed(1)
 
   const tabs = [
-    { id: 'overview', label: 'Overview',    icon: BarChart3   },
-    { id: 'issues',   label: 'Fix List',    icon: AlertCircle },
-    { id: 'plan',     label: 'Action Plan', icon: Calendar    },
-    { id: 'pages',    label: 'Pages',       icon: FileText    },
+    { id: 'overview', label: 'Overview',    icon: BarChart3,   locked: false },
+    { id: 'issues',   label: 'Fix List',    icon: AlertCircle, locked: !isAiUnlocked },
+    { id: 'plan',     label: 'Action Plan', icon: Calendar,    locked: !isAiUnlocked },
+    { id: 'pages',    label: 'Pages',       icon: FileText,    locked: false },
   ] as const
 
   return (
@@ -342,7 +342,7 @@ export default function ResultsPage() {
           <div className="flex-shrink-0">
             {isAiUnlocked ? (
               <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-xs font-black uppercase tracking-widest border border-violet-200 dark:border-violet-800/50">
-                <Sparkles className="h-4 w-4" /> AI Report Active
+                <Sparkles className="h-4 w-4" /> Full Report Unlocked
               </div>
             ) : isPro ? (
               <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-muted text-muted-foreground text-xs font-black uppercase tracking-widest border border-border/60">
@@ -350,12 +350,9 @@ export default function ResultsPage() {
                 Generating Report...
               </div>
             ) : (
-              <div className="flex flex-col items-end gap-1.5">
-                <Button onClick={handleUnlock} disabled={isUnlocking} className="gap-2 bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 rounded-xl px-5">
-                  {isUnlocking ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Lock className="h-4 w-4" />}
-                  Get Exact Fixes to Get Approved — ₹19
-                </Button>
-                <p className="text-[10px] text-muted-foreground">One-time · Instant · No subscription</p>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/50 border border-border/60 text-xs text-muted-foreground">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 flex-shrink-0" />
+                Free Plan
               </div>
             )}
             {unlockError && <p className="text-xs text-red-500 mt-2 text-right">{unlockError}</p>}
@@ -374,13 +371,53 @@ export default function ResultsPage() {
         <div className="flex items-center gap-1 p-1 bg-muted/30 rounded-2xl border border-border/40 overflow-x-auto no-scrollbar">
           {tabs.map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex-1 justify-center ${
+              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex-1 justify-center relative ${
                 activeTab === tab.id ? 'bg-background text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
               }`}>
-              <tab.icon className="h-4 w-4" />{tab.label}
+              <tab.icon className="h-4 w-4 flex-shrink-0" />
+              <span>{tab.label}</span>
+              {tab.locked ? (
+                <Lock className="h-3 w-3 text-muted-foreground/60 flex-shrink-0" />
+              ) : (
+                <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-1.5 py-0.5 rounded-full leading-none flex-shrink-0">FREE</span>
+              )}
             </button>
           ))}
         </div>
+
+        {/* ── Plan comparison banner (only when not unlocked) ── */}
+        {!isAiUnlocked && (
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-4 rounded-2xl border border-border/60 bg-muted/20">
+              <p className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5" /> Free Plan — Included
+              </p>
+              <ul className="space-y-1.5 text-xs text-muted-foreground">
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-emerald-500 flex-shrink-0" /> AI readiness score (0-100)</li>
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-emerald-500 flex-shrink-0" /> 5 category scores</li>
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-emerald-500 flex-shrink-0" /> Compliance checklist</li>
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-emerald-500 flex-shrink-0" /> Top issues found</li>
+                <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-emerald-500 flex-shrink-0" /> Pages tab</li>
+              </ul>
+            </div>
+            <div className="p-4 rounded-2xl border-2 border-primary/30 bg-primary/5 relative overflow-hidden">
+              <div className="absolute top-2 right-2 text-[9px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full">₹19 ONE-TIME</div>
+              <p className="text-xs font-black text-primary uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5" /> Unlock — What You Get
+              </p>
+              <ul className="space-y-1.5 text-xs text-muted-foreground">
+                <li className="flex items-center gap-1.5"><Lock className="h-3 w-3 text-primary flex-shrink-0" /> <span className="text-foreground font-semibold">Full fix list</span> with exact page URLs</li>
+                <li className="flex items-center gap-1.5"><Lock className="h-3 w-3 text-primary flex-shrink-0" /> <span className="text-foreground font-semibold">30-day action plan</span> for your site</li>
+                <li className="flex items-center gap-1.5"><Lock className="h-3 w-3 text-primary flex-shrink-0" /> <span className="text-foreground font-semibold">Revenue estimate</span> after approval</li>
+                <li className="flex items-center gap-1.5"><Lock className="h-3 w-3 text-primary flex-shrink-0" /> <span className="text-foreground font-semibold">Missing topics</span> to write next</li>
+              </ul>
+              <Button onClick={handleUnlock} disabled={isUnlocking} size="sm" className="w-full mt-3 gap-1.5 rounded-xl font-bold text-xs h-8">
+                {isUnlocking ? <div className="h-3.5 w-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Lock className="h-3.5 w-3.5" />}
+                Unlock Now — ₹19
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* ══════════════════════════════════════════════════════════════════ */}
         {/* OVERVIEW TAB                                                       */}
