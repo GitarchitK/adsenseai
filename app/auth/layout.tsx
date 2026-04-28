@@ -38,7 +38,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 <span className="text-primary">Start getting paid.</span>
               </h2>
               <p className="text-white/60 text-base leading-relaxed">
-                AdSenseAI tells you exactly what Google wants to see — and exactly what to fix to get approved.
+                AdSense Checker AI tells you exactly what Google wants to see — and exactly what to fix to get approved.
               </p>
             </div>
 
@@ -78,7 +78,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             </div>
           </div>
 
-          <p className="text-white/25 text-xs">© {new Date().getFullYear()} AdSenseAI</p>
+          <p className="text-white/25 text-xs">© {new Date().getFullYear()} AdSense Checker AI</p>
         </div>
       </div>
 

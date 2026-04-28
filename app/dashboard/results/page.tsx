@@ -34,11 +34,6 @@ const sc = (s: number) =>
 const bc = (s: number) =>
   s >= 80 ? 'bg-emerald-500' : s >= 60 ? 'bg-amber-500' : 'bg-red-500'
 
-const imp = (i: FixSuggestion['impact']) =>
-  i === 'high'   ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-  : i === 'medium' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
-  : 'bg-muted text-muted-foreground'
-
 const catIcon = (c: FixSuggestion['category']) => {
   const cls = 'h-4 w-4'
   switch (c) {
@@ -683,8 +678,8 @@ export default function ResultsPage() {
               </Card>
             </div>
 
-            {/* E-E-A-T + Monetization (AI only) */}
-            {hasAiPreview && ai && (ai as AIReport).eeat && (
+            {/* E-E-A-T + Monetization — only shown when fully unlocked */}
+            {isAiUnlocked && ai && (ai as AIReport).eeat && (
               <div className="grid md:grid-cols-2 gap-4">
                 <Card className="p-5 border-border/60 rounded-2xl space-y-3">
                   <div className="flex items-center gap-2 mb-1">

@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Navroll Studio' }],
   creator: 'Navroll Studio',
-  publisher: 'AdSenseAI',
+  publisher: 'AdSense Checker AI',
   robots: {
     index: true,
     follow: true,
