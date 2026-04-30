@@ -348,6 +348,235 @@ function ArticleReport({ report }: { report: SingleArticleReport }) {
   )
 }
 
+// ── New Tool Sub-components ───────────────────────────────────────────────────
+
+function MetaGeneratorTool({ getAuthHeader }: { getAuthHeader: () => Promise<{ Authorization: string }> }) {
+  const [title, setTitle] = useState('')
+  const [content, setContent] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [results, setResults] = useState<Array<{ text: string; chars: number; angle: string }>>([])
+  const [copied, setCopied] = useState<number | null>(null)
+
+  const generate = async () => {
+    if (!title && !content) return
+    setLoading(true)
+    const headers = await getAuthHeader()
+    const res = await fetch('/api/ai/meta-generator', {
+      method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, content }),
+    })
+    const data = await res.json()
+    setResults(data.descriptions ?? [])
+    setLoading(false)
+  }
+
+  const copy = (text: string, i: number) => {
+    navigator.clipboard.writeText(text)
+    setCopied(i)
+    setTimeout(() => setCopied(null), 2000)
+  }
+
+  return (
+    <div className="space-y-3">
+      <Input placeholder="Article title" value={title} onChange={e => setTitle(e.target.value)} className="rounded-xl bg-muted/30 border-border/80" />
+      <textarea className="w-full rounded-xl border border-border/80 bg-muted/30 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring min-h-[80px] resize-y" placeholder="Paste content snippet (optional)" value={content} onChange={e => setContent(e.target.value)} />
+      <Button onClick={generate} disabled={loading || (!title && !content)} className="gap-2 rounded-xl">
+        {loading ? <><div className="h-4 w-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin" /> Generating...</> : <><Sparkles className="h-4 w-4" /> Generate Meta Descriptions</>}
+      </Button>
+      {results.length > 0 && (
+        <div className="space-y-2 mt-2">
+          {results.map((r, i) => (
+            <div key={i} className="p-3 rounded-xl border border-border/60 bg-muted/20 space-y-1.5">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full capitalize">{r.angle}</span>
+                <div className="flex items-center gap-2">
+                  <span className={`text-[10px] font-mono ${r.chars > 160 ? 'text-red-500' : r.chars < 140 ? 'text-amber-500' : 'text-emerald-500'}`}>{r.chars} chars</span>
+                  <Button variant="ghost" size="sm" className="h-6 px-2 text-xs gap-1" onClick={() => copy(r.text, i)}>
+                    {copied === i ? <><CheckCircle2 className="h-3 w-3 text-emerald-500" /> Copied</> : <><Copy className="h-3 w-3" /> Copy</>}
+                  </Button>
+                </div>
+              </div>
+              <p className="text-sm text-foreground leading-relaxed">{r.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function TitleGeneratorTool({ getAuthHeader }: { getAuthHeader: () => Promise<{ Authorization: string }> }) {
+  const [topic, setTopic] = useState('')
+  const [keyword, setKeyword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [results, setResults] = useState<Array<{ text: string; chars: number; formula: string; seo_score: number; why: string }>>([])
+  const [copied, setCopied] = useState<number | null>(null)
+
+  const generate = async () => {
+    if (!topic) return
+    setLoading(true)
+    const headers = await getAuthHeader()
+    const res = await fetch('/api/ai/title-generator', {
+      method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic, keyword }),
+    })
+    const data = await res.json()
+    setResults(data.titles ?? [])
+    setLoading(false)
+  }
+
+  const copy = (text: string, i: number) => {
+    navigator.clipboard.writeText(text)
+    setCopied(i)
+    setTimeout(() => setCopied(null), 2000)
+  }
+
+  return (
+    <div className="space-y-3">
+      <Input placeholder="Article topic (e.g. how to get adsense approved)" value={topic} onChange={e => setTopic(e.target.value)} className="rounded-xl bg-muted/30 border-border/80" />
+      <Input placeholder="Target keyword (optional)" value={keyword} onChange={e => setKeyword(e.target.value)} className="rounded-xl bg-muted/30 border-border/80" />
+      <Button onClick={generate} disabled={loading || !topic} className="gap-2 rounded-xl">
+        {loading ? <><div className="h-4 w-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin" /> Generating...</> : <><Sparkles className="h-4 w-4" /> Generate Titles</>}
+      </Button>
+      {results.length > 0 && (
+        <div className="space-y-2 mt-2">
+          {results.map((r, i) => (
+            <div key={i} className="p-3 rounded-xl border border-border/60 bg-muted/20 space-y-1.5">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full capitalize">{r.formula}</span>
+                  <span className={`text-[10px] font-mono ${r.chars > 60 ? 'text-amber-500' : 'text-emerald-500'}`}>{r.chars} chars</span>
+                  <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400">SEO: {r.seo_score}</span>
+                </div>
+                <Button variant="ghost" size="sm" className="h-6 px-2 text-xs gap-1" onClick={() => copy(r.text, i)}>
+                  {copied === i ? <><CheckCircle2 className="h-3 w-3 text-emerald-500" /> Copied</> : <><Copy className="h-3 w-3" /> Copy</>}
+                </Button>
+              </div>
+              <p className="text-sm font-bold text-foreground">{r.text}</p>
+              <p className="text-xs text-muted-foreground">{r.why}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function KeywordDensityTool({ getAuthHeader }: { getAuthHeader: () => Promise<{ Authorization: string }> }) {
+  const [content, setContent] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<{ total_words: number; keywords: Array<{ word: string; count: number; density: number; status: string }>; overall_status: string; recommendation: string } | null>(null)
+
+  const analyze = async () => {
+    if (!content) return
+    setLoading(true)
+    const headers = await getAuthHeader()
+    const res = await fetch('/api/ai/keyword-density', {
+      method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content }),
+    })
+    const data = await res.json()
+    setResult(data)
+    setLoading(false)
+  }
+
+  const statusColor = (s: string) => s === 'stuffed' ? 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30' : s === 'high' ? 'text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30' : s === 'good' ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30' : 'text-muted-foreground bg-muted'
+
+  return (
+    <div className="space-y-3">
+      <textarea className="w-full rounded-xl border border-border/80 bg-muted/30 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring min-h-[140px] resize-y" placeholder="Paste your article content here..." value={content} onChange={e => setContent(e.target.value)} />
+      <Button onClick={analyze} disabled={loading || !content} className="gap-2 rounded-xl">
+        {loading ? <><div className="h-4 w-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin" /> Analyzing...</> : <><BarChart3 className="h-4 w-4" /> Analyze Keyword Density</>}
+      </Button>
+      {result && (
+        <div className="space-y-3 mt-2">
+          <div className={`p-3 rounded-xl border text-sm font-semibold ${result.overall_status === 'warning' ? 'border-amber-200 dark:border-amber-800/40 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-300' : 'border-emerald-200 dark:border-emerald-800/40 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-300'}`}>
+            {result.recommendation}
+          </div>
+          <p className="text-xs text-muted-foreground">{result.total_words} total words analyzed</p>
+          <div className="space-y-1.5">
+            {result.keywords.slice(0, 15).map((k, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <span className="text-xs font-mono text-foreground w-24 truncate">{k.word}</span>
+                <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                  <div className={`h-full rounded-full ${k.status === 'stuffed' ? 'bg-red-500' : k.status === 'high' ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${Math.min(100, k.density * 20)}%` }} />
+                </div>
+                <span className="text-[10px] font-mono text-muted-foreground w-10 text-right">{k.density}%</span>
+                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${statusColor(k.status)}`}>{k.status}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ContentPolicyTool({ getAuthHeader }: { getAuthHeader: () => Promise<{ Authorization: string }> }) {
+  const [content, setContent] = useState('')
+  const [title, setTitle] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<{ verdict: string; policy_score: number; issues: Array<{ type: string; severity: string; description: string; fix: string }>; strengths: string[]; word_count: number; word_count_verdict: string; summary: string } | null>(null)
+
+  const check = async () => {
+    if (!content) return
+    setLoading(true)
+    const headers = await getAuthHeader()
+    const res = await fetch('/api/ai/content-policy-check', {
+      method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content, title }),
+    })
+    const data = await res.json()
+    setResult(data)
+    setLoading(false)
+  }
+
+  const verdictColor = (v: string) => v === 'pass' ? 'border-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-300' : v === 'warning' ? 'border-amber-300 bg-amber-50/50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-300' : 'border-red-300 bg-red-50/50 dark:bg-red-950/20 text-red-700 dark:text-red-300'
+
+  return (
+    <div className="space-y-3">
+      <Input placeholder="Article title (optional)" value={title} onChange={e => setTitle(e.target.value)} className="rounded-xl bg-muted/30 border-border/80" />
+      <textarea className="w-full rounded-xl border border-border/80 bg-muted/30 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring min-h-[140px] resize-y" placeholder="Paste your article content here..." value={content} onChange={e => setContent(e.target.value)} />
+      <Button onClick={check} disabled={loading || !content} className="gap-2 rounded-xl">
+        {loading ? <><div className="h-4 w-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin" /> Checking...</> : <><ShieldCheck className="h-4 w-4" /> Check AdSense Policy</>}
+      </Button>
+      {result && (
+        <div className="space-y-3 mt-2">
+          <div className={`p-4 rounded-xl border-2 ${verdictColor(result.verdict)}`}>
+            <div className="flex items-center justify-between mb-1">
+              <p className="font-black text-sm capitalize">{result.verdict === 'pass' ? '✓ Policy Compliant' : result.verdict === 'warning' ? '⚠ Needs Review' : '✗ Policy Issues Found'}</p>
+              <span className="text-lg font-black tabular-nums">{result.policy_score}/100</span>
+            </div>
+            <p className="text-xs leading-relaxed opacity-90">{result.summary}</p>
+            <p className="text-[10px] mt-1 opacity-70">{result.word_count} words · {result.word_count_verdict === 'thin' ? 'Thin content' : result.word_count_verdict === 'borderline' ? 'Borderline length' : 'Good length'}</p>
+          </div>
+          {result.issues.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-xs font-black text-red-600 dark:text-red-400 uppercase tracking-widest">Issues Found</p>
+              {result.issues.map((issue, i) => (
+                <div key={i} className={`p-3 rounded-xl border ${issue.severity === 'critical' ? 'border-red-200 dark:border-red-800/40 bg-red-50/50 dark:bg-red-950/20' : 'border-amber-200 dark:border-amber-800/40 bg-amber-50/50 dark:bg-amber-950/20'}`}>
+                  <p className="text-xs font-bold text-foreground mb-0.5">{issue.description}</p>
+                  <p className="text-xs text-muted-foreground"><span className="font-semibold text-emerald-600 dark:text-emerald-400">Fix:</span> {issue.fix}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          {result.strengths.length > 0 && (
+            <div className="space-y-1.5">
+              <p className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Strengths</p>
+              {result.strengths.map((s, i) => (
+                <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0 mt-0.5" />{s}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function AIToolsPage() {
@@ -378,7 +607,6 @@ export default function AIToolsPage() {
   const [seoDomain, setSeoDomain] = useState('')
   const [seoResult, setSeoResult] = useState<Array<{ title: string; description: string; priority: string }>>([])
   const [seoLoading, setSeoLoading] = useState(false)
-
   const openUpgrade = (feature: string) => { setModalFeature(feature); setModalOpen(true) }
 
   const getAuthHeader = async () => {
@@ -624,6 +852,42 @@ export default function AIToolsPage() {
             </ToolCard>
           ) : (
             <LockedTool icon={<Search className="h-4 w-4" />} title="SEO Optimization" description="Get targeted SEO suggestions for your domain" onUnlock={() => openUpgrade('SEO Optimization')} />
+          )}
+
+          {/* ── Meta Description Generator ── */}
+          {isPro ? (
+            <ToolCard icon={<FileText className="h-4 w-4" />} title="Meta Description Generator" description="Generate 3 SEO-optimized meta descriptions from a title or content" badge="New">
+              <MetaGeneratorTool getAuthHeader={getAuthHeader} />
+            </ToolCard>
+          ) : (
+            <LockedTool icon={<FileText className="h-4 w-4" />} title="Meta Description Generator" description="Generate 3 SEO-optimized meta descriptions instantly" onUnlock={() => openUpgrade('Meta Description Generator')} />
+          )}
+
+          {/* ── Article Title Generator ── */}
+          {isPro ? (
+            <ToolCard icon={<Sparkles className="h-4 w-4" />} title="Article Title Generator" description="Generate 5 SEO-optimized article titles for any topic" badge="New">
+              <TitleGeneratorTool getAuthHeader={getAuthHeader} />
+            </ToolCard>
+          ) : (
+            <LockedTool icon={<Sparkles className="h-4 w-4" />} title="Article Title Generator" description="Generate click-worthy, SEO-optimized titles for your articles" onUnlock={() => openUpgrade('Title Generator')} />
+          )}
+
+          {/* ── Keyword Density Analyzer ── */}
+          {isPro ? (
+            <ToolCard icon={<BarChart3 className="h-4 w-4" />} title="Keyword Density Analyzer" description="Paste your article and instantly detect keyword stuffing" badge="New">
+              <KeywordDensityTool getAuthHeader={getAuthHeader} />
+            </ToolCard>
+          ) : (
+            <LockedTool icon={<BarChart3 className="h-4 w-4" />} title="Keyword Density Analyzer" description="Detect keyword stuffing before AdSense rejects your site" onUnlock={() => openUpgrade('Keyword Density Analyzer')} />
+          )}
+
+          {/* ── AdSense Content Policy Checker ── */}
+          {isPro ? (
+            <ToolCard icon={<ShieldCheck className="h-4 w-4" />} title="AdSense Content Policy Checker" description="Paste any article and get an instant AdSense policy compliance check" badge="New">
+              <ContentPolicyTool getAuthHeader={getAuthHeader} />
+            </ToolCard>
+          ) : (
+            <LockedTool icon={<ShieldCheck className="h-4 w-4" />} title="AdSense Content Policy Checker" description="Check any article for AdSense policy violations before publishing" onUnlock={() => openUpgrade('Content Policy Checker')} />
           )}
 
         </div>
