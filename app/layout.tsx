@@ -144,6 +144,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Bing Webmaster Tools verification */}
+        <meta name="msvalidate.01" content="29C7545485F5ABB5BD2957F43DD88E7B" />
         {/* Ahrefs Analytics */}
         <script
           src="https://analytics.ahrefs.com/analytics.js"
