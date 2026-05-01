@@ -202,7 +202,7 @@ export default function ResultsPage() {
 
       await openCheckout({
         key: order.keyId, amount: order.amount, currency: order.currency,
-        name: 'AdSenseAI', description: 'Full AI Report — One-time ₹19', order_id: order.orderId,
+        name: 'AdSense Checker AI', description: 'Full AI Report — One-time ₹19', order_id: order.orderId,
         handler: async (r: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
           try {
             // Build a clean CrawlResponse — strip non-crawl fields before sending
@@ -255,7 +255,7 @@ export default function ResultsPage() {
     if (!order.orderId) return
     await openCheckout({
       key: order.keyId, amount: order.amount, currency: order.currency,
-      name: 'AdSenseAI', description: 'Pro Plan — ₹199/month', order_id: order.orderId,
+      name: 'AdSense Checker AI', description: 'Pro Plan — ₹199/month', order_id: order.orderId,
       handler: async () => { window.location.href = '/dashboard?upgraded=1' },
       prefill: {}, theme: { color: '#7c3aed' },
     })

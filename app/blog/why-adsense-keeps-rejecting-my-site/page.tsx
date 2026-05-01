@@ -52,7 +52,7 @@ const reasons = [
   {
     title: '2. Missing Privacy Policy Page',
     problem: 'AdSense requires a Privacy Policy page on every site. Without it, your application is automatically rejected.',
-    fix: 'Create a Privacy Policy page at /privacy-policy. It must explain what data you collect and how you use it. AdSenseAI\'s AI Tools include a free Privacy Policy generator.',
+    fix: 'Create a Privacy Policy page at /privacy-policy. It must explain what data you collect and how you use it. AdSense Checker AI\'s AI Tools include a free Privacy Policy generator.',
     critical: true,
   },
   {
@@ -142,7 +142,7 @@ export default function WhyAdsenseKeepsRejectingMySite() {
           <section>
             <h2 className="text-2xl font-black text-foreground mb-4">How to Diagnose Your Rejection in 30 Seconds</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              Instead of guessing which of these issues is causing your rejection, use AdSenseAI's free AdSense approval checker. It scans your entire site and tells you exactly which issues were found — with specific fixes for each one.
+              Instead of guessing which of these issues is causing your rejection, use AdSense Checker AI's free AdSense approval checker. It scans your entire site and tells you exactly which issues were found — with specific fixes for each one.
             </p>
             <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20">
               <div className="flex items-start gap-3 mb-4">

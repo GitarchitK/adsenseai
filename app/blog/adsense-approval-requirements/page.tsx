@@ -157,7 +157,7 @@ export default function AdsenseApprovalRequirements() {
           <section>
             <h2 className="text-2xl font-black text-foreground mb-4">How to Check All Requirements Automatically</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              Manually checking every requirement takes hours. AdSenseAI's free AdSense approval checker scans your entire website in 30 seconds and tells you exactly which requirements you're failing — with specific fixes for each one.
+              Manually checking every requirement takes hours. AdSense Checker AI's free AdSense approval checker scans your entire website in 30 seconds and tells you exactly which requirements you're failing — with specific fixes for each one.
             </p>
             <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20">
               <p className="font-bold text-foreground mb-2">Free AdSense Approval Checker</p>

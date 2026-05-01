@@ -9,7 +9,7 @@ const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono'
 
 export const metadata: Metadata = {
   title: {
-    default: 'AdSense Approval Checker — Free AI Website Audit Tool | AdSenseAI',
+    default: 'AdSense Approval Checker — Free AI Website Audit Tool | AdSense Checker AI',
     template: '%s | AdSense Approval Checker AI',
   },
   description: 'Free AdSense approval checker. Instantly check if your website meets Google AdSense requirements. AI scans content quality, policy compliance, SEO & trust signals — get your approval score in 30 seconds.',
@@ -40,10 +40,10 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    siteName: 'AdSenseAI',
-    title: 'AdSense Approval Checker — Free AI Website Audit | AdSenseAI',
+    siteName: 'AdSense Checker AI',
+    ,
     description: 'Check if your website is ready for Google AdSense approval. Free AdSense approval checker — AI scans content, policy, SEO & trust signals in 30 seconds.',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'AdSenseAI — AdSense Approval Checker' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'AdSense Checker AI — AdSense Approval Checker' }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -124,7 +124,7 @@ const jsonLd = {
           name: 'How do I check if my website is AdSense ready?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Enter your website URL in AdSenseAI\'s free AdSense audit tool. It will scan your site in 30 seconds and give you a readiness score from 0-100, along with specific fixes to get approved.',
+            text: 'Enter your website URL in AdSense Checker AI\'s free AdSense audit tool. It will scan your site in 30 seconds and give you a readiness score from 0-100, along with specific fixes to get approved.',
           },
         },
         {

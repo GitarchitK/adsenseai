@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     try {
       const res = await fetch(normalizedUrl, {
         signal: controller.signal,
-        headers: { 'User-Agent': 'Mozilla/5.0 AdSenseAI-ArticleAnalyzer/1.0' },
+        headers: { 'User-Agent': 'Mozilla/5.0 AdSenseCheckerAI-ArticleAnalyzer/1.0' },
       })
       clearTimeout(timeout)
       if (!res.ok) return NextResponse.json({ error: `Could not fetch page (HTTP ${res.status}).` }, { status: 400 })

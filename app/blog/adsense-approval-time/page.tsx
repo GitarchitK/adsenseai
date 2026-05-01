@@ -119,7 +119,7 @@ export default function AdsenseApprovalTime() {
             </p>
             <div className="space-y-3">
               {[
-                { tip: 'Use an AdSense approval checker first', detail: 'Run your site through AdSenseAI before applying. Fix all flagged issues so your application passes the automated check immediately.' },
+                { tip: 'Use an AdSense approval checker first', detail: 'Run your site through AdSense Checker AI before applying. Fix all flagged issues so your application passes the automated check immediately.' },
                 { tip: 'Make sure Google has indexed your site', detail: 'Check Google Search Console to confirm your pages are indexed. Unindexed sites can\'t be reviewed.' },
                 { tip: 'Don\'t apply with a brand new domain', detail: 'Wait at least 3-6 months after launching your site. New domains are reviewed more slowly and rejected more often.' },
                 { tip: 'Have all required pages ready', detail: 'Privacy Policy, About, and Contact pages must exist before you apply. Missing any of these causes instant rejection.' },

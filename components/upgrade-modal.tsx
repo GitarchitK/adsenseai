@@ -81,7 +81,7 @@ export function UpgradeModal({ open, onClose, feature, onSuccess }: UpgradeModal
         key:         order.keyId,
         amount:      order.amount,
         currency:    order.currency,
-        name:        'AdSenseAI',
+        name:        'AdSense Checker AI',
         description: 'Pro Plan — ₹199/month · 200 scans · All AI tools',
         order_id:    order.orderId,
         handler: async (r: {

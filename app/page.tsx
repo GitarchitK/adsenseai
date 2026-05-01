@@ -130,7 +130,7 @@ const steps = [
 ]
 
 const testimonials = [
-  { quote: 'I\'d been rejected by AdSense 3 times. AdSenseAI showed me exactly what was wrong — missing Privacy Policy and thin content. Fixed both, approved in a week.', author: 'Priya S.', role: 'Lifestyle Blogger', rating: 5 },
+  { quote: 'I\'d been rejected by AdSense 3 times. AdSense Checker AI showed me exactly what was wrong — missing Privacy Policy and thin content. Fixed both, approved in a week.', author: 'Priya S.', role: 'Lifestyle Blogger', rating: 5 },
   { quote: 'The AI fix suggestions were incredibly specific. Not generic advice — actual page-by-page recommendations. Worth every rupee.', author: 'Marcus T.', role: 'Tech Content Creator', rating: 5 },
   { quote: 'Saved me hours of guesswork. The policy risk checker caught a copyright issue I had no idea about. Game changer.', author: 'Aisha K.', role: 'News Publisher', rating: 5 },
 ]
@@ -529,7 +529,7 @@ export default function Home() {
             <div className="text-center mb-14">
               <p className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Success Stories</p>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Publishers who got approved</h2>
-              <p className="text-muted-foreground">Real results from real publishers who used AdSenseAI to fix their sites.</p>
+              <p className="text-muted-foreground">Real results from real publishers who used AdSense Checker AI to fix their sites.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {testimonials.map(({ quote, author, role, rating }) => (
@@ -565,7 +565,7 @@ export default function Home() {
           </div>
           <div className="space-y-4">
             {[
-              { q: 'How is this different from a regular SEO tool?', a: 'AdSenseAI is built specifically for AdSense approval — not general SEO. We check the exact signals Google\'s AdSense review team evaluates: content quality, policy compliance, required pages, and trust signals.' },
+              { q: 'How is this different from a regular SEO tool?', a: 'AdSense Checker AI is built specifically for AdSense approval — not general SEO. We check the exact signals Google\'s AdSense review team evaluates: content quality, policy compliance, required pages, and trust signals.' },
               { q: 'Is it worth it to pay ₹199 monthly or ₹19 for a one-time report?', a: 'If you have one site and just want to know why you were rejected, the ₹19 report is perfect. If you are a serious publisher or manage multiple sites, the ₹199 Pro plan is a massive value: it includes 200 scans, the Article Content Analyzer (our most powerful tool for "Low Value Content" issues), and the AI Content Rewriter.' },
               { q: 'Do I need to install anything on my site?', a: 'No. Just paste your URL. We crawl your site externally — no plugins, no code, no access to your CMS required.' },
               { q: 'What does the ₹19 report unlock include?', a: 'The full AI report includes GPT-4 content analysis, policy risk deep scan, prioritized fix suggestions, trust & UX scoring, and a detailed breakdown of every category.' },

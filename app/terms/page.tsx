@@ -23,11 +23,11 @@ export default function TermsPage() {
           {[
             {
               title: '1. Acceptance of Terms',
-              content: 'By accessing or using AdSenseAI ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service.',
+              content: 'By accessing or using AdSense Checker AI ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service.',
             },
             {
               title: '2. Description of Service',
-              content: 'AdSenseAI provides AI-powered website analysis to help publishers prepare their sites for Google AdSense monetization. We analyze publicly accessible website content and provide scores, recommendations, and reports.',
+              content: 'AdSense Checker AI provides AI-powered website analysis to help publishers prepare their sites for Google AdSense monetization. We analyze publicly accessible website content and provide scores, recommendations, and reports.',
             },
             {
               title: '3. User Accounts',
@@ -50,15 +50,15 @@ Pro Plan (₹199/month): Monthly subscription. You may cancel at any time. No re
             },
             {
               title: '6. Disclaimer of Warranties',
-              content: 'AdSenseAI provides analysis based on publicly available information and AI models. We do not guarantee AdSense approval. Google\'s approval decisions are made solely by Google and are subject to their policies, which may change at any time.',
+              content: 'AdSense Checker AI provides analysis based on publicly available information and AI models. We do not guarantee AdSense approval. Google\'s approval decisions are made solely by Google and are subject to their policies, which may change at any time.',
             },
             {
               title: '7. Limitation of Liability',
-              content: 'To the maximum extent permitted by law, AdSenseAI shall not be liable for any indirect, incidental, or consequential damages arising from your use of the Service, including but not limited to AdSense rejection or loss of revenue.',
+              content: 'To the maximum extent permitted by law, AdSense Checker AI shall not be liable for any indirect, incidental, or consequential damages arising from your use of the Service, including but not limited to AdSense rejection or loss of revenue.',
             },
             {
               title: '8. Intellectual Property',
-              content: 'The AdSenseAI platform, including its AI models, scoring algorithms, and interface, is our intellectual property. You retain ownership of your website content.',
+              content: 'The AdSense Checker AI platform, including its AI models, scoring algorithms, and interface, is our intellectual property. You retain ownership of your website content.',
             },
             {
               title: '9. Termination',

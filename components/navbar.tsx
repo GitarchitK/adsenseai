@@ -47,7 +47,7 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
           <div className="flex items-center justify-center w-8 h-8 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-200">
-            <img src="/icon.svg" alt="AdSenseAI" className="w-full h-full object-cover" />
+            <img src="/icon.svg" alt="AdSense Checker AI" className="w-full h-full object-cover" />
           </div>
           <span className="font-semibold text-foreground text-[15px]">
             <span className="md:hidden">AdSense <span className="text-primary">Checker</span></span>

@@ -28,7 +28,7 @@ export default function AboutPage() {
             Built for publishers who want to <span className="gradient-text">get paid</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            AdSenseAI was born out of frustration — vague rejection emails, no actionable feedback, and weeks of guesswork. We built the tool we wished existed.
+            AdSense Checker AI was born out of frustration — vague rejection emails, no actionable feedback, and weeks of guesswork. We built the tool we wished existed.
           </p>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent" />
@@ -44,7 +44,7 @@ export default function AboutPage() {
               Every day, thousands of publishers get rejected by Google AdSense with nothing but a generic email. They spend weeks guessing what went wrong, making random changes, and reapplying — only to get rejected again.
             </p>
             <p className="text-muted-foreground leading-relaxed mb-6">
-              We built AdSenseAI to change that. Our AI analyzes your site against the exact criteria Google uses — content quality, policy compliance, SEO, trust signals — and tells you precisely what to fix, in what order.
+              We built AdSense Checker AI to change that. Our AI analyzes your site against the exact criteria Google uses — content quality, policy compliance, SEO, trust signals — and tells you precisely what to fix, in what order.
             </p>
             <div className="pt-6 border-t border-border/60">
               <p className="text-xs font-bold text-foreground uppercase tracking-widest mb-4">The Team</p>
@@ -58,7 +58,7 @@ export default function AboutPage() {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mt-6 leading-relaxed">
-                AdSenseAI is a product of <span className="font-bold text-primary">Navroll Studio</span>, dedicated to building high-impact tools for the digital publishing economy.
+                AdSense Checker AI is a product of <span className="font-bold text-primary">Navroll Studio</span>, dedicated to building high-impact tools for the digital publishing economy.
               </p>
             </div>
           </div>

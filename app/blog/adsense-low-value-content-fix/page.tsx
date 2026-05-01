@@ -156,7 +156,7 @@ export default function AdsenseLowValueContentFix() {
           <section>
             <h2 className="text-2xl font-black text-foreground mb-4">How to Check if Your Content Passes AdSense Standards</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              After making fixes, use AdSenseAI's free AdSense approval checker to verify your content quality score. The tool scans every page on your site and flags thin content, low originality, and keyword stuffing — the same signals Google's reviewers look for.
+              After making fixes, use AdSense Checker AI's free AdSense approval checker to verify your content quality score. The tool scans every page on your site and flags thin content, low originality, and keyword stuffing — the same signals Google's reviewers look for.
             </p>
             <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20">
               <div className="flex items-start gap-3 mb-4">

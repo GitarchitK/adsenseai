@@ -46,8 +46,8 @@ const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: [
-    { '@type': 'Question', name: 'How do I check if my website is AdSense ready?', acceptedAnswer: { '@type': 'Answer', text: 'Use AdSenseAI\'s free AdSense approval checker. Enter your URL, wait 30 seconds, and get a score from 0-100 with specific fixes.' } },
-    { '@type': 'Question', name: 'What score do I need to get AdSense approved?', acceptedAnswer: { '@type': 'Answer', text: 'A score of 70+ on AdSenseAI\'s checker indicates your site is likely ready for AdSense approval. Scores of 80+ have a high approval rate.' } },
+    { '@type': 'Question', name: 'How do I check if my website is AdSense ready?', acceptedAnswer: { '@type': 'Answer', text: 'use AdSense Checker AI\'s free AdSense approval checker. Enter your URL, wait 30 seconds, and get a score from 0-100 with specific fixes.' } },
+    { '@type': 'Question', name: 'What score do I need to get AdSense approved?', acceptedAnswer: { '@type': 'Answer', text: 'A score of 70+ on AdSense Checker AI\'s checker indicates your site is likely ready for AdSense approval. Scores of 80+ have a high approval rate.' } },
     { '@type': 'Question', name: 'What does Google check for AdSense approval?', acceptedAnswer: { '@type': 'Answer', text: 'Google checks content quality, policy compliance, required pages (Privacy Policy, About, Contact), site structure, and SEO signals like H1 tags and meta descriptions.' } },
   ],
 }
@@ -104,7 +104,7 @@ export default function HowToCheckAdsenseApproval() {
               The fastest way to check your AdSense approval readiness is to use an automated AdSense approval checker tool. These tools crawl your website and score it against Google's known approval criteria.
             </p>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              AdSenseAI is a free AdSense approval checker that scans your entire website in under 30 seconds. It checks all the criteria above and gives you a score from 0-100, along with specific fixes.
+              AdSense Checker AI is a free AdSense approval checker that scans your entire website in under 30 seconds. It checks all the criteria above and gives you a score from 0-100, along with specific fixes.
             </p>
             <div className="space-y-3 mb-6">
               {[
@@ -135,7 +135,7 @@ export default function HowToCheckAdsenseApproval() {
             <div className="space-y-3">
               {[
                 { issue: 'Low Value Content', fix: 'Rewrite thin articles to 600+ words with original insights and examples.' },
-                { issue: 'Missing Privacy Policy', fix: 'Create a Privacy Policy page at /privacy-policy. Use AdSenseAI\'s free generator.' },
+                { issue: 'Missing Privacy Policy', fix: 'Create a Privacy Policy page at /privacy-policy. use AdSense Checker AI\'s free generator.' },
                 { issue: 'Insufficient Content', fix: 'Publish at least 25 quality articles before applying.' },
                 { issue: 'Copyright Violations', fix: 'Remove any copied content and replace with original writing.' },
                 { issue: 'Navigation Issues', fix: 'Ensure every page is reachable from your homepage within 2 clicks.' },
@@ -174,7 +174,7 @@ export default function HowToCheckAdsenseApproval() {
           <section className="p-6 rounded-2xl bg-primary/5 border border-primary/20">
             <h2 className="text-xl font-black text-foreground mb-2">Check Your AdSense Approval Score — Free</h2>
             <p className="text-sm text-muted-foreground mb-4">
-              AdSenseAI is the most accurate free AdSense approval checker available. Get your score in 30 seconds and a personalised fix list.
+              AdSense Checker AI is the most accurate free AdSense approval checker available. Get your score in 30 seconds and a personalised fix list.
             </p>
             <Link href="/auth/signup">
               <Button className="gap-2 rounded-xl">

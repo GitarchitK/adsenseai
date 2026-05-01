@@ -35,7 +35,7 @@ const sections = [
     links: [
       { href: '/privacy', label: 'Privacy Policy',  desc: 'How we collect and use your data' },
       { href: '/terms',   label: 'Terms of Service', desc: 'Terms and conditions of use' },
-      { href: '/sitemap', label: 'Sitemap',          desc: 'All pages on AdSenseAI' },
+      { href: '/sitemap', label: 'Sitemap',          desc: 'All pages on AdSense Checker AI' },
     ],
   },
 ]
@@ -47,7 +47,7 @@ export default function SitemapPage() {
       <div className="container mx-auto px-6 py-16 max-w-4xl">
         <div className="mb-10">
           <h1 className="text-3xl font-black text-foreground mb-2">Sitemap</h1>
-          <p className="text-sm text-muted-foreground">All pages on AdSenseAI</p>
+          <p className="text-sm text-muted-foreground">All pages on AdSense Checker AI</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

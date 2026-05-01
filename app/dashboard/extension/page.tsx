@@ -102,7 +102,7 @@ export default function ExtensionPage() {
                 <Crown className="h-4 w-4" /> Included in Pro
               </div>
               <h2 className="text-3xl md:text-4xl font-black text-white mb-4 leading-tight">
-                Unlock full extension power with AdSenseAI Pro
+                Unlock full extension power with AdSense Checker AI Pro
               </h2>
               <p className="text-white/80 leading-relaxed mb-8">
                 Pro users get unlimited real-time scans, full keyword risk reports, and priority access to our upcoming "Auto-Fix" suggestions.

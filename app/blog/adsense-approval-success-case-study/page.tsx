@@ -40,7 +40,7 @@ const caseStudies = [
     score: 82,
     problem: 'Missing Privacy Policy, 8 thin articles under 300 words, no About page.',
     fix: 'Created Privacy Policy and About pages, rewrote 8 articles to 700+ words, added author bio.',
-    quote: 'I\'d been rejected 3 times. AdSenseAI showed me exactly what was wrong. Fixed both issues, approved in a week.',
+    quote: 'I\'d been rejected 3 times. AdSense Checker AI showed me exactly what was wrong. Fixed both issues, approved in a week.',
   },
   {
     name: 'Marcus T. — Tech Blog',

@@ -372,7 +372,7 @@ function buildFallbackAdvice(
     {
       timeframe: 'Week 5–6',
       task: 'Re-scan & Apply',
-      details: `Run a fresh scan on AdSenseAI to check ${domain}'s new score. If it's 70+, submit your AdSense application at adsense.google.com. Your current score is ${finalScore}/100 — you need to reach at least 65-70 before applying.`
+      details: `Run a fresh scan on AdSense Checker AI to check ${domain}'s new score. If it's 70+, submit your AdSense application at adsense.google.com. Your current score is ${finalScore}/100 — you need to reach at least 65-70 before applying.`
     },
   ]
 
