@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     siteName: 'AdSense Checker AI',
-    ,
+    title: 'AdSense Approval Checker — Free AI Website Audit | AdSense Checker AI',
     description: 'Check if your website is ready for Google AdSense approval. Free AdSense approval checker — AI scans content, policy, SEO & trust signals in 30 seconds.',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'AdSense Checker AI — AdSense Approval Checker' }],
   },
