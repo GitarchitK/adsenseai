@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedProfile, consumeThumbnailCredit, getThumbnailCredits } from '@/lib/auth-server'
 import { hasFeature } from '@/lib/plans'
-import OpenAI from 'openai'
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+import openaiClient from '@/services/openai'
 
 export async function POST(request: NextRequest) {
   const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
@@ -35,7 +33,7 @@ Style requirements:
 - Bold typography-friendly layout with clear focal point
 - Vibrant but not overwhelming colors (blue, purple, teal, orange palette)
 - No text or words in the image — pure visual storytelling
-- High contrast, thumbnail-optimized composition (16:9 aspect ratio)
+- High contrast, thumbnail-optimized composition
 - Suitable for a tech/business/lifestyle blog
 - Cinematic lighting and depth
 - Centered subject matter with abstract digital elements`
@@ -46,7 +44,7 @@ Style requirements:
       return NextResponse.json({ error: 'Failed to consume thumbnail credit.', upgrade_required: true }, { status: 403 })
     }
 
-    const response = await openai.images.generate({
+    const response = await openaiClient.images.generate({
       model: 'dall-e-3',
       prompt,
       n: 1,
