@@ -48,7 +48,7 @@ export function DashboardSidebar() {
         feature={modalFeature}
       />
 
-      <aside className="fixed left-0 top-0 z-40 hidden h-screen w-64 md:flex flex-col bg-sidebar border-r border-sidebar-border">
+      <aside className="fixed left-0 top-0 z-40 h-screen w-64 flex flex-col bg-sidebar border-r border-sidebar-border">
 
       {/* Logo */}
       <div className="flex items-center gap-2.5 px-5 h-16 border-b border-sidebar-border flex-shrink-0">
