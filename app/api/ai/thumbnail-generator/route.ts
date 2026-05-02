@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedProfile, consumeThumbnailCredit, getThumbnailCredits } from '@/lib/auth-server'
 import { hasFeature } from '@/lib/plans'
-import openaiClient from '@/services/openai'
+import OpenAI from 'openai'
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 export async function POST(request: NextRequest) {
   const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
@@ -33,10 +35,12 @@ Style requirements:
 - Bold typography-friendly layout with clear focal point
 - Vibrant but not overwhelming colors (blue, purple, teal, orange palette)
 - No text or words in the image — pure visual storytelling
-- High contrast, thumbnail-optimized composition
+- High contrast, thumbnail-optimized composition (16:9 aspect ratio)
 - Suitable for a tech/business/lifestyle blog
 - Cinematic lighting and depth
-- Centered subject matter with abstract digital elements`
+- Centered subject matter with abstract digital elements
+
+Return the image as a URL.`
 
   try {
     const consumed = await consumeThumbnailCredit(profile.uid)
@@ -44,7 +48,7 @@ Style requirements:
       return NextResponse.json({ error: 'Failed to consume thumbnail credit.', upgrade_required: true }, { status: 403 })
     }
 
-    const response = await openaiClient.images.generate({
+    const response = await openai.images.generate({
       model: 'dall-e-3',
       prompt,
       n: 1,
@@ -53,7 +57,7 @@ Style requirements:
     })
 
     const imageUrl = response.data?.[0]?.url
-    if (!imageUrl) throw new Error('No image URL returned from OpenAI')
+    if (!imageUrl) throw new Error('No image URL returned')
 
     return NextResponse.json({
       image_url: imageUrl,
@@ -61,15 +65,7 @@ Style requirements:
       credits_remaining: credits.remaining - 1,
     })
   } catch (error) {
-    const msg = (error as Error).message ?? 'Unknown error'
-    console.error('[Thumbnail Generator] Error:', msg)
-
-    if (msg.includes('content_policy') || msg.includes('safety')) {
-      return NextResponse.json({ error: 'Image was rejected by content policy. Try a different description.' }, { status: 400 })
-    }
-    if (msg.includes('billing') || msg.includes('quota') || msg.includes('insufficient_quota')) {
-      return NextResponse.json({ error: 'OpenAI quota exceeded. Please contact support.' }, { status: 503 })
-    }
-    return NextResponse.json({ error: `Thumbnail generation failed: ${msg}` }, { status: 500 })
+    console.error('[Thumbnail Generator] Error:', error)
+    return NextResponse.json({ error: 'Failed to generate thumbnail. Please try again.' }, { status: 500 })
   }
 }

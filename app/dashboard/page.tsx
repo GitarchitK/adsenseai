@@ -503,7 +503,6 @@ export default function DashboardPage() {
               </Link>
             </Card>
           )}
-
           <Card className="p-6 border-border/60 rounded-2xl bg-card group cursor-pointer hover:border-primary/40 transition-colors relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
             <Link href="/dashboard/extension" className="flex items-start gap-4">

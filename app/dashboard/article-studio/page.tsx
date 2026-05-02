@@ -80,7 +80,7 @@ function ProBadge() {
 // ── Main Studio Component ──────────────────────────────────────────────────────
 
 export default function ArticleStudioPage() {
-  const { profile, loading: profileLoading, getToken } = useProfile()
+  const { profile, loading: profileLoading } = useProfile()
   const [showUpgrade, setShowUpgrade] = useState(false)
 
   const [topic, setTopic] = useState('')
@@ -124,7 +124,7 @@ export default function ArticleStudioPage() {
     const start = Date.now()
 
     try {
-      const t = await getToken()
+      const t = localStorage.getItem('authToken')
       const res = await fetch('/api/ai/article-writer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(t ? { Authorization: `Bearer ${t}` } : {}) },
@@ -132,7 +132,6 @@ export default function ArticleStudioPage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Generation failed')
-      if (!data.title || !data.body) throw new Error('Article generation failed — empty response. Please try again.')
 
       setGeneratedArticle(data)
       setGenerationTime(Math.round((Date.now() - start) / 1000))
@@ -154,7 +153,7 @@ export default function ArticleStudioPage() {
     setError('')
 
     try {
-      const t = await getToken()
+      const t = localStorage.getItem('authToken')
       const res = await fetch('/api/ai/thumbnail-generator', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(t ? { Authorization: `Bearer ${t}` } : {}) },

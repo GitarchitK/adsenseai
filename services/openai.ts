@@ -1,11 +1,9 @@
 import OpenAI from 'openai'
 
 // Singleton client — reused across all AI modules
-// Strip surrounding quotes in case the env var was set with quotes in Vercel
-const rawKey = process.env.OPENAI_API_KEY ?? ''
-const apiKey = rawKey.replace(/^["']|["']$/g, '').trim()
-
-const client = new OpenAI({ apiKey })
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+})
 
 /**
  * Shared helper: sends a prompt and forces JSON output.
@@ -15,8 +13,7 @@ export async function callOpenAI<T>(
   systemPrompt: string,
   userContent: string,
   fallback: T,
-  model: 'gpt-4o' | 'gpt-4o-mini' = 'gpt-4o-mini',
-  maxTokens = 2000
+  model: 'gpt-4o' | 'gpt-4o-mini' = 'gpt-4o-mini'
 ): Promise<T> {
   try {
     const response = await client.chat.completions.create({
@@ -27,7 +24,7 @@ export async function callOpenAI<T>(
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userContent },
       ],
-      max_tokens: maxTokens,
+      max_tokens: 2000,
     })
 
     const raw = response.choices[0]?.message?.content

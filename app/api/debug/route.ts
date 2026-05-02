@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
       : false,
   }
 
+  // Try to verify a token if one is provided
   const authHeader = request.headers.get('authorization')
   if (authHeader?.startsWith('Bearer ') && initialized) {
     try {
@@ -34,8 +35,10 @@ export async function GET(request: NextRequest) {
       info.tokenVerification = 'FAILED'
       info.tokenError = (err as Error).message
     }
+  } else if (authHeader?.startsWith('Bearer ') && !initialized) {
+    info.tokenVerification = 'SKIPPED — Admin not initialized'
   } else {
-    info.tokenVerification = 'No token provided'
+    info.tokenVerification = 'No token provided — add Authorization: Bearer <token> header to test'
   }
 
   return NextResponse.json(info, { status: 200 })

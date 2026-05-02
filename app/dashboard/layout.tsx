@@ -6,7 +6,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-background">
       <DashboardSidebar />
-      <main className="md:pl-64">
+      {/* md: offset for sidebar; mobile: top padding for hamburger button */}
+      <main className="md:pl-64 pt-16 md:pt-0">
         {children}
       </main>
     </div>
