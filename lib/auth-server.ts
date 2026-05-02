@@ -111,3 +111,40 @@ export async function adminSetPlan(userId: string, plan: "free" | "pro"): Promis
     await adminDb.collection("users").doc(userId).update({ plan, updatedAt: new Date().toISOString() })
   } catch (err) { console.error("[DB] adminSetPlan:", (err as Error).message) }
 }
+
+export async function adminDeleteUser(userId: string): Promise<void> {
+  try {
+    // Delete from Firestore
+    await adminDb.collection("users").doc(userId).delete()
+    // Delete all scans
+    const scans = await adminDb.collection("scans").where("userId", "==", userId).get()
+    const batch = adminDb.batch()
+    scans.docs.forEach(d => batch.delete(d.ref))
+    await batch.commit()
+    // Delete from Firebase Auth
+    await adminAuth.deleteUser(userId)
+  } catch (err) { console.error("[DB] adminDeleteUser:", (err as Error).message) }
+}
+
+export async function adminGetPayments(limit = 50): Promise<Record<string, unknown>[]> {
+  try {
+    const snap = await adminDb.collection("payments").orderBy("createdAt", "desc").limit(limit).get()
+    if (!snap.empty) return snap.docs.map(d => ({ id: d.id, ...d.data() }))
+    // Fallback: derive payments from users with pro plan
+    const users = await adminGetUsers(100)
+    return users
+      .filter(u => u.plan === 'pro' || u.razorpaySubscriptionId)
+      .map(u => ({
+        id: u.uid,
+        userId: u.uid,
+        email: u.email,
+        name: u.fullName,
+        plan: u.plan,
+        amount: 199,
+        currency: 'INR',
+        status: 'paid',
+        razorpaySubscriptionId: u.razorpaySubscriptionId,
+        createdAt: u.updatedAt ?? u.createdAt,
+      }))
+  } catch (err) { console.error("[DB] adminGetPayments:", (err as Error).message); return [] }
+}
