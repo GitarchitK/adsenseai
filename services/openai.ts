@@ -13,7 +13,8 @@ export async function callOpenAI<T>(
   systemPrompt: string,
   userContent: string,
   fallback: T,
-  model: 'gpt-4o' | 'gpt-4o-mini' = 'gpt-4o-mini'
+  model: 'gpt-4o' | 'gpt-4o-mini' = 'gpt-4o-mini',
+  maxTokens = 2000
 ): Promise<T> {
   try {
     const response = await client.chat.completions.create({
@@ -24,7 +25,7 @@ export async function callOpenAI<T>(
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userContent },
       ],
-      max_tokens: 2000,
+      max_tokens: maxTokens,
     })
 
     const raw = response.choices[0]?.message?.content

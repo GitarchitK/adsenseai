@@ -38,9 +38,7 @@ Style requirements:
 - High contrast, thumbnail-optimized composition (16:9 aspect ratio)
 - Suitable for a tech/business/lifestyle blog
 - Cinematic lighting and depth
-- Centered subject matter with abstract digital elements
-
-Return the image as a URL.`
+- Centered subject matter with abstract digital elements`
 
   try {
     const consumed = await consumeThumbnailCredit(profile.uid)
@@ -57,7 +55,7 @@ Return the image as a URL.`
     })
 
     const imageUrl = response.data?.[0]?.url
-    if (!imageUrl) throw new Error('No image URL returned')
+    if (!imageUrl) throw new Error('No image URL returned from OpenAI')
 
     return NextResponse.json({
       image_url: imageUrl,
@@ -65,7 +63,15 @@ Return the image as a URL.`
       credits_remaining: credits.remaining - 1,
     })
   } catch (error) {
-    console.error('[Thumbnail Generator] Error:', error)
-    return NextResponse.json({ error: 'Failed to generate thumbnail. Please try again.' }, { status: 500 })
+    const msg = (error as Error).message ?? 'Unknown error'
+    console.error('[Thumbnail Generator] Error:', msg)
+
+    if (msg.includes('content_policy') || msg.includes('safety')) {
+      return NextResponse.json({ error: 'Image was rejected by content policy. Try a different description.' }, { status: 400 })
+    }
+    if (msg.includes('billing') || msg.includes('quota') || msg.includes('insufficient_quota')) {
+      return NextResponse.json({ error: 'OpenAI quota exceeded. Please contact support.' }, { status: 503 })
+    }
+    return NextResponse.json({ error: `Thumbnail generation failed: ${msg}` }, { status: 500 })
   }
 }

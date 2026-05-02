@@ -132,6 +132,7 @@ export default function ArticleStudioPage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Generation failed')
+      if (!data.title || !data.body) throw new Error('Article generation failed — empty response. Please try again.')
 
       setGeneratedArticle(data)
       setGenerationTime(Math.round((Date.now() - start) / 1000))

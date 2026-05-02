@@ -73,8 +73,14 @@ Return a single JSON object:
     }>(
       'You are an expert SEO content writer and blog strategist with 10+ years of experience.',
       prompt,
-      { title: '', meta_description: '', introduction: '', body: '', conclusion: '', faq: [], secondary_keywords: [], estimated_read_time: '', word_count: 0 }
+      { title: '', meta_description: '', introduction: '', body: '', conclusion: '', faq: [], secondary_keywords: [], estimated_read_time: '', word_count: 0 },
+      'gpt-4o',
+      4096
     )
+
+    if (!result.title || !result.body) {
+      return NextResponse.json({ error: 'Article generation failed — OpenAI returned an empty response. Please try again.' }, { status: 500 })
+    }
 
     return NextResponse.json(result)
   } catch (error) {
