@@ -80,7 +80,7 @@ function ProBadge() {
 // ── Main Studio Component ──────────────────────────────────────────────────────
 
 export default function ArticleStudioPage() {
-  const { profile, loading: profileLoading } = useProfile()
+  const { profile, loading: profileLoading, getToken } = useProfile()
   const [showUpgrade, setShowUpgrade] = useState(false)
 
   const [topic, setTopic] = useState('')
@@ -124,7 +124,7 @@ export default function ArticleStudioPage() {
     const start = Date.now()
 
     try {
-      const t = localStorage.getItem('authToken')
+      const t = await getToken()
       const res = await fetch('/api/ai/article-writer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(t ? { Authorization: `Bearer ${t}` } : {}) },
@@ -153,7 +153,7 @@ export default function ArticleStudioPage() {
     setError('')
 
     try {
-      const t = localStorage.getItem('authToken')
+      const t = await getToken()
       const res = await fetch('/api/ai/thumbnail-generator', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(t ? { Authorization: `Bearer ${t}` } : {}) },
