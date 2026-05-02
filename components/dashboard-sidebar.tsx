@@ -19,16 +19,16 @@ const navItems = [
   { name: 'Settings',   href: '/dashboard/settings', icon: Settings        },
 ]
 
-// Thumbnail Maker and Article Studio removed
+// All tools live on /dashboard/ai-tools — use hash anchors to scroll to each
 const proNavItems = [
-  { name: 'Article Analyzer',  href: '/dashboard/articles',        icon: BookOpen   },
-  { name: 'Privacy Policy',    href: '/dashboard/privacy-policy',  icon: FileText   },
-  { name: 'Content Rewriter',  href: '/dashboard/rewrite',         icon: PenLine    },
-  { name: 'SEO Suggestions',   href: '/dashboard/seo',             icon: Search     },
-  { name: 'Meta Generator',    href: '/dashboard/meta',            icon: FileText   },
-  { name: 'Title Generator',   href: '/dashboard/titles',          icon: Sparkles   },
-  { name: 'Keyword Density',   href: '/dashboard/keyword-density', icon: BarChart3  },
-  { name: 'Policy Checker',    href: '/dashboard/policy',          icon: ShieldCheck},
+  { name: 'Article Analyzer',  href: '/dashboard/articles',        icon: BookOpen,    anchor: ''                  },
+  { name: 'Privacy Policy',    href: '/dashboard/ai-tools',        icon: FileText,    anchor: '#privacy-policy'   },
+  { name: 'Content Rewriter',  href: '/dashboard/ai-tools',        icon: PenLine,     anchor: '#content-rewriter' },
+  { name: 'SEO Suggestions',   href: '/dashboard/ai-tools',        icon: Search,      anchor: '#seo-suggestions'  },
+  { name: 'Meta Generator',    href: '/dashboard/ai-tools',        icon: FileText,    anchor: '#meta-generator'   },
+  { name: 'Title Generator',   href: '/dashboard/ai-tools',        icon: Sparkles,    anchor: '#title-generator'  },
+  { name: 'Keyword Density',   href: '/dashboard/ai-tools',        icon: BarChart3,   anchor: '#keyword-density'  },
+  { name: 'Policy Checker',    href: '/dashboard/ai-tools',        icon: ShieldCheck, anchor: '#policy-checker'   },
 ]
 
 // ── Shared sidebar content ────────────────────────────────────────────────────
@@ -95,16 +95,27 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         <div className="pt-5">
           <p className="px-3 text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-2">AI Tools</p>
           {isPro ? (
-            proNavItems.map(({ name, href, icon: Icon }) => (
-              <Link key={href} href={href} onClick={onClose} className={linkCls(href)}>
-                <Icon className="h-4 w-4 flex-shrink-0" />
-                {name}
-              </Link>
-            ))
+            proNavItems.map(({ name, href, anchor, icon: Icon }) => {
+              const fullHref = href + anchor
+              const isActive = anchor
+                ? pathname === href  // highlight all ai-tools links when on that page
+                : pathname === href || pathname.startsWith(href + '/')
+              return (
+                <Link key={name} href={fullHref} onClick={onClose} className={cn(
+                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150',
+                  isActive
+                    ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
+                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                )}>
+                  <Icon className="h-4 w-4 flex-shrink-0" />
+                  {name}
+                </Link>
+              )
+            })
           ) : (
-            proNavItems.map(({ name, href, icon: Icon }) => (
+            proNavItems.map(({ name, icon: Icon }) => (
               <button
-                key={href}
+                key={name}
                 onClick={() => openUpgrade(name)}
                 className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-sidebar-accent transition-all group"
               >

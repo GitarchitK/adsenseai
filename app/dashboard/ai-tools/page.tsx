@@ -80,11 +80,11 @@ function LockedTool({ icon, title, description, onUnlock }: {
   )
 }
 
-function ToolCard({ icon, title, description, badge, children }: {
-  icon: React.ReactNode; title: string; description: string; badge?: string; children: React.ReactNode
+function ToolCard({ id, icon, title, description, badge, children }: {
+  id?: string; icon: React.ReactNode; title: string; description: string; badge?: string; children: React.ReactNode
 }) {
   return (
-    <Card className="p-6 border-border/60">
+    <Card id={id} className="p-6 border-border/60 scroll-mt-6">
       <div className="flex items-center gap-3 mb-5">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400">{icon}</div>
         <div className="flex-1">
@@ -801,7 +801,7 @@ export default function AIToolsPage() {
 
           {/* ── Privacy Policy Generator ── */}
           {isPro ? (
-            <ToolCard icon={<FileText className="h-4 w-4" />} title="Privacy Policy Generator" description="Generate an AdSense-compliant Privacy Policy for your site">
+            <ToolCard id="privacy-policy" icon={<FileText className="h-4 w-4" />} title="Privacy Policy Generator" description="Generate an AdSense-compliant Privacy Policy for your site">
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <Input placeholder="yourdomain.com" value={ppDomain} onChange={e => setPpDomain(e.target.value)} className="rounded-xl bg-muted/30 border-border/80" />
@@ -829,7 +829,7 @@ export default function AIToolsPage() {
 
           {/* ── Content Rewriter ── */}
           {isPro ? (
-            <ToolCard icon={<PenLine className="h-4 w-4" />} title="Content Rewriter" description="Improve low-quality content to meet AdSense standards">
+            <ToolCard id="content-rewriter" icon={<PenLine className="h-4 w-4" />} title="Content Rewriter" description="Improve low-quality content to meet AdSense standards">
               <div className="space-y-3">
                 <textarea
                   className="w-full rounded-xl border border-border/80 bg-muted/30 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring min-h-[120px] resize-y"
@@ -865,7 +865,7 @@ export default function AIToolsPage() {
 
           {/* ── SEO Suggestions ── */}
           {isPro ? (
-            <ToolCard icon={<Search className="h-4 w-4" />} title="SEO Optimization" description="Get targeted SEO suggestions for your domain">
+            <ToolCard id="seo-suggestions" icon={<Search className="h-4 w-4" />} title="SEO Optimization" description="Get targeted SEO suggestions for your domain">
               <div className="space-y-3">
                 <Input placeholder="yourdomain.com" value={seoDomain} onChange={e => setSeoDomain(e.target.value)} className="rounded-xl bg-muted/30 border-border/80" />
                 <Button onClick={getSeoSuggestions} disabled={seoLoading || !seoDomain} className="gap-2 rounded-xl">
@@ -995,7 +995,7 @@ export default function AIToolsPage() {
 
           {/* ── Meta Description Generator ── */}
           {isPro ? (
-            <ToolCard icon={<FileText className="h-4 w-4" />} title="Meta Description Generator" description="Generate 3 SEO-optimized meta descriptions from a title or content" badge="New">
+            <ToolCard id="meta-generator" icon={<FileText className="h-4 w-4" />} title="Meta Description Generator" description="Generate 3 SEO-optimized meta descriptions from a title or content" badge="New">
               <MetaGeneratorTool getAuthHeader={getAuthHeader} />
             </ToolCard>
           ) : (
@@ -1004,7 +1004,7 @@ export default function AIToolsPage() {
 
           {/* ── Article Title Generator ── */}
           {isPro ? (
-            <ToolCard icon={<Sparkles className="h-4 w-4" />} title="Article Title Generator" description="Generate 5 SEO-optimized article titles for any topic" badge="New">
+            <ToolCard id="title-generator" icon={<Sparkles className="h-4 w-4" />} title="Article Title Generator" description="Generate 5 SEO-optimized article titles for any topic" badge="New">
               <TitleGeneratorTool getAuthHeader={getAuthHeader} />
             </ToolCard>
           ) : (
@@ -1013,7 +1013,7 @@ export default function AIToolsPage() {
 
           {/* ── Keyword Density Analyzer ── */}
           {isPro ? (
-            <ToolCard icon={<BarChart3 className="h-4 w-4" />} title="Keyword Density Analyzer" description="Paste your article and instantly detect keyword stuffing" badge="New">
+            <ToolCard id="keyword-density" icon={<BarChart3 className="h-4 w-4" />} title="Keyword Density Analyzer" description="Paste your article and instantly detect keyword stuffing" badge="New">
               <KeywordDensityTool getAuthHeader={getAuthHeader} />
             </ToolCard>
           ) : (
@@ -1022,7 +1022,7 @@ export default function AIToolsPage() {
 
           {/* ── AdSense Content Policy Checker ── */}
           {isPro ? (
-            <ToolCard icon={<ShieldCheck className="h-4 w-4" />} title="AdSense Content Policy Checker" description="Paste any article and get an instant AdSense policy compliance check" badge="New">
+            <ToolCard id="policy-checker" icon={<ShieldCheck className="h-4 w-4" />} title="AdSense Content Policy Checker" description="Paste any article and get an instant AdSense policy compliance check" badge="New">
               <ContentPolicyTool getAuthHeader={getAuthHeader} />
             </ToolCard>
           ) : (
