@@ -1,9 +1,11 @@
 import OpenAI from 'openai'
 
 // Singleton client — reused across all AI modules
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Strip surrounding quotes in case the env var was set with quotes in Vercel
+const rawKey = process.env.OPENAI_API_KEY ?? ''
+const apiKey = rawKey.replace(/^["']|["']$/g, '').trim()
+
+const client = new OpenAI({ apiKey })
 
 /**
  * Shared helper: sends a prompt and forces JSON output.
