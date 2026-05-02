@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { LayoutDashboard, Settings, LogOut, History, Sparkles, Crown, Zap, BookOpen } from 'lucide-react'
+import { LayoutDashboard, Settings, LogOut, History, Sparkles, Crown, BookOpen } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { useProfile } from '@/hooks/use-profile'
 import { UpgradeModal } from './upgrade-modal'
@@ -16,8 +16,9 @@ const navItems = [
 ]
 
 const proNavItems = [
-  { name: 'AI Tools', href: '/dashboard/ai-tools', icon: Sparkles },
   { name: 'Article Analyzer', href: '/dashboard/articles', icon: BookOpen },
+  { name: 'Article Studio', href: '/dashboard/article-studio', icon: Sparkles },
+  { name: 'AI Tools', href: '/dashboard/ai-tools', icon: Sparkles },
 ]
 
 export function DashboardSidebar() {
