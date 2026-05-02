@@ -11,7 +11,7 @@ import {
 import { signOut } from '@/lib/auth'
 import { useProfile } from '@/hooks/use-profile'
 import { UpgradeModal } from './upgrade-modal'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const navItems = [
   { name: 'Dashboard',  href: '/dashboard',          icon: LayoutDashboard },
@@ -19,16 +19,16 @@ const navItems = [
   { name: 'Settings',   href: '/dashboard/settings', icon: Settings        },
 ]
 
-// All tools live on /dashboard/ai-tools — use hash anchors to scroll to each
+// Each tool has a unique anchor — only the matching one highlights
 const proNavItems = [
-  { name: 'Article Analyzer',  href: '/dashboard/articles',        icon: BookOpen,    anchor: ''                  },
-  { name: 'Privacy Policy',    href: '/dashboard/ai-tools',        icon: FileText,    anchor: '#privacy-policy'   },
-  { name: 'Content Rewriter',  href: '/dashboard/ai-tools',        icon: PenLine,     anchor: '#content-rewriter' },
-  { name: 'SEO Suggestions',   href: '/dashboard/ai-tools',        icon: Search,      anchor: '#seo-suggestions'  },
-  { name: 'Meta Generator',    href: '/dashboard/ai-tools',        icon: FileText,    anchor: '#meta-generator'   },
-  { name: 'Title Generator',   href: '/dashboard/ai-tools',        icon: Sparkles,    anchor: '#title-generator'  },
-  { name: 'Keyword Density',   href: '/dashboard/ai-tools',        icon: BarChart3,   anchor: '#keyword-density'  },
-  { name: 'Policy Checker',    href: '/dashboard/ai-tools',        icon: ShieldCheck, anchor: '#policy-checker'   },
+  { name: 'Article Analyzer',  href: '/dashboard/articles',  anchor: '',                   icon: BookOpen    },
+  { name: 'Privacy Policy',    href: '/dashboard/ai-tools',  anchor: '#privacy-policy',    icon: FileText    },
+  { name: 'Content Rewriter',  href: '/dashboard/ai-tools',  anchor: '#content-rewriter',  icon: PenLine     },
+  { name: 'SEO Suggestions',   href: '/dashboard/ai-tools',  anchor: '#seo-suggestions',   icon: Search      },
+  { name: 'Meta Generator',    href: '/dashboard/ai-tools',  anchor: '#meta-generator',    icon: FileText    },
+  { name: 'Title Generator',   href: '/dashboard/ai-tools',  anchor: '#title-generator',   icon: Sparkles    },
+  { name: 'Keyword Density',   href: '/dashboard/ai-tools',  anchor: '#keyword-density',   icon: BarChart3   },
+  { name: 'Policy Checker',    href: '/dashboard/ai-tools',  anchor: '#policy-checker',    icon: ShieldCheck },
 ]
 
 // ── Shared sidebar content ────────────────────────────────────────────────────
@@ -36,8 +36,17 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname()
   const router   = useRouter()
   const { isPro, usage, profile } = useProfile()
-  const [modalOpen, setModalOpen]     = useState(false)
+  const [modalOpen, setModalOpen]       = useState(false)
   const [modalFeature, setModalFeature] = useState('')
+  const [hash, setHash]                 = useState('')
+
+  // Track hash client-side (Next.js usePathname doesn't include hash)
+  useEffect(() => {
+    const update = () => setHash(window.location.hash)
+    update()
+    window.addEventListener('hashchange', update)
+    return () => window.removeEventListener('hashchange', update)
+  }, [pathname])
 
   const handleLogout = async () => {
     await signOut()
@@ -51,13 +60,19 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
 
   const initial = (profile?.fullName?.[0] ?? profile?.email?.[0] ?? '?').toUpperCase()
 
-  const linkCls = (href: string) =>
-    cn(
-      'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150',
-      (pathname === href || (href !== '/dashboard' && pathname.startsWith(href)))
-        ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
-        : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-    )
+  // Active check for regular nav items
+  const isNavActive = (href: string) =>
+    pathname === href || (href !== '/dashboard' && pathname.startsWith(href + '/'))
+
+  // Active check for pro tool items — must match both path AND hash
+  const isToolActive = (href: string, anchor: string) => {
+    if (!anchor) {
+      // No anchor = exact path match (Article Analyzer → /dashboard/articles)
+      return pathname === href || pathname.startsWith(href + '/')
+    }
+    // Has anchor = must be on that path AND hash must match
+    return pathname === href && hash === anchor
+  }
 
   return (
     <>
@@ -85,7 +100,12 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
       <nav className="flex-1 px-3 py-5 space-y-0.5 overflow-y-auto">
         <p className="px-3 text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-2">Main</p>
         {navItems.map(({ name, href, icon: Icon }) => (
-          <Link key={href} href={href} onClick={onClose} className={linkCls(href)}>
+          <Link key={href} href={href} onClick={onClose} className={cn(
+            'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150',
+            isNavActive(href)
+              ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
+              : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+          )}>
             <Icon className="h-4 w-4 flex-shrink-0" />
             {name}
           </Link>
@@ -95,23 +115,22 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         <div className="pt-5">
           <p className="px-3 text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-2">AI Tools</p>
           {isPro ? (
-            proNavItems.map(({ name, href, anchor, icon: Icon }) => {
-              const fullHref = href + anchor
-              const isActive = anchor
-                ? pathname === href  // highlight all ai-tools links when on that page
-                : pathname === href || pathname.startsWith(href + '/')
-              return (
-                <Link key={name} href={fullHref} onClick={onClose} className={cn(
+            proNavItems.map(({ name, href, anchor, icon: Icon }) => (
+              <Link
+                key={name}
+                href={href + anchor}
+                onClick={onClose}
+                className={cn(
                   'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150',
-                  isActive
+                  isToolActive(href, anchor)
                     ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
                     : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                )}>
-                  <Icon className="h-4 w-4 flex-shrink-0" />
-                  {name}
-                </Link>
-              )
-            })
+                )}
+              >
+                <Icon className="h-4 w-4 flex-shrink-0" />
+                {name}
+              </Link>
+            ))
           ) : (
             proNavItems.map(({ name, icon: Icon }) => (
               <button
