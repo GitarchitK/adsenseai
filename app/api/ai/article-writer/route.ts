@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedProfile } from '@/lib/auth-server'
 import { hasFeature } from '@/lib/plans'
-import { callOpenAI } from '@/services/openai'
+import OpenAI from 'openai'
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 export async function POST(request: NextRequest) {
   const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
@@ -17,74 +19,81 @@ export async function POST(request: NextRequest) {
   const selectedTone = tone || 'informative'
   const selectedAudience = target_audience || 'general readers interested in the topic'
 
-  const prompt = `You are an expert SEO content writer and blog strategist. Write a complete, publication-ready blog article.
+  const systemPrompt = `You are an expert SEO content writer. You MUST respond with valid JSON only — no markdown, no code blocks, no extra text. Just raw JSON.`
 
-## Article Requirements
-- Topic: ${topic}
-- Target Keyword: ${keyword || topic}
-- Niche: ${niche || 'general'}
-- Tone: ${selectedTone}
-- Target Audience: ${selectedAudience}
-- Target Word Count: ~${targetWords} words
+  const userPrompt = `Write a complete blog article and return it as a JSON object.
 
-## Structure Required
-Write the article with these exact sections:
-1. **SEO Title** (50-60 chars, include keyword)
-2. **Meta Description** (150-160 chars, compelling summary with keyword)
-3. **Introduction** (hook the reader, state the promise, 100-150 words)
-4. **Main Body** (use H2 and H3 subheadings, 4-8 sections depending on topic depth)
-5. **Conclusion** (summary + clear call to action, 100-150 words)
+Topic: ${topic}
+Target Keyword: ${keyword || topic}
+Niche: ${niche || 'general'}
+Tone: ${selectedTone}
+Target Audience: ${selectedAudience}
+Target Word Count: ~${targetWords} words
 
-## Content Guidelines
-- Write in clear, engaging English — no fluff or padding
-- Each section must be substantive with real depth and value
-- Use numbered lists, bullet points, and bold text for scannability
-- Include a FAQ section at the end (3-5 questions based on the topic)
-- End with a compelling call-to-action that encourages newsletter signup or engagement
-- Target 3-5 secondary keywords naturally throughout the article
-- Make content original, evidence-based, and actionable
-- Write like a confident expert — clear assertions, no hedging
-
-## Return Format
-Return a single JSON object:
+Return this exact JSON structure:
 {
-  "title": "SEO-optimized article title",
-  "meta_description": "compelling 155-char description",
-  "introduction": "full introduction text",
-  "body": "full body text with all headings and formatting",
-  "conclusion": "full conclusion text",
+  "title": "SEO title 50-60 chars",
+  "meta_description": "compelling 150-160 char description with keyword",
+  "introduction": "hook paragraph 100-150 words",
+  "body": "full article body with H2/H3 headings, lists, and depth — at least ${Math.round(targetWords * 0.7)} words",
+  "conclusion": "summary and CTA 100-150 words",
   "faq": [{"question": "...", "answer": "..."}],
-  "secondary_keywords": ["keyword1", "keyword2", "keyword3"],
-  "estimated_read_time": "5 min",
-  "word_count": 1200
-}`
+  "secondary_keywords": ["kw1", "kw2", "kw3"],
+  "estimated_read_time": "X min read",
+  "word_count": ${targetWords}
+}
+
+Rules:
+- body must be substantive with real depth, use \\n\\n between sections
+- Include 3-5 FAQ items
+- No placeholder text — write real content
+- Return ONLY the JSON object, nothing else`
 
   try {
-    const result = await callOpenAI<{
-      title: string
-      meta_description: string
-      introduction: string
-      body: string
-      conclusion: string
-      faq: Array<{ question: string; answer: string }>
-      secondary_keywords: string[]
-      estimated_read_time: string
-      word_count: number
-    }>(
-      'You are an expert SEO content writer and blog strategist with 10+ years of experience.',
-      prompt,
-      { title: '', meta_description: '', introduction: '', body: '', conclusion: '', faq: [], secondary_keywords: [], estimated_read_time: '', word_count: 0 },
-      'gpt-4o',
-      4096
-    )
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      temperature: 0.4,
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      max_tokens: 4096,
+    })
+
+    const raw = response.choices[0]?.message?.content
+    if (!raw) {
+      const finishReason = response.choices[0]?.finish_reason
+      console.error('[Article Writer] Empty response, finish_reason:', finishReason)
+      return NextResponse.json({
+        error: `OpenAI returned empty content (finish_reason: ${finishReason}). Please try again.`
+      }, { status: 500 })
+    }
+
+    let result
+    try {
+      result = JSON.parse(raw)
+    } catch (parseErr) {
+      console.error('[Article Writer] JSON parse error. Raw:', raw.slice(0, 500))
+      return NextResponse.json({ error: 'Failed to parse AI response. Please try again.' }, { status: 500 })
+    }
 
     if (!result.title || !result.body) {
-      return NextResponse.json({ error: 'Article generation failed — OpenAI returned an empty response. Please try again.' }, { status: 500 })
+      console.error('[Article Writer] Missing fields. Keys:', Object.keys(result))
+      return NextResponse.json({ error: 'AI returned incomplete article. Please try again.' }, { status: 500 })
     }
 
     return NextResponse.json(result)
   } catch (error) {
-    console.error('[Article Writer] Error:', error)
-    return NextResponse.json({ error: 'Failed to generate article. Please try again.' }, { status: 500 })
+    const msg = (error as Error).message ?? 'Unknown error'
+    console.error('[Article Writer] OpenAI error:', msg)
+
+    if (msg.includes('billing') || msg.includes('quota') || msg.includes('insufficient_quota')) {
+      return NextResponse.json({ error: 'OpenAI quota exceeded. Please contact support.' }, { status: 503 })
+    }
+    if (msg.includes('context_length') || msg.includes('maximum context')) {
+      return NextResponse.json({ error: 'Prompt too long. Try a shorter topic description.' }, { status: 400 })
+    }
+    return NextResponse.json({ error: `Article generation failed: ${msg}` }, { status: 500 })
   }
 }
