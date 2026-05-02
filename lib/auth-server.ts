@@ -1,6 +1,7 @@
-﻿import { adminAuth, adminDb, isAdminInitialized } from "./firebase-admin"
+import { adminAuth, adminDb, isAdminInitialized } from "./firebase-admin"
 import type { UserProfile, ScanRecord } from "./firebase-types"
 import { FieldValue } from "firebase-admin/firestore"
+import { PLANS } from './plans'
 
 export async function verifyToken(authHeader: string | null) {
   if (!authHeader?.startsWith("Bearer ")) return null
@@ -30,6 +31,7 @@ export async function getAuthenticatedProfile(authHeader: string | null): Promis
         uid: decoded.uid, email: decoded.email ?? "", fullName: decoded.name ?? null,
         plan: "free", razorpayCustomerId: null, razorpaySubscriptionId: null,
         scansThisMonth: 0, scansMonthKey: now.slice(0, 7), totalScans: 0,
+        thumbnailCreditsThisMonth: 0, thumbnailMonthKey: now.slice(0, 7),
         createdAt: now, updatedAt: now,
       }
       await adminDb.collection("users").doc(decoded.uid).set(profile)
@@ -56,6 +58,41 @@ export async function incrementScanCount(userId: string): Promise<void> {
       updatedAt: new Date().toISOString(),
     })
   } catch (err) { console.error("[auth-server] incrementScanCount:", (err as Error).message) }
+}
+
+export async function consumeThumbnailCredit(userId: string): Promise<boolean> {
+  try {
+    const monthKey = new Date().toISOString().slice(0, 7)
+    const ref = adminDb.collection("users").doc(userId)
+    const snap = await ref.get()
+    const profile = snap.data() as UserProfile | undefined
+    if (!profile) return false
+
+    if (profile.plan !== 'pro') return false
+    if (profile.thumbnailMonthKey !== monthKey) {
+      await ref.update({
+        thumbnailCreditsThisMonth: PLANS.pro.thumbnail_credits - 1,
+        thumbnailMonthKey: monthKey,
+        updatedAt: new Date().toISOString(),
+      })
+    } else {
+      const remaining = profile.thumbnailCreditsThisMonth
+      if (remaining <= 0) return false
+      await ref.update({
+        thumbnailCreditsThisMonth: FieldValue.increment(-1),
+        updatedAt: new Date().toISOString(),
+      })
+    }
+    return true
+  } catch (err) { console.error("[auth-server] consumeThumbnailCredit:", (err as Error).message); return false }
+}
+
+export async function getThumbnailCredits(profile: UserProfile): Promise<{ remaining: number; limit: number }> {
+  const monthKey = new Date().toISOString().slice(0, 7)
+  const limit = PLANS[profile.plan]?.thumbnail_credits ?? 0
+  if (profile.plan !== 'pro') return { remaining: 0, limit }
+  if (profile.thumbnailMonthKey !== monthKey) return { remaining: limit, limit }
+  return { remaining: profile.thumbnailCreditsThisMonth, limit }
 }
 
 export async function saveScan(userId: string, data: Omit<ScanRecord, "id" | "createdAt">): Promise<string | null> {

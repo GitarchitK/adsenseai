@@ -7,10 +7,11 @@ export interface UserProfile {
   plan: Plan
   razorpayCustomerId: string | null
   razorpaySubscriptionId: string | null
-  // Monthly usage (resets on 1st of each month)
   scansThisMonth: number
-  scansMonthKey: string    // 'YYYY-MM'
+  scansMonthKey: string
   totalScans: number
+  thumbnailCreditsThisMonth: number
+  thumbnailMonthKey: string
   createdAt: string
   updatedAt: string
 }

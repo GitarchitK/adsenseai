@@ -31,6 +31,8 @@ export async function ensureUserProfile(
     scansThisMonth: 0,
     scansMonthKey: now.slice(0, 7),
     totalScans: 0,
+    thumbnailCreditsThisMonth: 0,
+    thumbnailMonthKey: now.slice(0, 7),
     createdAt: now,
     updatedAt: now,
   }

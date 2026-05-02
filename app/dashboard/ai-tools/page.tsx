@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import {
   Sparkles, FileText, PenLine, Search, Crown, Copy, CheckCircle2,
   Lock, AlertCircle, AlertTriangle, Lightbulb, ShieldCheck, BookOpen,
-  ArrowRight, BarChart3, Zap, RefreshCw,
+  ArrowRight, BarChart3, Zap, RefreshCw, Image, Download, Link2,
 } from 'lucide-react'
 import { useProfile } from '@/hooks/use-profile'
 import { UpgradeModal } from '@/components/upgrade-modal'
@@ -607,6 +607,16 @@ export default function AIToolsPage() {
   const [seoDomain, setSeoDomain] = useState('')
   const [seoResult, setSeoResult] = useState<Array<{ title: string; description: string; priority: string }>>([])
   const [seoLoading, setSeoLoading] = useState(false)
+
+  // Thumbnail Maker
+  const [thumbTitle, setThumbTitle] = useState('')
+  const [thumbDesc, setThumbDesc] = useState('')
+  const [thumbImageUrl, setThumbImageUrl] = useState('')
+  const [thumbStyle, setThumbStyle] = useState('blog')
+  const [thumbSize, setThumbSize] = useState('wide')
+  const [thumbResult, setThumbResult] = useState<{ imageUrl: string; revisedPrompt: string } | null>(null)
+  const [thumbLoading, setThumbLoading] = useState(false)
+  const [thumbError, setThumbError] = useState('')
   const openUpgrade = (feature: string) => { setModalFeature(feature); setModalOpen(true) }
 
   const getAuthHeader = async () => {
@@ -677,6 +687,34 @@ export default function AIToolsPage() {
     const data = await res.json()
     setSeoResult(data.suggestions ?? [])
     setSeoLoading(false)
+  }
+
+  const generateThumbnail = async () => {
+    if (!thumbTitle && !thumbDesc && !thumbImageUrl) return
+    setThumbLoading(true)
+    setThumbError('')
+    setThumbResult(null)
+    try {
+      const headers = await getAuthHeader()
+      const res = await fetch('/api/ai/thumbnail', {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          articleTitle: thumbTitle,
+          description: thumbDesc,
+          imageUrl: thumbImageUrl,
+          style: thumbStyle,
+          size: thumbSize,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setThumbError(data.error ?? 'Generation failed.'); return }
+      setThumbResult(data)
+    } catch {
+      setThumbError('Network error. Please try again.')
+    } finally {
+      setThumbLoading(false)
+    }
   }
 
   if (isLoading) return null
@@ -852,6 +890,107 @@ export default function AIToolsPage() {
             </ToolCard>
           ) : (
             <LockedTool icon={<Search className="h-4 w-4" />} title="SEO Optimization" description="Get targeted SEO suggestions for your domain" onUnlock={() => openUpgrade('SEO Optimization')} />
+          )}
+
+          {/* ── Thumbnail Maker ── */}
+          {isPro ? (
+            <ToolCard icon={<Image className="h-4 w-4" />} title="Article Thumbnail Maker" description="Generate professional article thumbnails with DALL-E 3" badge="New">
+              <div className="space-y-4">
+                {/* Article title */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Article Title</label>
+                  <Input placeholder="e.g. How to Get AdSense Approved in 2025" value={thumbTitle} onChange={e => setThumbTitle(e.target.value)} className="rounded-xl bg-muted/30 border-border/80" />
+                </div>
+
+                {/* Description */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Describe What You Want <span className="text-muted-foreground/50 normal-case font-normal">(optional)</span></label>
+                  <textarea
+                    className="w-full rounded-xl border border-border/80 bg-muted/30 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring min-h-[80px] resize-y"
+                    placeholder="e.g. A laptop with Google AdSense logo, green approval checkmark, clean modern style..."
+                    value={thumbDesc}
+                    onChange={e => setThumbDesc(e.target.value)}
+                  />
+                </div>
+
+                {/* Reference image URL */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
+                    <Link2 className="h-3 w-3" /> Reference Image URL <span className="text-muted-foreground/50 normal-case font-normal">(optional)</span>
+                  </label>
+                  <Input placeholder="https://example.com/reference-image.jpg" value={thumbImageUrl} onChange={e => setThumbImageUrl(e.target.value)} className="rounded-xl bg-muted/30 border-border/80 font-mono text-xs" />
+                  <p className="text-[11px] text-muted-foreground">AI will analyze the style of this image and use it as reference</p>
+                </div>
+
+                {/* Style + Size */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Style</label>
+                    <select value={thumbStyle} onChange={e => setThumbStyle(e.target.value)}
+                      className="w-full rounded-xl border border-border/80 bg-muted/30 px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring">
+                      <option value="blog">Blog / Article</option>
+                      <option value="youtube">YouTube Thumbnail</option>
+                      <option value="minimal">Minimalist</option>
+                      <option value="vibrant">Vibrant / Colorful</option>
+                      <option value="dark">Dark Theme</option>
+                      <option value="news">News / Editorial</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Size</label>
+                    <select value={thumbSize} onChange={e => setThumbSize(e.target.value)}
+                      className="w-full rounded-xl border border-border/80 bg-muted/30 px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring">
+                      <option value="wide">Wide (1792×1024) — Blog</option>
+                      <option value="square">Square (1024×1024) — Social</option>
+                    </select>
+                  </div>
+                </div>
+
+                <Button onClick={generateThumbnail} disabled={thumbLoading || (!thumbTitle && !thumbDesc && !thumbImageUrl)} className="gap-2 rounded-xl w-full h-11">
+                  {thumbLoading ? <><RefreshCw className="h-4 w-4 animate-spin" /> Generating... (15-30s)</> : <><Sparkles className="h-4 w-4" /> Generate Thumbnail</>}
+                </Button>
+
+                {thumbLoading && (
+                  <div className="py-4 text-center space-y-2">
+                    <div className="h-6 w-6 rounded-full border-2 border-primary border-t-transparent animate-spin mx-auto" />
+                    <p className="text-xs text-muted-foreground">DALL-E 3 is creating your thumbnail...</p>
+                  </div>
+                )}
+
+                {thumbError && (
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/40 text-sm text-red-700 dark:text-red-300">
+                    <AlertCircle className="h-4 w-4 flex-shrink-0" />{thumbError}
+                  </div>
+                )}
+
+                {thumbResult && (
+                  <div className="space-y-3 mt-2">
+                    <div className="relative rounded-xl overflow-hidden border border-border/60 bg-muted/20">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={thumbResult.imageUrl} alt="Generated thumbnail" className="w-full h-auto" />
+                      <div className="absolute top-2 right-2 flex gap-2">
+                        <a href={thumbResult.imageUrl} download="thumbnail.png" target="_blank" rel="noopener noreferrer">
+                          <Button size="sm" className="gap-1.5 text-xs h-8 rounded-lg shadow-lg">
+                            <Download className="h-3.5 w-3.5" /> Download
+                          </Button>
+                        </a>
+                      </div>
+                    </div>
+                    {thumbResult.revisedPrompt && (
+                      <div className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">AI Used This Prompt</p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{thumbResult.revisedPrompt}</p>
+                      </div>
+                    )}
+                    <Button variant="outline" onClick={generateThumbnail} disabled={thumbLoading} className="w-full gap-2 rounded-xl text-xs h-9">
+                      <RefreshCw className="h-3.5 w-3.5" /> Generate Another Variation
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </ToolCard>
+          ) : (
+            <LockedTool icon={<Image className="h-4 w-4" />} title="Article Thumbnail Maker" description="Generate professional thumbnails with DALL-E 3 — describe, upload reference, or use image URL" onUnlock={() => openUpgrade('Thumbnail Maker')} />
           )}
 
           {/* ── Meta Description Generator ── */}

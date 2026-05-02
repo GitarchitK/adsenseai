@@ -2,8 +2,9 @@ import type { Plan } from './firebase-types'
 
 // ── Pricing (in paise — 100 paise = ₹1) ──────────────────────────────────────
 export const PRICES = {
-  report_unlock: 1900,   // ₹19 — one-time per scan AI report unlock
-  pro_monthly:   19900,  // ₹199 — monthly Pro subscription
+  report_unlock:   1900,   // ₹19 — one-time per scan AI report unlock
+  pro_monthly:    19900,   // ₹199 — monthly Pro subscription
+  thumbnail:        500,   // ₹5 — per thumbnail generation (DALL-E 3 is expensive)
 } as const
 
 // ── Plan definitions ──────────────────────────────────────────────────────────
@@ -17,16 +18,18 @@ export const PLANS = {
     content_rewrite: false,
     privacy_generator: false,
     article_analyzer: false,
+    thumbnail_credits: 0,      // no thumbnails on free
   },
   pro: {
     name: 'Pro',
-    scans_per_month: 200,      // 200 scans/month
+    scans_per_month: 200,       // 200 scans/month
     article_crawl_limit: 50,   // crawl up to 50 articles
-    ai_report: true,           // AI report included on every scan
+    ai_report: true,            // AI report included on every scan
     fix_suggestions: true,
     content_rewrite: true,
     privacy_generator: true,
     article_analyzer: true,
+    thumbnail_credits: 20,     // 20 thumbnails/month included
   },
 } as const
 

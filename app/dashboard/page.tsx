@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/card'
 import {
   Zap, AlertCircle, Globe, Crown, Lock, ArrowRight,
   Clock, TrendingUp, BarChart3, Sparkles, CheckCircle2,
-  FileText, Search, Brain, ShieldCheck,
+  FileText, Search, Brain, ShieldCheck, Wand2,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useProfile } from '@/hooks/use-profile'
@@ -481,6 +481,28 @@ export default function DashboardPage() {
               </div>
             </Link>
           </Card>
+
+          {isPro && (
+            <Card className="p-6 border-border/60 rounded-2xl bg-card group cursor-pointer hover:border-primary/40 transition-colors">
+              <Link href="/dashboard/article-studio" className="flex items-start gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <Wand2 className="h-6 w-6" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-bold text-foreground">AI Article Studio</h3>
+                    <span className="text-[10px] font-bold text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-full uppercase tracking-widest">Pro</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Generate full SEO-optimized blog articles with thumbnails from any topic. Publication-ready content in seconds.
+                  </p>
+                  <div className="flex items-center gap-1.5 mt-4 text-xs font-bold text-primary">
+                    Start Writing <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </Link>
+            </Card>
+          )}
 
           <Card className="p-6 border-border/60 rounded-2xl bg-card group cursor-pointer hover:border-primary/40 transition-colors relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
