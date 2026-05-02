@@ -140,7 +140,7 @@ export async function adminGetPayments(limit = 50): Promise<Record<string, unkno
         email: u.email,
         name: u.fullName,
         plan: u.plan,
-        amount: 199,
+        amount: 19900,  // 199 rupees in paise
         currency: 'INR',
         status: 'paid',
         razorpaySubscriptionId: u.razorpaySubscriptionId,

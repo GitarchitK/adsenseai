@@ -126,7 +126,7 @@ export default function AdminPage() {
             { icon: Users, label: 'Total Users', value: users.length, color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' },
             { icon: Crown, label: 'Pro Users', value: proUsers, color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400' },
             { icon: BarChart3, label: 'Total Scans', value: totalScans, color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' },
-            { icon: DollarSign, label: 'Revenue (₹)', value: `₹${totalRevenue.toLocaleString()}`, color: 'bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400' },
+            { icon: DollarSign, label: 'Revenue (₹)', value: `₹${(totalRevenue / 100).toLocaleString('en-IN')}`, color: 'bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400' },
           ].map(({ icon: Icon, label, value, color }) => (
             <Card key={label} className="p-4 border-border/60">
               <div className="flex items-center gap-3">
@@ -255,7 +255,7 @@ export default function AdminPage() {
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
-                          ₹{(p.amount ?? 0).toLocaleString()}
+                          ₹{((p.amount ?? 0) / 100).toLocaleString('en-IN')}
                         </td>
                         <td className="px-4 py-3">
                           <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${p.status === 'paid' || !p.status ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'bg-muted text-muted-foreground'}`}>
