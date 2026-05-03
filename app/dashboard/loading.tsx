@@ -23,9 +23,28 @@ export default function DashboardLoading() {
           0%   { background-position: -200% 0; }
           100% { background-position:  200% 0; }
         }
+        @keyframes fade-in-down {
+          from { opacity: 0; transform: translateY(-8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
       `}</style>
 
       <div className="min-h-screen bg-background">
+
+        {/* ── Loading message banner ── */}
+        <div
+          className="sticky top-0 z-50 flex items-center justify-center gap-3 px-4 py-3 bg-primary/5 border-b border-primary/10 backdrop-blur-sm"
+          style={{ animation: 'fade-in-down 0.4s ease-out' }}
+        >
+          <div className="flex gap-1 items-center">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }} />
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }} />
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }} />
+          </div>
+          <p className="text-sm font-medium text-primary">
+            Hold on, we&apos;re preparing your dashboard…
+          </p>
+        </div>
         <div className="container mx-auto px-4 md:px-6 py-8 max-w-5xl space-y-7">
 
           {/* ── Header ── */}
