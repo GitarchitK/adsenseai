@@ -53,11 +53,13 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icon.svg',   type: 'image/svg+xml' },
+      { url: '/icon.svg',   sizes: '32x32',  type: 'image/svg+xml' },
+      { url: '/icon.svg',   sizes: '16x16',  type: 'image/svg+xml' },
       { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
     ],
     shortcut: '/icon.svg',
-    apple: '/apple-icon.png',
+    apple:    '/apple-icon.png',
   },
   alternates: {
     canonical: 'https://www.adsensechecker.in',
