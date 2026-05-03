@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/card'
 import {
   Zap, AlertCircle, Globe, Crown, Lock, ArrowRight,
   Clock, TrendingUp, BarChart3, Sparkles, CheckCircle2,
-  FileText, Search, Brain, ShieldCheck, Wand2,
+  FileText, Search, ShieldCheck,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useProfile } from '@/hooks/use-profile'
@@ -392,10 +392,10 @@ export default function DashboardPage() {
                     {[
                       { icon: BarChart3, text: 'AdSense readiness score (0–100)', free: true },
                       { icon: CheckCircle2, text: 'Site structure & missing pages', free: true },
-                      { icon: AlertCircle, text: 'Critical issues & warnings', free: true },
-                      { icon: Brain, text: 'Full AI report', free: false, price: '₹19 unlock' },
-                      { icon: Search, text: 'Prioritized fix suggestions', free: false, price: '₹19 unlock' },
-                      { icon: FileText, text: 'Privacy Policy generator', free: false, price: 'Pro only' },
+                      { icon: AlertCircle,  text: 'Critical issues & warnings',     free: true },
+                      { icon: Sparkles,     text: 'Full AI report',                 free: false, price: '₹19 unlock' },
+                      { icon: Search,       text: 'Prioritized fix suggestions',    free: false, price: '₹19 unlock' },
+                      { icon: FileText,     text: 'Privacy Policy generator',       free: false, price: 'Pro only' },
                     ].map(({ icon: Icon, text, free, price }) => (
                       <div key={text} className={`flex items-center gap-2.5 text-sm ${free ? 'text-foreground' : 'text-muted-foreground/60'}`}>
                         {free
@@ -463,47 +463,6 @@ export default function DashboardPage() {
 
         {/* ── Features & Extension ── */}
         <div className="grid md:grid-cols-2 gap-6">
-          <Card className="p-6 border-border/60 rounded-2xl bg-card group cursor-pointer hover:border-primary/40 transition-colors">
-            <Link href="/dashboard/ai-tools" className="flex items-start gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-500/10 text-violet-600 flex-shrink-0 group-hover:scale-110 transition-transform">
-                <Brain className="h-6 w-6" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-bold text-foreground">AI Content Tools</h3>
-                  <span className="text-[10px] font-bold text-violet-600 bg-violet-500/10 px-2 py-0.5 rounded-full uppercase tracking-widest">Included</span>
-                </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Rewrite articles, generate privacy policies, and fix content issues in one click.
-                </p>
-                <div className="flex items-center gap-1.5 mt-4 text-xs font-bold text-primary">
-                  Explore Tools <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
-            </Link>
-          </Card>
-
-          {isPro && (
-            <Card className="p-6 border-border/60 rounded-2xl bg-card group cursor-pointer hover:border-primary/40 transition-colors">
-              <Link href="/dashboard/article-studio" className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <Wand2 className="h-6 w-6" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-bold text-foreground">AI Article Studio</h3>
-                    <span className="text-[10px] font-bold text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-full uppercase tracking-widest">Pro</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Generate full SEO-optimized blog articles with thumbnails from any topic. Publication-ready content in seconds.
-                  </p>
-                  <div className="flex items-center gap-1.5 mt-4 text-xs font-bold text-primary">
-                    Start Writing <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </Link>
-            </Card>
-          )}
           <Card className="p-6 border-border/60 rounded-2xl bg-card group cursor-pointer hover:border-primary/40 transition-colors relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
             <Link href="/dashboard/extension" className="flex items-start gap-4">
@@ -582,11 +541,10 @@ export default function DashboardPage() {
         </div>
 
         {/* ── Quick links ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
-            { href: '/dashboard/scans',    icon: BarChart3,  title: 'All Scans',         desc: 'View your complete scan history' },
-            { href: '/dashboard/ai-tools', icon: Sparkles,   title: 'AI Tools',          desc: isPro ? 'Content rewriting & more' : 'Unlock with Pro' },
-            { href: '/pricing',            icon: Crown,      title: 'Pricing',           desc: 'View plans & upgrade' },
+            { href: '/dashboard/scans', icon: BarChart3, title: 'All Scans',  desc: 'View your complete scan history' },
+            { href: '/pricing',         icon: Crown,     title: 'Pricing',    desc: 'View plans & upgrade' },
           ].map(({ href, icon: Icon, title, desc }) => (
             <Link key={href} href={href}>
               <Card className="p-4 border-border/60 rounded-2xl hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer group">
