@@ -96,10 +96,24 @@ export async function getThumbnailCredits(profile: UserProfile): Promise<{ remai
   return { remaining: profile.thumbnailCreditsThisMonth, limit }
 }
 
+/** Recursively remove undefined values — Firestore rejects them */
+function stripUndefined<T>(obj: T): T {
+  if (Array.isArray(obj)) return obj.map(stripUndefined) as unknown as T
+  if (obj !== null && typeof obj === 'object') {
+    return Object.fromEntries(
+      Object.entries(obj as Record<string, unknown>)
+        .filter(([, v]) => v !== undefined)
+        .map(([k, v]) => [k, stripUndefined(v)])
+    ) as T
+  }
+  return obj
+}
+
 export async function saveScan(userId: string, data: Omit<ScanRecord, "id" | "createdAt">): Promise<string | null> {
   try {
     const ref = adminDb.collection("scans").doc()
-    await ref.set({ ...data, id: ref.id, userId, createdAt: new Date().toISOString() })
+    const clean = stripUndefined({ ...data, id: ref.id, userId, createdAt: new Date().toISOString() })
+    await ref.set(clean)
     return ref.id
   } catch (err) { console.error("[DB] saveScan:", (err as Error).message); return null }
 }

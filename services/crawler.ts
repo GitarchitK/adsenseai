@@ -141,7 +141,8 @@ export class WebsiteCrawler {
         (sum, p) => sum + (p.images_missing_alt ?? 0), 0
       )
 
-      // Robots.txt blocking check
+      // Robots.txt blocking check — default false
+      siteStructure.robots_blocks_crawl = false
       try {
         const robotsTxt = await this.fetchPage(`${new URL(this.url).origin}/robots.txt`)
         if (robotsTxt) {
