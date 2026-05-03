@@ -136,7 +136,7 @@ export default function ResultsPage() {
   const [isUnlocking, setIsUnlocking] = useState(false)
   const [unlockError, setUnlockError] = useState('')
   const [aiReport, setAiReport] = useState<AIReport | null>(null)
-  const [activeTab, setActiveTab] = useState<'overview' | 'issues' | 'plan' | 'pages'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'issues' | 'plan' | 'pages' | 'deep'>('overview')
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -307,10 +307,11 @@ export default function ResultsPage() {
   const crawlSecs    = (data.crawl_time_ms / 1000).toFixed(1)
 
   const tabs = [
-    { id: 'overview', label: 'Overview',    icon: BarChart3,   locked: false },
-    { id: 'issues',   label: 'Fix List',    icon: AlertCircle, locked: !isAiUnlocked },
-    { id: 'plan',     label: 'Action Plan', icon: Calendar,    locked: !isAiUnlocked },
-    { id: 'pages',    label: 'Pages',       icon: FileText,    locked: false },
+    { id: 'overview', label: 'Overview',      icon: BarChart3,   locked: false },
+    { id: 'issues',   label: 'Fix List',      icon: AlertCircle, locked: !isAiUnlocked },
+    { id: 'plan',     label: 'Action Plan',   icon: Calendar,    locked: !isAiUnlocked },
+    { id: 'deep',     label: 'Deep Analysis', icon: Brain,       locked: !isAiUnlocked },
+    { id: 'pages',    label: 'Pages',         icon: FileText,    locked: false },
   ] as const
 
   return (
@@ -449,11 +450,13 @@ export default function ResultsPage() {
                 <div className="space-y-4 bg-muted/20 p-5 rounded-2xl border border-border/40">
                   {!hasAiPreview && (
                     <p className="text-[10px] text-amber-600 dark:text-amber-400 italic">Based on site structure only. Unlock AI for content & policy scores.</p>
-                  )}                  <WeightBar label="Content Quality"   score={qualityScore} weight="35% weight" plain={qualityScore >= 80 ? 'Great writing' : qualityScore >= 60 ? 'Needs work' : 'Too thin/generic'} />
-                  <WeightBar label="Policy Compliance" score={policyScore}  weight="30% weight" plain={policyScore >= 80 ? 'No violations' : policyScore >= 60 ? 'Minor issues' : 'Violations found'} />
-                  <WeightBar label="SEO Performance"   score={seoScore}     weight="15% weight" plain={seoScore >= 80 ? 'Well optimised' : seoScore >= 60 ? 'Partially done' : 'Missing basics'} />
-                  <WeightBar label="User Experience"   score={uxScore}      weight="10% weight" plain={uxScore >= 80 ? 'Easy to use' : uxScore >= 60 ? 'Some friction' : 'Hard to navigate'} />
-                  <WeightBar label="Trust Signals"     score={trustScore}   weight="10% weight" plain={trustScore >= 80 ? 'Looks legit' : trustScore >= 60 ? 'Needs pages' : 'Missing pages'} />
+                  )}
+                  <WeightBar label="Content Quality"   score={qualityScore} weight="30% weight" plain={qualityScore >= 80 ? 'Great writing' : qualityScore >= 60 ? 'Needs work' : 'Too thin/generic'} />
+                  <WeightBar label="Policy Compliance" score={policyScore}  weight="25% weight" plain={policyScore >= 80 ? 'No violations' : policyScore >= 60 ? 'Minor issues' : 'Violations found'} />
+                  <WeightBar label="SEO Performance"   score={seoScore}     weight="20% weight" plain={seoScore >= 80 ? 'Well optimised' : seoScore >= 60 ? 'Partially done' : 'Missing basics'} />
+                  <WeightBar label="E-E-A-T"           score={ai?.eeat?.overall_eeat_score ?? 0} weight="10% weight" plain={!ai ? 'Unlock AI' : (ai.eeat?.overall_eeat_score ?? 0) >= 70 ? 'Strong authority' : 'Needs work'} />
+                  <WeightBar label="User Experience"   score={uxScore}      weight="8% weight"  plain={uxScore >= 80 ? 'Easy to use' : uxScore >= 60 ? 'Some friction' : 'Hard to navigate'} />
+                  <WeightBar label="Trust Signals"     score={trustScore}   weight="7% weight"  plain={trustScore >= 80 ? 'Looks legit' : trustScore >= 60 ? 'Needs pages' : 'Missing pages'} />
                 </div>
               </div>
             </Card>
@@ -1154,6 +1157,302 @@ export default function ResultsPage() {
                 </p>
               </Card>
             </Link>
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {/* DEEP ANALYSIS TAB                                                  */}
+        {/* ══════════════════════════════════════════════════════════════════ */}
+        {activeTab === 'deep' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {isAiUnlocked && ai ? (
+              <>
+                {/* ── E-E-A-T Breakdown ── */}
+                <Card className="p-5 border-border/60 rounded-2xl">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Brain className="h-5 w-5 text-violet-500" />
+                    <h3 className="font-bold text-foreground">E-E-A-T Analysis</h3>
+                    <span className={`ml-auto text-lg font-black tabular-nums ${sc(ai.eeat.overall_eeat_score)}`}>{ai.eeat.overall_eeat_score}/100</span>
+                  </div>
+                  <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden mb-4">
+                    <div className={`h-full rounded-full ${bc(ai.eeat.overall_eeat_score)}`} style={{ width: `${ai.eeat.overall_eeat_score}%` }} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mb-4">
+                    {[
+                      { label: 'Experience',     val: ai.eeat.experience_score,        reason: ai.eeat.eeat_score_breakdown?.experience_reason },
+                      { label: 'Expertise',      val: ai.eeat.expertise_score,         reason: ai.eeat.eeat_score_breakdown?.expertise_reason },
+                      { label: 'Authority',      val: ai.eeat.authoritativeness_score, reason: ai.eeat.eeat_score_breakdown?.authority_reason },
+                      { label: 'Trustworthiness',val: ai.eeat.trustworthiness_score,   reason: ai.eeat.eeat_score_breakdown?.trust_reason },
+                    ].map(({ label, val, reason }) => (
+                      <div key={label} className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-xs font-semibold text-foreground">{label}</p>
+                          <span className={`text-sm font-black tabular-nums ${sc(val)}`}>{val}</span>
+                        </div>
+                        <div className="h-1 w-full rounded-full bg-muted overflow-hidden mb-1.5">
+                          <div className={`h-full rounded-full ${bc(val)}`} style={{ width: `${val}%` }} />
+                        </div>
+                        {reason && <p className="text-[10px] text-muted-foreground leading-relaxed">{reason}</p>}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{ai.eeat.summary}</p>
+                  {ai.eeat.ymyl_risk && (
+                    <div className="mt-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40">
+                      <p className="text-xs font-bold text-amber-700 dark:text-amber-300">⚠ YMYL Site — Higher Scrutiny</p>
+                      <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">Category: {ai.eeat.ymyl_category}. Google applies stricter E-E-A-T standards to Your Money or Your Life sites.</p>
+                    </div>
+                  )}
+                  {ai.eeat.eeat_quick_wins?.length > 0 && (
+                    <div className="mt-3 space-y-1.5">
+                      <p className="text-xs font-bold text-foreground">Quick Wins to Boost E-E-A-T:</p>
+                      {ai.eeat.eeat_quick_wins.map((w, i) => (
+                        <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0 mt-0.5" />{w}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Card>
+
+                {/* ── Technical Health ── */}
+                <Card className="p-5 border-border/60 rounded-2xl">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Search className="h-5 w-5 text-blue-500" />
+                    <h3 className="font-bold text-foreground">Technical Health</h3>
+                    <span className={`ml-auto text-lg font-black tabular-nums ${sc(ai.technical_health.structural_integrity)}`}>{ai.technical_health.structural_integrity}/100</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    {[
+                      { label: 'Mobile Ready',    val: ai.technical_health.mobile_readiness_score },
+                      { label: 'Page Speed',      val: ai.technical_health.page_speed_likelihood },
+                      { label: 'Structure',       val: ai.technical_health.structural_integrity },
+                    ].map(({ label, val }) => (
+                      <div key={label} className="p-3 rounded-xl bg-muted/30 border border-border/40 text-center">
+                        <p className={`text-xl font-black tabular-nums ${sc(val)}`}>{val}</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">{label}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    {[
+                      { label: 'Pages Missing H1',   val: ai.technical_health.pages_missing_h1,   bad: true },
+                      { label: 'Pages Missing Meta', val: ai.technical_health.pages_missing_meta,  bad: true },
+                      { label: 'Avg Internal Links', val: ai.technical_health.avg_internal_links,  bad: false },
+                      { label: 'Heading Score',      val: ai.technical_health.heading_hierarchy_score, bad: false },
+                    ].map(({ label, val, bad }) => (
+                      <div key={label} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/20 border border-border/40">
+                        <p className="text-xs text-muted-foreground">{label}</p>
+                        <span className={`text-sm font-black tabular-nums ${
+                          bad ? (val > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400')
+                              : sc(typeof val === 'number' ? val : 50)
+                        }`}>{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {/* New signals from crawler */}
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/20 border border-border/40">
+                      <p className="text-xs text-muted-foreground">HTTPS</p>
+                      <span className={`text-xs font-bold ${data.site_structure.is_https ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                        {data.site_structure.is_https ? '✓ Secure' : '✗ Not HTTPS'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/20 border border-border/40">
+                      <p className="text-xs text-muted-foreground">Sitemap</p>
+                      <span className={`text-xs font-bold ${data.site_structure.has_sitemap ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                        {data.site_structure.has_sitemap ? `✓ Found (${data.sitemap_total ?? 0} URLs)` : '✗ Not found'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/20 border border-border/40">
+                      <p className="text-xs text-muted-foreground">Schema Markup</p>
+                      <span className={`text-xs font-bold ${(data.site_structure.schema_pages ?? 0) > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'}`}>
+                        {(data.site_structure.schema_pages ?? 0) > 0 ? `✓ ${data.site_structure.schema_pages} pages` : 'Not detected'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-muted/20 border border-border/40">
+                      <p className="text-xs text-muted-foreground">Images Missing Alt</p>
+                      <span className={`text-xs font-bold ${(data.site_structure.images_missing_alt ?? 0) > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                        {(data.site_structure.images_missing_alt ?? 0) > 0 ? `${data.site_structure.images_missing_alt} images` : '✓ All have alt'}
+                      </span>
+                    </div>
+                  </div>
+                  {ai.technical_health.technical_wins?.length > 0 && (
+                    <div className="space-y-1.5 mb-3">
+                      <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">✓ Technical Wins</p>
+                      {ai.technical_health.technical_wins.map((w, i) => (
+                        <p key={i} className="text-xs text-muted-foreground flex items-start gap-2">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0 mt-0.5" />{w}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-xs text-muted-foreground leading-relaxed">{ai.technical_health.summary}</p>
+                </Card>
+
+                {/* ── SEO Authority ── */}
+                <Card className="p-5 border-border/60 rounded-2xl">
+                  <div className="flex items-center gap-2 mb-4">
+                    <TrendingUp className="h-5 w-5 text-indigo-500" />
+                    <h3 className="font-bold text-foreground">SEO & Topical Authority</h3>
+                    <span className={`ml-auto text-lg font-black tabular-nums ${sc(ai.seo_authority.topical_authority_score)}`}>{ai.seo_authority.topical_authority_score}/100</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                      <p className="text-xs text-muted-foreground mb-1">Topical Authority</p>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div className={`h-full rounded-full ${bc(ai.seo_authority.topical_authority_score)}`} style={{ width: `${ai.seo_authority.topical_authority_score}%` }} />
+                        </div>
+                        <span className={`text-xs font-black ${sc(ai.seo_authority.topical_authority_score)}`}>{ai.seo_authority.topical_authority_score}</span>
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                      <p className="text-xs text-muted-foreground mb-1">Semantic Coverage</p>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                          <div className={`h-full rounded-full ${bc(ai.seo_authority.semantic_coverage_score)}`} style={{ width: `${ai.seo_authority.semantic_coverage_score}%` }} />
+                        </div>
+                        <span className={`text-xs font-black ${sc(ai.seo_authority.semantic_coverage_score)}`}>{ai.seo_authority.semantic_coverage_score}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-3 leading-relaxed">{ai.seo_authority.niche_focus}</p>
+                  {ai.seo_authority.missing_topics?.length > 0 && (
+                    <div className="mb-3">
+                      <p className="text-xs font-bold text-foreground mb-2">Topics to Write Next:</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {ai.seo_authority.missing_topics.map((t, i) => (
+                          <span key={i} className="text-[11px] bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 px-2.5 py-1 rounded-full font-medium">{t}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {ai.seo_authority.keyword_opportunities?.length > 0 && (
+                    <div className="mb-3">
+                      <p className="text-xs font-bold text-foreground mb-2">High-CPC Keywords to Target:</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {ai.seo_authority.keyword_opportunities.map((k, i) => (
+                          <span key={i} className="text-[11px] bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-2.5 py-1 rounded-full font-medium">{k}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {ai.seo_authority.seo_quick_wins?.length > 0 && (
+                    <div>
+                      <p className="text-xs font-bold text-foreground mb-2">SEO Quick Wins:</p>
+                      {ai.seo_authority.seo_quick_wins.map((w, i) => (
+                        <p key={i} className="text-xs text-muted-foreground flex items-start gap-2 mb-1">
+                          <Zap className="h-3.5 w-3.5 text-amber-500 flex-shrink-0 mt-0.5" />{w}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                </Card>
+
+                {/* ── Monetization ── */}
+                <Card className="p-5 border-border/60 rounded-2xl">
+                  <div className="flex items-center gap-2 mb-4">
+                    <DollarSign className="h-5 w-5 text-emerald-500" />
+                    <h3 className="font-bold text-foreground">Monetization Potential</h3>
+                    <span className={`ml-auto text-sm font-black px-2.5 py-1 rounded-full ${
+                      ai.monetization.revenue_potential === 'High' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+                      : ai.monetization.revenue_potential === 'Medium' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+                      : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+                    }`}>{ai.monetization.revenue_potential}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    {[
+                      { label: 'Niche',             val: ai.monetization.niche },
+                      { label: 'CPC Tier',          val: ai.monetization.niche_cpc_tier ?? 'medium' },
+                      { label: 'Est. CPC',          val: ai.monetization.estimated_cpc },
+                      { label: 'Est. CPM',          val: ai.monetization.estimated_cpm },
+                      { label: 'Audience',          val: ai.monetization.audience_geography ?? 'India' },
+                      { label: 'Monthly Estimate',  val: ai.monetization.monthly_revenue_estimate ?? 'Varies' },
+                    ].map(({ label, val }) => (
+                      <div key={label} className="p-2.5 rounded-lg bg-muted/20 border border-border/40">
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{label}</p>
+                        <p className="text-xs font-bold text-foreground mt-0.5 truncate">{val}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {ai.monetization.revenue_blockers?.length > 0 && (
+                    <div className="mb-3">
+                      <p className="text-xs font-bold text-red-600 dark:text-red-400 mb-2">Revenue Blockers:</p>
+                      {ai.monetization.revenue_blockers.map((b, i) => (
+                        <p key={i} className="text-xs text-muted-foreground flex items-start gap-2 mb-1">
+                          <AlertCircle className="h-3.5 w-3.5 text-red-500 flex-shrink-0 mt-0.5" />{b}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                  {ai.monetization.ad_placement_advice && (
+                    <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40">
+                      <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300 mb-1">Ad Placement Advice</p>
+                      <p className="text-xs text-emerald-700 dark:text-emerald-300 leading-relaxed">{ai.monetization.ad_placement_advice}</p>
+                    </div>
+                  )}
+                </Card>
+
+                {/* ── Policy Deep Dive ── */}
+                <Card className="p-5 border-border/60 rounded-2xl">
+                  <div className="flex items-center gap-2 mb-4">
+                    <ShieldCheck className="h-5 w-5 text-blue-500" />
+                    <h3 className="font-bold text-foreground">Policy Deep Dive</h3>
+                    <span className={`ml-auto text-sm font-black tabular-nums ${sc(100 - ai.policy.policy_risk_score)}`}>{100 - ai.policy.policy_risk_score}/100</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mb-4">
+                    {[
+                      { label: 'Adult Content',     val: ai.policy.adult_content,         bad: true },
+                      { label: 'Copyright Risk',    val: ai.policy.copyright_risk,         bad: true },
+                      { label: 'Dangerous Content', val: ai.policy.dangerous_content,      bad: true },
+                      { label: 'Scraped Content',   val: ai.policy.scraped_content_risk,   bad: true },
+                      { label: 'AI-Generated Risk', val: ai.policy.ai_generated_risk,      bad: true },
+                      { label: 'Clickbait Risk',    val: ai.policy.clickbait_risk,         bad: true },
+                    ].map(({ label, val, bad }) => (
+                      <div key={label} className={`flex items-center justify-between p-2.5 rounded-lg border ${
+                        bad && val ? 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800/40'
+                        : 'bg-muted/20 border-border/40'
+                      }`}>
+                        <p className="text-xs text-muted-foreground">{label}</p>
+                        <span className={`text-xs font-bold ${bad && val ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                          {val ? '✗ Detected' : '✓ Clear'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  {ai.policy.missing_disclosures?.length > 0 && (
+                    <div className="mb-3">
+                      <p className="text-xs font-bold text-amber-600 dark:text-amber-400 mb-2">Missing Disclosures:</p>
+                      {ai.policy.missing_disclosures.map((d, i) => (
+                        <p key={i} className="text-xs text-muted-foreground flex items-start gap-2 mb-1">
+                          <AlertTriangle className="h-3.5 w-3.5 text-amber-500 flex-shrink-0 mt-0.5" />{d}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                  {ai.policy.compliant_signals?.length > 0 && (
+                    <div>
+                      <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mb-2">Compliance Signals:</p>
+                      {ai.policy.compliant_signals.map((s, i) => (
+                        <p key={i} className="text-xs text-muted-foreground flex items-start gap-2 mb-1">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0 mt-0.5" />{s}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                </Card>
+              </>
+            ) : (
+              <div className="py-20 text-center space-y-4 max-w-sm mx-auto">
+                <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center mx-auto">
+                  {isPro ? <div className="h-6 w-6 rounded-full border-2 border-primary border-t-transparent animate-spin" /> : <Lock className="h-7 w-7 text-muted-foreground/50" />}
+                </div>
+                <p className="font-black text-foreground text-lg">{isPro ? 'Generating Analysis...' : 'Deep Analysis Locked'}</p>
+                <p className="text-sm text-muted-foreground">{isPro ? 'E-E-A-T, technical health, monetization, and policy details will appear here.' : 'Unlock the AI report to see E-E-A-T scores, technical health, monetization potential, and policy deep dive.'}</p>
+                {!isPro && <Button onClick={handleUnlock} disabled={isUnlocking} className="gap-2 px-8"><Lock className="h-4 w-4" /> Unlock — ₹19</Button>}
+              </div>
+            )}
           </div>
         )}
 

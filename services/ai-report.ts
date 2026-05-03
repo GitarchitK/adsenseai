@@ -1,8 +1,15 @@
 /**
  * AI Report Assembler
- * Runs all three AI modules in parallel and combines them into one structured report.
- * Uses the canonical scoring formula:
- *   final_score = (quality*0.35) + (policy*0.30) + (seo*0.15) + (ux*0.10) + (trust*0.10)
+ * Runs all AI modules in parallel and combines them into one structured report.
+ *
+ * Scoring formula (v2):
+ *   final_score = (quality*0.30) + (policy*0.25) + (seo*0.20) + (eeat*0.10) + (ux*0.08) + (trust*0.07)
+ *
+ * Changes from v1:
+ *   - E-E-A-T now weighted at 10% (was 0%)
+ *   - SEO score now uses AI topical authority (was purely deterministic)
+ *   - Domain age penalty applied to final score
+ *   - Thin content penalty applied to quality score
  */
 
 import { analyzeContentQuality, type ContentQualityResult } from './ai-content'
@@ -80,24 +87,42 @@ export interface ScoreExplanation {
   what_to_do: string     // e.g. "Keep writing like this — no changes needed"
 }
 
-// ── Scoring formula ───────────────────────────────────────────────────────────
+// ── Scoring formula v2 ───────────────────────────────────────────────────────
 
 function computeFinalScore(
   quality: number,
   policy: number,
   seo: number,
   ux: number,
-  trust: number
+  trust: number,
+  eeat: number,
+  domainAgeYears?: number,
+  thinPageRatio?: number,
 ): number {
-  return Math.round(
-    Math.min(100, Math.max(0,
-      quality * 0.35 +
-      policy  * 0.30 +
-      seo     * 0.15 +
-      ux      * 0.10 +
-      trust   * 0.10
-    ))
+  // Weighted formula — E-E-A-T now included
+  let score = Math.round(
+    quality * 0.30 +
+    policy  * 0.25 +
+    seo     * 0.20 +
+    eeat    * 0.10 +
+    ux      * 0.08 +
+    trust   * 0.07
   )
+
+  // Domain age penalty — new domains are less trusted by AdSense
+  if (domainAgeYears !== undefined) {
+    if (domainAgeYears < 0.25)      score = Math.round(score * 0.75)  // < 3 months: -25%
+    else if (domainAgeYears < 0.5)  score = Math.round(score * 0.85)  // < 6 months: -15%
+    else if (domainAgeYears < 1.0)  score = Math.round(score * 0.92)  // < 1 year:   -8%
+  }
+
+  // Thin content penalty — too many thin pages hurts approval
+  if (thinPageRatio !== undefined && thinPageRatio > 0.3) {
+    const penalty = Math.min(0.20, thinPageRatio * 0.4)  // max -20%
+    score = Math.round(score * (1 - penalty))
+  }
+
+  return Math.min(100, Math.max(0, score))
 }
 
 function getStatus(score: number): { status: ScoreStatus; status_label: AIReport['status_label'] } {
@@ -106,17 +131,34 @@ function getStatus(score: number): { status: ScoreStatus; status_label: AIReport
   return               { status: 'low',      status_label: 'Low'         }
 }
 
-// ── SEO score derived from crawl data ────────────────────────────────────────
+// ── SEO score — blends deterministic signals with AI topical authority ────────
 
-function deriveSeoScore(crawl: CrawlResponse): number {
+function deriveSeoScore(crawl: CrawlResponse, topicalAuthorityScore?: number): number {
   const pages = crawl.pages
   const total = pages.length || 1
   const metaRatio = pages.filter((p) => p.meta_description).length / total
   const h1Ratio   = pages.filter((p) => p.headings.h1.length > 0).length / total
   const structureBonus =
-    (crawl.site_structure.has_about   ? 10 : 0) +
-    (crawl.site_structure.has_contact ? 10 : 0)
-  return Math.round(Math.min(100, h1Ratio * 40 + metaRatio * 40 + structureBonus))
+    (crawl.site_structure.has_about   ? 8 : 0) +
+    (crawl.site_structure.has_contact ? 8 : 0)
+
+  // Deterministic technical SEO (60% weight)
+  const technicalSeo = Math.round(Math.min(100, h1Ratio * 40 + metaRatio * 40 + structureBonus))
+
+  // Sitemap coverage bonus — more indexed pages = better
+  const sitemapTotal = crawl.sitemap_total ?? total
+  const coverageBonus = sitemapTotal >= 50 ? 5 : sitemapTotal >= 25 ? 3 : 0
+
+  if (topicalAuthorityScore !== undefined) {
+    // Blend: 50% technical + 40% AI topical authority + 10% coverage
+    return Math.round(Math.min(100,
+      technicalSeo * 0.50 +
+      topicalAuthorityScore * 0.40 +
+      coverageBonus * 2
+    ))
+  }
+
+  return Math.min(100, technicalSeo + coverageBonus)
 }
 
 // ── Top issues ────────────────────────────────────────────────────────────────
@@ -686,11 +728,21 @@ export async function generateAIReport(crawl: CrawlResponse): Promise<AIReport> 
 
   const quality_score = content.overall_quality_score
   const policy_score  = Math.round(100 - policy.policy_risk_score)
-  const seo_score     = deriveSeoScore(crawl)
+  const seo_score     = deriveSeoScore(crawl, seo_authority.topical_authority_score)
   const ux_score      = trust.ux_score
   const trust_score   = trust.trust_score
+  const eeat_score    = eeat.overall_eeat_score
 
-  const final_score = computeFinalScore(quality_score, policy_score, seo_score, ux_score, trust_score)
+  // Thin content ratio for penalty calculation
+  const thinPageRatio = crawl.pages.length > 0
+    ? crawl.pages.filter(p => p.word_count > 0 && p.word_count < 300).length / crawl.pages.length
+    : 0
+
+  const final_score = computeFinalScore(
+    quality_score, policy_score, seo_score, ux_score, trust_score, eeat_score,
+    crawl.site_structure.domain_age_years,
+    thinPageRatio,
+  )
   const { status, status_label } = getStatus(final_score)
 
   const adsense_ready =

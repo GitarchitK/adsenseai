@@ -126,6 +126,40 @@ export class WebsiteCrawler {
         siteStructure.domain_age_years = Number(ageYears.toFixed(1));
       }
 
+      // ── New: aggregate advanced signals ──────────────────────────────────
+      // HTTPS detection
+      siteStructure.is_https = this.url.startsWith('https://')
+
+      // Sitemap presence
+      siteStructure.has_sitemap = sitemapEntries.length > 0
+
+      // Schema markup count
+      siteStructure.schema_pages = this.crawledPages.filter(p => p.has_schema_markup).length
+
+      // Total images missing alt text
+      siteStructure.images_missing_alt = this.crawledPages.reduce(
+        (sum, p) => sum + (p.images_missing_alt ?? 0), 0
+      )
+
+      // Robots.txt blocking check
+      try {
+        const robotsTxt = await this.fetchPage(`${new URL(this.url).origin}/robots.txt`)
+        if (robotsTxt) {
+          const lines = robotsTxt.toLowerCase().split('\n')
+          let inGooglebotBlock = false
+          let inAllBlock = false
+          for (const line of lines) {
+            if (line.startsWith('user-agent: googlebot')) inGooglebotBlock = true
+            else if (line.startsWith('user-agent: *')) inAllBlock = true
+            else if (line.startsWith('user-agent:')) { inGooglebotBlock = false; inAllBlock = false }
+            if ((inGooglebotBlock || inAllBlock) && line.startsWith('disallow: /')) {
+              siteStructure.robots_blocks_crawl = true
+              break
+            }
+          }
+        }
+      } catch { /* ignore */ }
+
       const crawlTime = Date.now() - this.startTime;
 
       console.log(`[Crawler] Completed crawl: ${this.crawledPages.length} pages in ${crawlTime}ms`);
@@ -342,6 +376,25 @@ export class WebsiteCrawler {
     const metaDescription = extractMetaDescription(html)
     const lastmod = this.sitemapMetadata.get(url)?.lastmod
 
+    // ── New: image alt text analysis ──────────────────────────────────────
+    const imgMatches = html.match(/<img[^>]*>/gi) ?? []
+    const imagesTotal = imgMatches.length
+    const imagesMissingAlt = imgMatches.filter(tag => {
+      const altMatch = tag.match(/alt\s*=\s*["']([^"']*)["']/i)
+      return !altMatch || altMatch[1].trim() === ''
+    }).length
+
+    // ── New: schema markup detection ──────────────────────────────────────
+    const hasSchemaMarkup =
+      html.includes('application/ld+json') ||
+      html.includes('itemtype="http://schema.org') ||
+      html.includes("itemtype='http://schema.org") ||
+      html.includes('itemtype="https://schema.org') ||
+      html.includes("itemtype='https://schema.org")
+
+    // ── New: HTTPS detection ──────────────────────────────────────────────
+    const isHttps = url.startsWith('https://')
+
     // Firestore rejects `undefined` values; only set optional fields when present.
     const crawledPage: CrawledPage = {
       url,
@@ -350,6 +403,10 @@ export class WebsiteCrawler {
       word_count: countWords(cleanedContent),
       headings: extractHeadings(html),
       links: extractLinks(html, url),
+      images_total: imagesTotal,
+      images_missing_alt: imagesMissingAlt,
+      has_schema_markup: hasSchemaMarkup,
+      is_https: isHttps,
     };
 
     if (typeof metaDescription === 'string' && metaDescription.trim().length > 0) {

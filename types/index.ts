@@ -74,6 +74,11 @@ export interface CrawledPage {
     internal: string[];
     external: string[];
   };
+  // New advanced signals
+  images_total?: number;          // total images on page
+  images_missing_alt?: number;    // images without alt text
+  has_schema_markup?: boolean;    // JSON-LD or microdata present
+  is_https?: boolean;             // page served over HTTPS
   status_code?: number;
   error?: string;
 }
@@ -85,6 +90,11 @@ export interface SiteStructure {
   has_terms: boolean;
   has_disclaimer: boolean;
   domain_age_years?: number;
+  is_https?: boolean;             // site uses HTTPS
+  robots_blocks_crawl?: boolean;  // robots.txt blocks Googlebot
+  has_sitemap?: boolean;          // sitemap.xml found
+  schema_pages?: number;          // pages with schema markup
+  images_missing_alt?: number;    // total images missing alt text across site
 }
 
 export interface CrawlResponse {
