@@ -5,16 +5,17 @@ import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard, Settings, LogOut, History,
-  Crown, Menu, X,
+  Crown, Menu, X, Image,
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { useProfile } from '@/hooks/use-profile'
 import { useState } from 'react'
 
 const navItems = [
-  { name: 'Dashboard',  href: '/dashboard',          icon: LayoutDashboard },
-  { name: 'My Scans',   href: '/dashboard/scans',    icon: History         },
-  { name: 'Settings',   href: '/dashboard/settings', icon: Settings        },
+  { name: 'Dashboard',        href: '/dashboard',                   icon: LayoutDashboard },
+  { name: 'My Scans',         href: '/dashboard/scans',             icon: History         },
+  { name: 'Banner Generator', href: '/dashboard/banner-generator',  icon: Image, badge: 'NEW' },
+  { name: 'Settings',         href: '/dashboard/settings',          icon: Settings        },
 ]
 
 // No pro nav items — all tools removed
@@ -60,7 +61,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
       {/* Nav */}
       <nav className="flex-1 px-3 py-5 space-y-0.5 overflow-y-auto">
         <p className="px-3 text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-2">Main</p>
-        {navItems.map(({ name, href, icon: Icon }) => (
+        {navItems.map(({ name, href, icon: Icon, badge }) => (
           <Link key={href} href={href} onClick={onClose} className={cn(
             'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150',
             isNavActive(href)
@@ -69,6 +70,11 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
           )}>
             <Icon className="h-4 w-4 flex-shrink-0" />
             {name}
+            {badge && (
+              <span className="ml-auto text-[9px] font-black px-1.5 py-0.5 rounded-full bg-violet-500 text-white uppercase tracking-widest">
+                {badge}
+              </span>
+            )}
           </Link>
         ))}
 
