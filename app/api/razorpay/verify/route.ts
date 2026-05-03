@@ -56,10 +56,14 @@ export async function POST(request: NextRequest) {
   console.log(`[Payment] Saved payment ${paymentRef.id} for user ${profile.uid} — ₹${amount / 100} (${plan})`)
 
   // ── Upgrade user plan ─────────────────────────────────────────────────────
+  // Set expiry 30 days from today
+  const proExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+
   await updateUserProfile(profile.uid, {
     plan: 'pro',
     razorpayCustomerId:     paymentId,
     razorpaySubscriptionId: orderId,
+    proExpiresAt,
   })
 
   // ── Log upgrade event ─────────────────────────────────────────────────────

@@ -7,6 +7,7 @@ export interface UserProfile {
   plan: Plan
   razorpayCustomerId: string | null
   razorpaySubscriptionId: string | null
+  proExpiresAt: string | null          // ISO date — when Pro subscription expires
   scansThisMonth: number
   scansMonthKey: string
   totalScans: number

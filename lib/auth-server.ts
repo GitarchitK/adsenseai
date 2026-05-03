@@ -30,6 +30,7 @@ export async function getAuthenticatedProfile(authHeader: string | null): Promis
       const profile: UserProfile = {
         uid: decoded.uid, email: decoded.email ?? "", fullName: decoded.name ?? null,
         plan: "free", razorpayCustomerId: null, razorpaySubscriptionId: null,
+        proExpiresAt: null,
         scansThisMonth: 0, scansMonthKey: now.slice(0, 7), totalScans: 0,
         thumbnailCreditsThisMonth: 0, thumbnailMonthKey: now.slice(0, 7),
         createdAt: now, updatedAt: now,
@@ -129,7 +130,7 @@ export async function unlockScanAiReport(scanId: string, userId: string, aiRepor
 
 export async function updateUserProfile(
   userId: string,
-  updates: Partial<Pick<UserProfile, "fullName" | "plan" | "razorpayCustomerId" | "razorpaySubscriptionId">>
+  updates: Partial<Pick<UserProfile, "fullName" | "plan" | "razorpayCustomerId" | "razorpaySubscriptionId" | "proExpiresAt">>
 ): Promise<void> {
   try {
     await adminDb.collection("users").doc(userId).update({ ...updates, updatedAt: new Date().toISOString() })

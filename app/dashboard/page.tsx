@@ -283,8 +283,22 @@ export default function DashboardPage() {
             </Button>
           )}
           {isPro && (
-            <div className="flex items-center gap-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-bold px-3 py-1.5">
-              <Crown className="h-3.5 w-3.5" /> Pro Active
+            <div className="flex flex-col items-end gap-1">
+              <div className="flex items-center gap-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-bold px-3 py-1.5">
+                <Crown className="h-3.5 w-3.5" /> Pro Active
+              </div>
+              {profile?.proExpiresAt && (() => {
+                const expiry   = new Date(profile.proExpiresAt)
+                const today    = new Date()
+                const daysLeft = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+                const label    = expiry.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                const urgent   = daysLeft <= 5
+                return (
+                  <p className={`text-[11px] font-medium ${urgent ? 'text-red-500 dark:text-red-400' : 'text-muted-foreground'}`}>
+                    {urgent ? '⚠ ' : ''}Expires {label}{daysLeft > 0 ? ` · ${daysLeft}d left` : ' · Expired'}
+                  </p>
+                )
+              })()}
             </div>
           )}
         </div>
