@@ -13,6 +13,7 @@ import {
 import Link from 'next/link'
 import { useProfile } from '@/hooks/use-profile'
 import { useRazorpay } from '@/hooks/use-razorpay'
+import DashboardLoading from './loading'
 
 interface ScanRow {
   id: string
@@ -241,7 +242,7 @@ export default function DashboardPage() {
     })
   }
 
-  if (isLoading) return null // AuthGuard handles the loading screen
+  if (isLoading) return <DashboardLoading />
 
   const firstName = profile?.fullName?.split(' ')[0]
   const monthUsed = usage?.scans_this_month ?? 0
