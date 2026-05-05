@@ -57,7 +57,9 @@ export function BuildBanner({ name }: BuildBannerProps) {
 
           {/* CTA button */}
           <a
-            href="mailto:contact@navroll.in?subject=I want to build a tools website like AdSense Checker AI&body=Hi, I'm interested in building a similar tools/SaaS website. Please get in touch."
+            href="https://wa.me/916296992939?text=Hi%2C%20I%27m%20interested%20in%20building%20a%20similar%20tools%2FSaaS%20website.%20Please%20get%20in%20touch."
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-violet-700 font-black text-sm shadow-md hover:bg-white/90 active:scale-95 transition-all whitespace-nowrap w-full sm:w-auto justify-center"
           >
             Let&apos;s Connect →
