@@ -14,6 +14,7 @@ import Link from 'next/link'
 import { useProfile } from '@/hooks/use-profile'
 import { useRazorpay } from '@/hooks/use-razorpay'
 import DashboardLoading from './loading'
+import { BuildBanner } from '@/components/build-banner'
 
 interface ScanRow {
   id: string
@@ -555,45 +556,7 @@ export default function DashboardPage() {
         </div>
 
         {/* ── Build your own tools site banner ── */}
-        <Card className="relative overflow-hidden border-0 rounded-2xl bg-gradient-to-br from-violet-600 via-indigo-600 to-blue-600 shadow-xl shadow-violet-500/20">
-          {/* Background decoration */}
-          <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-xl pointer-events-none" />
-
-          <div className="relative z-10 p-6 md:p-8">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 flex-shrink-0 text-2xl">
-                  🚀
-                </div>
-                <div>
-                  <p className="text-xs font-black text-white/60 uppercase tracking-widest mb-1">
-                    For Entrepreneurs
-                  </p>
-                  <h3 className="text-lg md:text-xl font-black text-white leading-snug">
-                    {firstName ? `${firstName}, want a tools website like this?` : 'Want a tools website like this?'}
-                  </h3>
-                  <p className="text-sm text-white/75 mt-1.5 leading-relaxed max-w-md">
-                    We build AI-powered SaaS tools, checker websites, and business platforms — fully custom, production-ready, and launched fast.
-                  </p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3">
-                    {['AI tools & checkers', 'SaaS platforms', 'Payment integration', 'Fast delivery'].map(f => (
-                      <span key={f} className="text-xs text-white/70 flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 flex-shrink-0" />{f}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <a
-                href="mailto:contact@navroll.in?subject=I want to build a tools website like AdSense Checker AI&body=Hi, I'm interested in building a similar tools/SaaS website. Please get in touch."
-                className="flex-shrink-0 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-violet-700 font-black text-sm shadow-lg hover:bg-white/90 active:scale-95 transition-all"
-              >
-                Let&apos;s Connect →
-              </a>
-            </div>
-          </div>
-        </Card>
+        <BuildBanner name={firstName} />
 
         {/* ── Quick links ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

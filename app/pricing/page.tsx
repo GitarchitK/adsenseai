@@ -7,6 +7,7 @@ import { CheckCircle2, Lock, Zap, Crown, Star, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useProfile } from '@/hooks/use-profile'
 import { useRazorpay } from '@/hooks/use-razorpay'
+import { BuildBanner } from '@/components/build-banner'
 const freeFeatures = [
   '5 free site scans / month',
   'AdSense readiness score (0–100)',
@@ -301,6 +302,10 @@ export default function PricingPage() {
           </Button>
         </Link>
       </section>
+
+      <div className="container mx-auto px-6 pb-12 max-w-5xl">
+        <BuildBanner />
+      </div>
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card'
 import { ArrowRight, Clock, Crown, Globe, Search, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import { useProfile } from '@/hooks/use-profile'
+import { BuildBanner } from '@/components/build-banner'
 
 interface ScanRow {
   id: string
@@ -139,6 +140,8 @@ export default function ScansPage() {
           ))}
         </div>
       )}
+
+      <BuildBanner />
     </div>
   )
 }

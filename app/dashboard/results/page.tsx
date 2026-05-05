@@ -17,6 +17,7 @@ import type { CrawlResponse } from '@/types'
 import type { ScoreBreakdown } from '@/lib/scores'
 import type { AIReport, FixSuggestion } from '@/services/ai-report'
 import type { WhoisData } from '@/app/api/whois/route'
+import { BuildBanner } from '@/components/build-banner'
 
 interface CrawlResult extends CrawlResponse {
   scores?: ScoreBreakdown
@@ -1774,6 +1775,8 @@ export default function ResultsPage() {
         )}
 
         {/* ── Footer CTA ── */}
+        <BuildBanner name={data.domain ? undefined : undefined} />
+
         <Card className="p-8 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 rounded-3xl text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 -translate-x-1/2 blur-2xl pointer-events-none" />
           <div className="relative z-10 space-y-3">
