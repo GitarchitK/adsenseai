@@ -20,6 +20,7 @@ import { analyzeEEAT, type EEATResult } from './ai-eeat'
 import { analyzeSEOAuthority, type SEOAuthorityResult } from './ai-seo-authority'
 import { analyzeTechnicalHealth, type TechnicalHealthResult } from './ai-technical'
 import { callOpenAI, callOpenAIAdvanced } from './openai'
+import { buildFixList } from './ai-fix-list'
 import type { CrawlResponse } from '@/types'
 
 export type ScoreStatus = 'high' | 'moderate' | 'low'
@@ -74,7 +75,8 @@ export interface FixSuggestion {
   category: 'Content' | 'Policy' | 'SEO' | 'UX' | 'Trust'
   title: string
   description: string
-  technical_detail?: string   // for developers
+  steps: string[]           // numbered how-to steps — plain English, actionable
+  technical_detail?: string // for developers
   impact: 'high' | 'medium' | 'low'
 }
 
@@ -433,28 +435,9 @@ function buildFallbackAdvice(
   }
 }
 
-// ── Deterministic fix list — built from real crawl data ──────────────────────
-// This replaces AI-generated suggestions with data-driven fixes that are
-// 100% grounded in what was actually found on the scanned site.
+// buildFixList is now in services/ai-fix-list.ts — imported above
 
-function buildFixList(
-  crawl: CrawlResponse,
-  content: ContentQualityResult,
-  policy: PolicyComplianceResult,
-  trust: TrustUXResult,
-  seo: SEOAuthorityResult,
-  tech: TechnicalHealthResult,
-): FixSuggestion[] {
-  const fixes: FixSuggestion[] = []
-  const domain = crawl.domain
-  const pages = crawl.pages
-  const s = crawl.site_structure
-
-  const thinPages = pages.filter(p => p.word_count > 0 && p.word_count < 300)
-  const borderlinePages = pages.filter(p => p.word_count >= 300 && p.word_count < 500)
-  const noH1Pages = pages.filter(p => p.headings.h1.length === 0)
-  const noMetaPages = pages.filter(p => !p.meta_description)
-  const avgWords = pages.length ? Math.round(pages.reduce((s, p) => s + p.word_count, 0) / pages.length) : 0
+// ── Main assembler ────────────────────────────────────────────────────────────
 
   // ── POLICY (highest priority) ──────────────────────────────────────────────
 
@@ -702,16 +685,6 @@ function buildFixList(
       technical_detail: `domain_age_years=${s.domain_age_years}`,
     })
   }
-
-  // Sort: critical policy first, then by impact
-  const order = { high: 0, medium: 1, low: 2 }
-  return fixes.sort((a, b) => {
-    // Policy violations always first
-    if (a.category === 'Policy' && b.category !== 'Policy') return -1
-    if (b.category === 'Policy' && a.category !== 'Policy') return 1
-    return order[a.impact] - order[b.impact]
-  })
-}
 
 // ── Main assembler ────────────────────────────────────────────────────────────
 

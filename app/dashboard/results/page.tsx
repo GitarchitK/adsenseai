@@ -8,6 +8,7 @@ import {
   ShieldCheck, Search, Sparkles, UserCheck, FileText, Lightbulb,
   Globe, Lock, Zap, Calendar, TrendingUp, BarChart3,
   BookOpen, Clock, Eye, Link2, Brain, Target, DollarSign, Copy, CheckCheck,
+  Building2, Server, CalendarDays, ShieldAlert, Info,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useProfile } from '@/hooks/use-profile'
@@ -15,6 +16,7 @@ import { useRazorpay } from '@/hooks/use-razorpay'
 import type { CrawlResponse } from '@/types'
 import type { ScoreBreakdown } from '@/lib/scores'
 import type { AIReport, FixSuggestion } from '@/services/ai-report'
+import type { WhoisData } from '@/app/api/whois/route'
 
 interface CrawlResult extends CrawlResponse {
   scores?: ScoreBreakdown
@@ -23,6 +25,102 @@ interface CrawlResult extends CrawlResponse {
   plan?: string
   crawl_data?: CrawlResponse | null
   isAiUnlocked?: boolean
+}
+
+// ── Score label helpers ───────────────────────────────────────────────────────
+function scoreLabel(score: number): string {
+  if (score >= 85) return 'Excellent'
+  if (score >= 70) return 'Good'
+  if (score >= 55) return 'Fair'
+  if (score >= 40) return 'Needs Work'
+  return 'Critical'
+}
+
+function scoreLabelColor(score: number): string {
+  if (score >= 85) return 'text-emerald-600 dark:text-emerald-400'
+  if (score >= 70) return 'text-emerald-500 dark:text-emerald-400'
+  if (score >= 55) return 'text-amber-600 dark:text-amber-400'
+  if (score >= 40) return 'text-orange-600 dark:text-orange-400'
+  return 'text-red-600 dark:text-red-400'
+}
+
+function scoreBadgeBg(score: number): string {
+  if (score >= 70) return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+  if (score >= 55) return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+  return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+}
+
+// Plain-English explanation for each score category
+function scoreExplain(category: string, score: number): string {
+  const map: Record<string, [string, string, string, string, string]> = {
+    quality: [
+      'Your content is well-written, original, and in-depth — exactly what Google wants.',
+      'Content is decent but could be more detailed or original.',
+      'Some pages are thin or generic. Expand them to 600+ words with real insights.',
+      'Most pages have thin or low-quality content. This is a major rejection risk.',
+      'Content is too thin, copied, or spammy. AdSense will reject this.',
+    ],
+    policy: [
+      'No policy violations found. Your site follows AdSense rules.',
+      'Minor policy concerns. Review and fix before applying.',
+      'Some policy issues detected. These need to be fixed first.',
+      'Significant policy violations. AdSense will reject your application.',
+      'Critical policy violations. Your site will be rejected immediately.',
+    ],
+    seo: [
+      'Great SEO foundation — pages are well-structured and discoverable.',
+      'Good SEO basics in place. A few improvements will help.',
+      'SEO needs attention. Missing meta tags, H1s, or site structure.',
+      'Poor SEO signals. Google struggles to understand your site.',
+      'Very poor SEO. Missing critical elements on most pages.',
+    ],
+    ux: [
+      'Excellent user experience — easy to navigate and well-structured.',
+      'Good UX. Minor improvements would help visitors.',
+      'Navigation and structure need improvement.',
+      'Poor user experience. Visitors likely struggle to find content.',
+      'Very poor UX. Site is hard to use and navigate.',
+    ],
+    trust: [
+      'Strong trust signals — all required pages present.',
+      'Good trust signals. Add missing pages to strengthen.',
+      'Missing important trust pages. Add them before applying.',
+      'Several trust pages missing. AdSense reviewers will notice.',
+      'Critical trust pages missing. Application will be rejected.',
+    ],
+    eeat: [
+      'Strong expertise and authority signals — Google trusts your content.',
+      'Good E-E-A-T signals. Author attribution would help.',
+      'Moderate authority. Add author bios and cite sources.',
+      'Weak authority signals. Hard to tell who writes the content.',
+      'No expertise signals. Google cannot verify content credibility.',
+    ],
+  }
+  const levels = map[category] ?? map['quality']!
+  if (score >= 85) return levels[0]
+  if (score >= 70) return levels[1]
+  if (score >= 55) return levels[2]
+  if (score >= 40) return levels[3]
+  return levels[4]
+}
+
+// Format date nicely
+function fmtDate(iso?: string): string {
+  if (!iso) return '—'
+  try {
+    return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+  } catch { return '—' }
+}
+
+// Domain age human-readable
+function fmtAge(years?: number): string {
+  if (years === undefined) return '—'
+  if (years < 0.08) return 'Less than 1 month'
+  if (years < 1) return `${Math.round(years * 12)} months`
+  const y = Math.floor(years)
+  const m = Math.round((years - y) * 12)
+  if (m === 0) return `${y} year${y > 1 ? 's' : ''}`
+  return `${y}y ${m}m`
 }
 
 // ── Colour helpers ────────────────────────────────────────────────────────────
@@ -92,9 +190,10 @@ function WeightBar({ label, score, weight, plain }: { label: string; score: numb
       <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
         <div className={`h-full rounded-full transition-all duration-700 ${bc(score)}`} style={{ width: `${score}%` }} />
       </div>
-      <div className="text-right flex-shrink-0 w-16">
+      <div className="text-right flex-shrink-0 w-28">
         <span className={`text-sm font-bold font-mono tabular-nums ${sc(score)}`}>{score}</span>
-        {plain && <p className="text-[9px] text-muted-foreground leading-tight">{plain}</p>}
+        <span className={`ml-1.5 text-[9px] font-black px-1.5 py-0.5 rounded-full ${scoreBadgeBg(score)}`}>{scoreLabel(score)}</span>
+        {plain && <p className="text-[9px] text-muted-foreground leading-tight mt-0.5">{plain}</p>}
       </div>
     </div>
   )
@@ -138,6 +237,8 @@ export default function ResultsPage() {
   const [aiReport, setAiReport] = useState<AIReport | null>(null)
   const [activeTab, setActiveTab] = useState<'overview' | 'issues' | 'plan' | 'pages' | 'deep'>('overview')
   const [copied, setCopied] = useState(false)
+  const [whois, setWhois] = useState<WhoisData | null>(null)
+  const [whoisLoading, setWhoisLoading] = useState(false)
 
   useEffect(() => {
     try {
@@ -152,6 +253,17 @@ export default function ResultsPage() {
     } catch { setError('Failed to load results.') }
     finally { setLoading(false) }
   }, [])
+
+  // Fetch WHOIS data once we know the domain
+  useEffect(() => {
+    if (!data?.domain) return
+    setWhoisLoading(true)
+    fetch(`/api/whois?domain=${encodeURIComponent(data.domain)}`)
+      .then(r => r.json())
+      .then((d: WhoisData) => setWhois(d))
+      .catch(() => setWhois(null))
+      .finally(() => setWhoisLoading(false))
+  }, [data?.domain])
 
   useEffect(() => {
     if ((isPro || data?.isAiUnlocked) && data && !aiReport && !isUnlocking) handleUnlock()
@@ -430,6 +542,9 @@ export default function ResultsPage() {
                   <div className="text-center sm:text-left space-y-2">
                     <p className={`text-xs font-black uppercase tracking-[0.2em] ${sc(finalScore)}`}>AdSense Readiness</p>
                     <h2 className="text-2xl font-black text-foreground">{statusLabel}</h2>
+                    <div className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full ${scoreBadgeBg(finalScore)}`}>
+                      {scoreLabel(finalScore)}
+                    </div>
                     <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
                       {hasAiPreview && ai?.content?.summary
                         ? ai.content.summary
@@ -451,12 +566,12 @@ export default function ResultsPage() {
                   {!hasAiPreview && (
                     <p className="text-[10px] text-amber-600 dark:text-amber-400 italic">Based on site structure only. Unlock AI for content & policy scores.</p>
                   )}
-                  <WeightBar label="Content Quality"   score={qualityScore} weight="30% weight" plain={qualityScore >= 80 ? 'Great writing' : qualityScore >= 60 ? 'Needs work' : 'Too thin/generic'} />
-                  <WeightBar label="Policy Compliance" score={policyScore}  weight="25% weight" plain={policyScore >= 80 ? 'No violations' : policyScore >= 60 ? 'Minor issues' : 'Violations found'} />
-                  <WeightBar label="SEO Performance"   score={seoScore}     weight="20% weight" plain={seoScore >= 80 ? 'Well optimised' : seoScore >= 60 ? 'Partially done' : 'Missing basics'} />
-                  <WeightBar label="E-E-A-T"           score={ai?.eeat?.overall_eeat_score ?? 0} weight="10% weight" plain={!ai ? 'Unlock AI' : (ai.eeat?.overall_eeat_score ?? 0) >= 70 ? 'Strong authority' : 'Needs work'} />
-                  <WeightBar label="User Experience"   score={uxScore}      weight="8% weight"  plain={uxScore >= 80 ? 'Easy to use' : uxScore >= 60 ? 'Some friction' : 'Hard to navigate'} />
-                  <WeightBar label="Trust Signals"     score={trustScore}   weight="7% weight"  plain={trustScore >= 80 ? 'Looks legit' : trustScore >= 60 ? 'Needs pages' : 'Missing pages'} />
+                  <WeightBar label="Content Quality"   score={qualityScore} weight="30% weight" plain={scoreExplain('quality', qualityScore)} />
+                  <WeightBar label="Policy Compliance" score={policyScore}  weight="25% weight" plain={scoreExplain('policy', policyScore)} />
+                  <WeightBar label="SEO Performance"   score={seoScore}     weight="20% weight" plain={scoreExplain('seo', seoScore)} />
+                  <WeightBar label="E-E-A-T"           score={ai?.eeat?.overall_eeat_score ?? 0} weight="10% weight" plain={!ai ? 'Unlock AI to see' : scoreExplain('eeat', ai.eeat?.overall_eeat_score ?? 0)} />
+                  <WeightBar label="User Experience"   score={uxScore}      weight="8% weight"  plain={scoreExplain('ux', uxScore)} />
+                  <WeightBar label="Trust Signals"     score={trustScore}   weight="7% weight"  plain={scoreExplain('trust', trustScore)} />
                 </div>
               </div>
             </Card>
@@ -568,6 +683,121 @@ export default function ResultsPage() {
               </Card>
             )}
 
+            {/* WHOIS Domain Info Card */}
+            <Card className="p-5 border-border/60 rounded-2xl">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-9 w-9 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+                  <Globe className="h-5 w-5" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-bold text-sm text-foreground">Domain Information</p>
+                  <p className="text-xs text-muted-foreground">WHOIS / RDAP registration data</p>
+                </div>
+                {whoisLoading && <div className="h-4 w-4 rounded-full border-2 border-primary border-t-transparent animate-spin flex-shrink-0" />}
+              </div>
+
+              {whois && !whois.error ? (
+                <>
+                  {/* Domain age warning banner */}
+                  {whois.is_new_domain && (
+                    <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 mb-4">
+                      <ShieldAlert className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs font-bold text-amber-700 dark:text-amber-300">New Domain — AdSense Risk</p>
+                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                          Your domain is only <strong>{fmtAge(whois.domain_age_years)}</strong> old. AdSense prefers sites at least 6 months old. Keep building content and apply after the 6-month mark.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {whois.is_expiring_soon && (
+                    <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/40 mb-4">
+                      <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs font-bold text-red-700 dark:text-red-300">Domain Expiring Soon</p>
+                        <p className="text-xs text-red-600 dark:text-red-400 mt-0.5">
+                          Your domain expires on <strong>{fmtDate(whois.expires_on)}</strong>. Renew it before applying to AdSense — an expired domain means instant rejection.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <div className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" />
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Registered</p>
+                      </div>
+                      <p className="text-sm font-bold text-foreground">{fmtDate(whois.registered_on)}</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">Age: <span className={`font-bold ${whois.is_new_domain ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>{fmtAge(whois.domain_age_years)}</span></p>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" />
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Expires</p>
+                      </div>
+                      <p className={`text-sm font-bold ${whois.is_expiring_soon ? 'text-red-600 dark:text-red-400' : 'text-foreground'}`}>{fmtDate(whois.expires_on)}</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{whois.is_expiring_soon ? '⚠ Renew soon' : 'Active'}</p>
+                    </div>
+
+                    {whois.registrar && (
+                      <div className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Registrar</p>
+                        </div>
+                        <p className="text-sm font-bold text-foreground truncate">{whois.registrar}</p>
+                      </div>
+                    )}
+
+                    {whois.name_servers && whois.name_servers.length > 0 && (
+                      <div className="p-3 rounded-xl bg-muted/30 border border-border/40 col-span-2 md:col-span-3">
+                        <div className="flex items-center gap-1.5 mb-1.5">
+                          <Server className="h-3.5 w-3.5 text-muted-foreground" />
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Name Servers</p>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {whois.name_servers.map((ns, i) => (
+                            <span key={i} className="text-[10px] font-mono bg-muted px-2 py-0.5 rounded text-muted-foreground">{ns}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Domain age impact on score */}
+                  {whois.domain_age_years !== undefined && (
+                    <div className="mt-3 p-3 rounded-xl bg-muted/20 border border-border/40">
+                      <div className="flex items-start gap-2">
+                        <Info className="h-3.5 w-3.5 text-blue-500 flex-shrink-0 mt-0.5" />
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          <span className="font-semibold text-foreground">Score impact: </span>
+                          {whois.domain_age_years < 0.25
+                            ? 'Domain is under 3 months old — a 25% score penalty is applied. AdSense rarely approves very new domains.'
+                            : whois.domain_age_years < 0.5
+                            ? 'Domain is under 6 months old — a 15% score penalty is applied. Wait until the 6-month mark for best results.'
+                            : whois.domain_age_years < 1
+                            ? 'Domain is under 1 year old — an 8% score penalty is applied. Your chances improve significantly after 1 year.'
+                            : `Domain is ${fmtAge(whois.domain_age_years)} old — no age penalty. Good standing for AdSense.`}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : whoisLoading ? (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground py-2">
+                  <div className="h-3.5 w-3.5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                  Looking up domain registration data...
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground py-2">
+                  <Info className="h-3.5 w-3.5 flex-shrink-0" />
+                  {whois?.error ?? 'WHOIS data not available for this domain.'}
+                </div>
+              )}
+            </Card>
+
             {/* Article count */}
             {(() => {
               const target = 25
@@ -616,16 +846,20 @@ export default function ResultsPage() {
                     <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center"><FileText className="h-4 w-4" /></div>
                     <p className="font-semibold text-sm">Content Quality</p>
                   </div>
-                  <span className={`text-xl font-black tabular-nums ${sc(qualityScore)}`}>{qualityScore}</span>
+                  <div className="text-right">
+                    <span className={`text-xl font-black tabular-nums ${sc(qualityScore)}`}>{qualityScore}</span>
+                    <span className={`ml-1.5 text-[9px] font-black px-1.5 py-0.5 rounded-full ${scoreBadgeBg(qualityScore)}`}>{scoreLabel(qualityScore)}</span>
+                  </div>
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
                   <div className={`h-full rounded-full ${bc(qualityScore)}`} style={{ width: `${qualityScore}%` }} />
                 </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">{scoreExplain('quality', qualityScore)}</p>
                 <ul className="space-y-1.5 text-xs text-muted-foreground">
                   {hasAiPreview && ai ? <>
-                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc(ai.content.originality_score)}`} />Originality: {ai.content.originality_score}/100</li>
-                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc(ai.content.readability_score)}`} />Readability: {ai.content.readability_score}/100</li>
-                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${ai.content.spam_score > 50 ? 'bg-red-500' : 'bg-emerald-500'}`} />Spam score: {ai.content.spam_score}/100</li>
+                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc(ai.content.originality_score)}`} />Originality: <span className={`font-bold ${sc(ai.content.originality_score)}`}>{ai.content.originality_score}/100</span></li>
+                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc(ai.content.readability_score)}`} />Readability: <span className={`font-bold ${sc(ai.content.readability_score)}`}>{ai.content.readability_score}/100</span></li>
+                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${ai.content.spam_score > 50 ? 'bg-red-500' : 'bg-emerald-500'}`} />Spam risk: <span className={`font-bold ${ai.content.spam_score > 50 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>{ai.content.spam_score > 70 ? 'High' : ai.content.spam_score > 40 ? 'Medium' : 'Low'}</span></li>
                   </> : <>
                     <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 flex-shrink-0" />Avg {avgWords} words/page</li>
                     <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 flex-shrink-0" />{articleCount} articles detected</li>
@@ -640,16 +874,20 @@ export default function ResultsPage() {
                     <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center"><ShieldCheck className="h-4 w-4" /></div>
                     <p className="font-semibold text-sm">Policy Guard</p>
                   </div>
-                  <span className={`text-xl font-black tabular-nums ${sc(policyScore)}`}>{policyScore}</span>
+                  <div className="text-right">
+                    <span className={`text-xl font-black tabular-nums ${sc(policyScore)}`}>{policyScore}</span>
+                    <span className={`ml-1.5 text-[9px] font-black px-1.5 py-0.5 rounded-full ${scoreBadgeBg(policyScore)}`}>{scoreLabel(policyScore)}</span>
+                  </div>
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
                   <div className={`h-full rounded-full ${bc(policyScore)}`} style={{ width: `${policyScore}%` }} />
                 </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">{scoreExplain('policy', policyScore)}</p>
                 <ul className="space-y-1.5 text-xs text-muted-foreground">
                   {hasAiPreview && ai ? <>
                     <li className="flex items-center gap-2">{ai.policy.adult_content ? <AlertCircle className="h-3 w-3 text-red-500 flex-shrink-0" /> : <CheckCircle2 className="h-3 w-3 text-emerald-500 flex-shrink-0" />}{ai.policy.adult_content ? 'Adult content detected' : 'No adult content'}</li>
                     <li className="flex items-center gap-2">{ai.policy.copyright_risk ? <AlertCircle className="h-3 w-3 text-red-500 flex-shrink-0" /> : <CheckCircle2 className="h-3 w-3 text-emerald-500 flex-shrink-0" />}{ai.policy.copyright_risk ? 'Copyright risk found' : 'Low copyright risk'}</li>
-                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${ai.policy.violations.length > 0 ? 'bg-red-500' : 'bg-emerald-500'}`} />{ai.policy.violations.length} violation{ai.policy.violations.length !== 1 ? 's' : ''} found</li>
+                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${ai.policy.violations.length > 0 ? 'bg-red-500' : 'bg-emerald-500'}`} />{ai.policy.violations.length === 0 ? 'No violations found' : `${ai.policy.violations.length} violation${ai.policy.violations.length !== 1 ? 's' : ''} found`}</li>
                   </> : <>
                     <li className="flex items-center gap-2">{missingPages.length === 0 ? <CheckCircle2 className="h-3 w-3 text-emerald-500 flex-shrink-0" /> : <AlertCircle className="h-3 w-3 text-red-500 flex-shrink-0" />}{missingPages.length === 0 ? 'All required pages present' : `${missingPages.length} page(s) missing`}</li>
                   </>}
@@ -663,16 +901,20 @@ export default function ResultsPage() {
                     <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center"><Search className="h-4 w-4" /></div>
                     <p className="font-semibold text-sm">SEO & Authority</p>
                   </div>
-                  <span className={`text-xl font-black tabular-nums ${sc(seoScore)}`}>{seoScore}</span>
+                  <div className="text-right">
+                    <span className={`text-xl font-black tabular-nums ${sc(seoScore)}`}>{seoScore}</span>
+                    <span className={`ml-1.5 text-[9px] font-black px-1.5 py-0.5 rounded-full ${scoreBadgeBg(seoScore)}`}>{scoreLabel(seoScore)}</span>
+                  </div>
                 </div>
                 <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
                   <div className={`h-full rounded-full ${bc(seoScore)}`} style={{ width: `${seoScore}%` }} />
                 </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">{scoreExplain('seo', seoScore)}</p>
                 <ul className="space-y-1.5 text-xs text-muted-foreground">
                   {hasAiPreview && ai && (ai as AIReport).seo_authority ? <>
-                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc((ai as AIReport).seo_authority.topical_authority_score)}`} />Topical authority: {(ai as AIReport).seo_authority.topical_authority_score}/100</li>
-                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc((ai as AIReport).seo_authority.semantic_coverage_score)}`} />Semantic coverage: {(ai as AIReport).seo_authority.semantic_coverage_score}/100</li>
-                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc((ai as AIReport).technical_health.structural_integrity)}`} />Technical health: {(ai as AIReport).technical_health.structural_integrity}/100</li>
+                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc((ai as AIReport).seo_authority.topical_authority_score)}`} />Topical authority: <span className={`font-bold ${sc((ai as AIReport).seo_authority.topical_authority_score)}`}>{(ai as AIReport).seo_authority.topical_authority_score}/100</span></li>
+                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc((ai as AIReport).seo_authority.semantic_coverage_score)}`} />Semantic coverage: <span className={`font-bold ${sc((ai as AIReport).seo_authority.semantic_coverage_score)}`}>{(ai as AIReport).seo_authority.semantic_coverage_score}/100</span></li>
+                    <li className="flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${bc((ai as AIReport).technical_health.structural_integrity)}`} />Technical health: <span className={`font-bold ${sc((ai as AIReport).technical_health.structural_integrity)}`}>{(ai as AIReport).technical_health.structural_integrity}/100</span></li>
                   </> : <>
                     <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 flex-shrink-0" />{data.pages.filter(p => p.meta_description).length}/{data.total_pages} pages have meta</li>
                     <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 flex-shrink-0" />{data.pages.filter(p => p.headings.h1.length > 0).length}/{data.total_pages} pages have H1</li>
@@ -1440,6 +1682,81 @@ export default function ResultsPage() {
                         </p>
                       ))}
                     </div>
+                  )}
+                </Card>
+
+                {/* ── WHOIS Domain Registration ── */}
+                <Card className="p-5 border-border/60 rounded-2xl">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Globe className="h-5 w-5 text-blue-500" />
+                    <h3 className="font-bold text-foreground">Domain Registration (WHOIS)</h3>
+                    {whoisLoading && <div className="ml-auto h-4 w-4 rounded-full border-2 border-primary border-t-transparent animate-spin" />}
+                    {whois && !whois.error && !whoisLoading && (
+                      <span className={`ml-auto text-xs font-bold px-2.5 py-1 rounded-full ${whois.is_new_domain ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'}`}>
+                        {whois.is_new_domain ? 'New Domain' : fmtAge(whois.domain_age_years) + ' old'}
+                      </span>
+                    )}
+                  </div>
+                  {whois && !whois.error ? (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <div className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-1">Registered</p>
+                          <p className="text-sm font-bold text-foreground">{fmtDate(whois.registered_on)}</p>
+                        </div>
+                        <div className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-1">Expires</p>
+                          <p className={`text-sm font-bold ${whois.is_expiring_soon ? 'text-red-600 dark:text-red-400' : 'text-foreground'}`}>{fmtDate(whois.expires_on)}</p>
+                        </div>
+                        <div className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-1">Domain Age</p>
+                          <p className={`text-sm font-bold ${whois.is_new_domain ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>{fmtAge(whois.domain_age_years)}</p>
+                        </div>
+                        {whois.registrar && (
+                          <div className="p-3 rounded-xl bg-muted/30 border border-border/40 col-span-2">
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-1">Registrar</p>
+                            <p className="text-sm font-bold text-foreground">{whois.registrar}</p>
+                          </div>
+                        )}
+                        {whois.updated_on && (
+                          <div className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-1">Last Updated</p>
+                            <p className="text-sm font-bold text-foreground">{fmtDate(whois.updated_on)}</p>
+                          </div>
+                        )}
+                      </div>
+                      {whois.name_servers && whois.name_servers.length > 0 && (
+                        <div className="p-3 rounded-xl bg-muted/30 border border-border/40">
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-2">Name Servers</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {whois.name_servers.map((ns, i) => (
+                              <span key={i} className="text-[10px] font-mono bg-muted px-2 py-0.5 rounded text-muted-foreground">{ns}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {whois.domain_age_years !== undefined && (
+                        <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800/40">
+                          <div className="flex items-start gap-2">
+                            <Info className="h-3.5 w-3.5 text-blue-500 flex-shrink-0 mt-0.5" />
+                            <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
+                              <span className="font-bold">AdSense score impact: </span>
+                              {whois.domain_age_years < 0.25
+                                ? 'Under 3 months old — 25% score penalty applied. Very unlikely to get approved at this stage.'
+                                : whois.domain_age_years < 0.5
+                                ? 'Under 6 months old — 15% score penalty applied. Wait until the 6-month mark.'
+                                : whois.domain_age_years < 1
+                                ? 'Under 1 year old — 8% score penalty applied. Approval chances improve significantly after 1 year.'
+                                : `${fmtAge(whois.domain_age_years)} old — no age penalty. Domain age is not a barrier to approval.`}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : whoisLoading ? (
+                    <p className="text-xs text-muted-foreground">Looking up domain registration data...</p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">{whois?.error ?? 'WHOIS data not available for this domain.'}</p>
                   )}
                 </Card>
               </>

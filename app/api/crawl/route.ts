@@ -163,7 +163,14 @@ export async function POST(request: NextRequest) {
       crawl_data:  isPro ? null : crawlResult,
     })
   } catch (err) {
-    console.error('[/api/crawl] unhandled error:', err)
-    return NextResponse.json({ success: false, error: 'Internal server error.' }, { status: 500 })
+    const msg = (err as Error).message ?? String(err)
+    const stack = (err as Error).stack ?? ''
+    console.error('[/api/crawl] unhandled error:', msg, stack)
+    return NextResponse.json({
+      success: false,
+      error: 'Internal server error.',
+      // Include details in dev so you can see the real cause in the browser
+      ...(process.env.NODE_ENV === 'development' && { debug: msg, stack }),
+    }, { status: 500 })
   }
 }
