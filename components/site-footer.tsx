@@ -95,6 +95,9 @@ export function SiteFooter() {
         <p className="text-center text-[10px] text-muted-foreground/50 mt-4">
           This site uses Google AdSense. Google uses cookies to serve ads based on your prior visits. <Link href="/privacy" className="underline hover:text-muted-foreground">Learn more</Link>. AdSense Checker AI is not affiliated with Google LLC.
         </p>
+        <p className="text-center text-[10px] text-muted-foreground/30 mt-2">
+          v2.1.0
+        </p>
       </div>
     </footer>
   )
