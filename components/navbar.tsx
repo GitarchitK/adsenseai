@@ -60,6 +60,9 @@ export function Navbar() {
           <Link href="/#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/60">
             Features
           </Link>
+          <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/60">
+            Blog
+          </Link>
           <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/60">
             Pricing
           </Link>

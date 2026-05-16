@@ -1,55 +1,218 @@
+import { Metadata } from 'next'
+import Link from 'next/link'
 import { Navbar } from '@/components/navbar'
 import { SiteFooter } from '@/components/site-footer'
-import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
-import type { Metadata } from 'next'
+import { Card } from '@/components/ui/card'
+import { Zap, Shield, TrendingUp, BookOpen, ArrowRight, CheckCircle2, Clock, BarChart3, Search, Globe, Star } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'AdSense Approval Guides & Resources',
-  description: 'Free guides on how to get Google AdSense approved. Learn about AdSense approval requirements, how to check your eligibility, and how to fix common rejection reasons.',
-  alternates: { canonical: 'https://www.adsensechecker.in/blog' },
+  title: 'AdSense & Monetization Guides — Expert Tips for Publishers',
+  description: 'Complete guides on AdSense approval, website monetization strategies, and building a profitable publishing business.',
 }
 
-const posts = [
-  { href: '/blog/how-to-use-adsense-checker-ai', title: 'How to Use AdSense Checker AI — Step-by-Step Guide', desc: 'Complete tutorial on how to scan your website, read your report, and fix issues to get AdSense approved.', tag: 'Tutorial' },
-  { href: '/blog/adsense-readiness-score-explained', title: 'AdSense Readiness Score Explained — What Your Score Means', desc: 'How your score is calculated, what each category measures, and what score you need to get approved.', tag: 'Score Guide' },
-  { href: '/blog/adsense-approval-checker-tool-free', title: 'Best Free AdSense Approval Checker Tool You Must Try', desc: 'Discover a powerful free AdSense approval checker that reveals exactly what\'s missing for approval.', tag: 'AdSense Tools' },
-  { href: '/blog/ai-adsense-approval-checker', title: 'AI AdSense Approval Checker That Predicts Approval Chances', desc: 'How AI-powered checkers evaluate your website like Google does — with advanced signals and real-time suggestions.', tag: 'AI Tools' },
-  { href: '/blog/how-to-check-adsense-approval', title: 'How to Check AdSense Approval: The Complete Guide for 2025', desc: 'Learn exactly how to check if your website is ready for Google AdSense approval — and what to fix if it\'s not.', tag: 'AdSense Guide' },
-  { href: '/blog/adsense-approval-requirements', title: 'Google AdSense Approval Requirements 2025 — Complete Checklist', desc: 'Every requirement your website must meet before applying for AdSense, with a critical vs recommended breakdown.', tag: 'Checklist' },
-  { href: '/blog/adsense-rejected-how-to-fix', title: 'AdSense Rejected? Here Is How to Fix Your Website Fast', desc: 'Got rejected by AdSense? Identify common issues, improve content quality, and reapply with confidence.', tag: 'Fix Guide' },
-  { href: '/blog/optimize-website-for-adsense-approval', title: 'How to Optimize Your Website for AdSense Approval', desc: 'Improve content quality, site design, and technical SEO to increase your AdSense approval chances.', tag: 'Optimization' },
-  { href: '/blog/adsense-approval-success-case-study', title: 'Real AdSense Approval Success Case Studies Explained', desc: 'Learn from real publishers who went from rejected to approved — with the exact issues they fixed.', tag: 'Case Studies' },
-  { href: '/blog/monetize-website-without-adsense', title: 'How to Monetize Your Website Without AdSense Approval', desc: 'Discover alternative platforms and revenue streams to earn while working toward AdSense approval.', tag: 'Monetization' },
-  { href: '/blog/how-many-articles-for-adsense-approval', title: 'How Many Articles Do You Need for AdSense Approval in 2025?', desc: 'The exact number of articles you need — and the quality standards they must meet to pass AdSense review.', tag: 'AdSense Guide' },
-  { href: '/blog/adsense-approval-time', title: 'How Long Does AdSense Approval Take in 2025? (Real Timeline)', desc: 'The real AdSense review timeline, what happens during review, and how to get approved faster.', tag: 'AdSense Guide' },
-  { href: '/blog/adsense-low-value-content-fix', title: 'How to Fix AdSense "Low Value Content" Rejection', desc: '"Low value content" is the #1 AdSense rejection reason. Here are 5 specific fixes to get approved.', tag: 'Fix Guide' },
-  { href: '/blog/why-adsense-keeps-rejecting-my-site', title: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes', desc: 'The 8 most common AdSense rejection reasons and exactly how to fix each one.', tag: 'Troubleshooting' },
+const guides = [
+  {
+    slug: 'how-to-get-adsense-approved-first-time',
+    title: 'How to Get AdSense Approved on Your First Try',
+    excerpt: 'Stop wasting months on rejections. This comprehensive guide walks you through every requirement Google looks for — from content quality to policy compliance.',
+    icon: Zap,
+    color: 'bg-emerald-500/10 text-emerald-500',
+    readTime: '8 min read',
+    category: 'AdSense Approval',
+  },
+  {
+    slug: 'mythos-ai-review',
+    title: 'Mythos AI Review: I Used It for 3 Months — Honest Take',
+    excerpt: 'After building two websites and writing 80+ articles with Mythos AI, here\'s what actually works, what doesn\'t, and whether it\'s worth your money for AdSense content.',
+    icon: Star,
+    color: 'bg-violet-500/10 text-violet-500',
+    readTime: '11 min read',
+    category: 'AI Tools',
+  },
+  {
+    slug: 'adsense-policy-complete-guide',
+    title: 'Complete AdSense Policy Guide for Publishers',
+    excerpt: 'Understanding Google\'s policies is crucial for maintaining your account. Learn exactly what content triggers rejections and how to stay compliant.',
+    icon: Shield,
+    color: 'bg-red-500/10 text-red-500',
+    readTime: '12 min read',
+    category: 'Policy & Compliance',
+  },
+  {
+    slug: 'how-i-use-mythos-ai-for-adsense-blogs',
+    title: 'My Exact Workflow: Using Mythos AI for AdSense Blogs',
+    excerpt: 'The step-by-step process I follow to turn AI drafts into content that passes Google\'s quality review — including the editing checklist I use every time.',
+    icon: BookOpen,
+    color: 'bg-emerald-500/10 text-emerald-500',
+    readTime: '10 min read',
+    category: 'Workflow Guide',
+  },
+  {
+    slug: 'website-monetization-strategies',
+    title: 'Website Monetization Strategies That Actually Work',
+    excerpt: 'Beyond AdSense: Explore affiliate marketing, sponsored content, digital products, and hybrid strategies to maximize your site\'s revenue potential.',
+    icon: TrendingUp,
+    color: 'bg-amber-500/10 text-amber-500',
+    readTime: '10 min read',
+    category: 'Monetization',
+  },
+  {
+    slug: 'mythos-ai-vs-other-ai-tools',
+    title: 'Mythos AI vs Jasper vs Copy.ai: Which Helps AdSense Approval?',
+    excerpt: 'I ran the same content brief through three AI tools and checked each output against AdSense quality criteria. The results were more interesting than I expected.',
+    icon: BarChart3,
+    color: 'bg-blue-500/10 text-blue-500',
+    readTime: '13 min read',
+    category: 'AI Tools',
+  },
+  {
+    slug: 'why-adsense-rejects-sites',
+    title: 'Why AdSense Keeps Rejecting Your Site (And How to Fix It)',
+    excerpt: 'Decode those vague rejection emails. We break down the real reasons Google rejects sites and provide actionable fixes for each scenario.',
+    icon: Search,
+    color: 'bg-pink-500/10 text-pink-500',
+    readTime: '7 min read',
+    category: 'Troubleshooting',
+  },
+  {
+    slug: 'thin-content-guide',
+    title: 'What is Thin Content? A Complete Guide to High-Value Articles',
+    excerpt: 'Thin content is the #1 reason for AdSense rejections. Learn how to create substantive, valuable articles that satisfy both readers and Google.',
+    icon: BookOpen,
+    color: 'bg-violet-500/10 text-violet-500',
+    readTime: '9 min read',
+    category: 'Content Quality',
+  },
+  {
+    slug: 'domain-age-adsense',
+    title: 'Does Domain Age Matter for AdSense? Truth Revealed',
+    excerpt: 'New domain owners fear rejection due to age. Learn the truth about domain age requirements and strategies for newer sites to get approved.',
+    icon: Clock,
+    color: 'bg-cyan-500/10 text-cyan-500',
+    readTime: '5 min read',
+    category: 'AdSense Approval',
+  },
+  {
+    slug: 'cpc-keyword-research',
+    title: 'High CPC Keyword Research for Maximum Ad Revenue',
+    excerpt: 'Not all traffic is equal. Discover how to identify high-value keywords in your niche that attract premium advertisers and boost your CPM.',
+    icon: BarChart3,
+    color: 'bg-pink-500/10 text-pink-500',
+    readTime: '11 min read',
+    category: 'SEO & Revenue',
+  },
+  {
+    slug: 'adsense-alternatives',
+    title: 'Best AdSense Alternatives for Publishers in 2024',
+    excerpt: 'If AdSense isn\'t right for you or you want to diversify, explore these legitimate ad networks that can monetize your traffic effectively.',
+    icon: Globe,
+    color: 'bg-orange-500/10 text-orange-500',
+    readTime: '8 min read',
+    category: 'Monetization',
+  },
 ]
 
 export default function BlogPage() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="container mx-auto px-6 py-16 max-w-3xl">
-        <div className="mb-12">
-          <p className="text-xs font-bold text-primary uppercase tracking-widest mb-3">AdSense Resources</p>
-          <h1 className="text-3xl md:text-4xl font-black text-foreground mb-4">AdSense Approval Guides</h1>
-          <p className="text-lg text-muted-foreground">Free guides to help you get Google AdSense approved faster.</p>
-        </div>
-        <div className="space-y-4">
-          {posts.map(post => (
-            <Link key={post.href} href={post.href} className="block group">
-              <div className="p-6 rounded-2xl border border-border/60 bg-card hover:border-primary/40 transition-colors">
-                <span className="text-[10px] font-black text-primary uppercase tracking-widest">{post.tag}</span>
-                <h2 className="text-lg font-black text-foreground mt-1 mb-2 group-hover:text-primary transition-colors">{post.title}</h2>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-3">{post.desc}</p>
-                <span className="text-xs font-bold text-primary flex items-center gap-1">Read guide <ArrowRight className="h-3 w-3" /></span>
+      
+      {/* Hero */}
+      <section className="border-b border-border/60 bg-muted/20">
+        <div className="container mx-auto px-6 py-16 md:py-24">
+          <div className="max-w-3xl">
+            <p className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Publisher Guides</p>
+            <h1 className="text-3xl md:text-5xl font-black text-foreground mb-4 leading-tight">
+              Master AdSense Approval & Website Monetization
+            </h1>
+            <p className="text-lg text-muted-foreground mb-6">
+              Expert guides, proven strategies, and insider tips to get your site approved and maximize your publishing revenue.
+            </p>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                <span>Free guides</span>
               </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                <span>Updated for 2024</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                <span>Actionable tips</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Guides Grid */}
+      <section className="container mx-auto px-6 py-12 md:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {guides.map((guide) => (
+            <Link key={guide.slug} href={`/blog/${guide.slug}`}>
+              <Card className="h-full p-6 border-border/60 rounded-2xl hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 transition-all group cursor-pointer">
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${guide.color}`}>
+                    <guide.icon className="h-5 w-5" />
+                  </div>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider bg-muted px-2 py-1 rounded-full">
+                    {guide.category}
+                  </span>
+                </div>
+                
+                <h2 className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                  {guide.title}
+                </h2>
+                
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-3">
+                  {guide.excerpt}
+                </p>
+                
+                <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/40">
+                  <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5" /> {guide.readTime}
+                  </span>
+                  <span className="text-sm font-semibold text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
+                    Read Guide <ArrowRight className="h-4 w-4" />
+                  </span>
+                </div>
+              </Card>
             </Link>
           ))}
         </div>
-      </div>
+      </section>
+
+      {/* CTA */}
+      <section className="border-t border-border/60 bg-muted/20">
+        <div className="container mx-auto px-6 py-12 md:py-16">
+          <Card className="p-8 md:p-12 border-primary/20 bg-gradient-to-br from-primary/5 to-violet-500/5 rounded-2xl">
+            <div className="max-w-2xl mx-auto text-center">
+              <h2 className="text-2xl md:text-3xl font-black text-foreground mb-3">
+                Ready to Check Your AdSense Readiness?
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Use our free AI-powered tool to scan your site and get personalized recommendations before applying to AdSense.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Link 
+                  href="/auth/signup"
+                  className="inline-flex items-center justify-center gap-2 h-11 px-7 rounded-xl bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all"
+                >
+                  <Zap className="h-4 w-4" /> Check My Site Free
+                </Link>
+                <Link 
+                  href="/pricing"
+                  className="inline-flex items-center justify-center gap-2 h-11 px-7 rounded-xl border border-border bg-background font-semibold hover:bg-muted transition-all"
+                >
+                  View Pricing
+                </Link>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </section>
+
       <SiteFooter />
     </div>
   )
