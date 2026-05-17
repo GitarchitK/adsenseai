@@ -7,8 +7,11 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle2, ArrowRight, Clock, Zap, Search, AlertCircle, Shield, TrendingUp } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Why AdSense Keeps Rejecting Your Site (And How to Fix It)',
-  description: 'Decode those vague rejection emails. We break down the real reasons Google rejects sites and provide actionable fixes for each scenario.',
+  title: 'Why AdSense Keeps Rejecting Your Site — Real Reasons & Fixes (2026)',
+  description: 'Decode those vague AdSense rejection emails. We break down the 6 real reasons Google rejects sites and give you actionable fixes for each one.',
+  keywords: ['why adsense rejected my site', 'adsense rejection reasons', 'adsense keeps rejecting', 'adsense rejection fix', 'google adsense rejected'],
+  alternates: { canonical: 'https://www.adsensechecker.in/blog/why-adsense-rejects-sites' },
+  openGraph: { type: 'article', title: 'Why AdSense Keeps Rejecting Your Site — Real Reasons & Fixes', description: 'Decode AdSense rejection emails and fix the real issues.', url: 'https://www.adsensechecker.in/blog/why-adsense-rejects-sites', siteName: 'AdSense Checker AI' },
 }
 
 export default function BlogPost() {

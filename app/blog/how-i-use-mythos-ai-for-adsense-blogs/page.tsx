@@ -9,7 +9,9 @@ import { CheckCircle2, ArrowRight, Clock, Zap, BookOpen } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'My Exact Workflow: Using Mythos AI to Write AdSense-Approved Blog Posts',
   description: 'The step-by-step process I use to turn Mythos AI drafts into blog posts that pass AdSense quality review — including the editing checklist I follow every time.',
+  keywords: ['mythos ai workflow', 'ai blog writing workflow', 'mythos ai adsense blogs', 'ai content editing checklist', 'write adsense approved content'],
   alternates: { canonical: 'https://www.adsensechecker.in/blog/how-i-use-mythos-ai-for-adsense-blogs' },
+  openGraph: { type: 'article', title: 'My Exact Workflow: Using Mythos AI for AdSense-Approved Blogs', description: 'Step-by-step process + editing checklist for AI content that passes AdSense review.', url: 'https://www.adsensechecker.in/blog/how-i-use-mythos-ai-for-adsense-blogs', siteName: 'AdSense Checker AI' },
 }
 
 export default function BlogPost() {

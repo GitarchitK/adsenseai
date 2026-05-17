@@ -7,8 +7,35 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle2, ArrowRight, Clock, Zap, Shield, AlertTriangle, BookOpen } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Complete AdSense Policy Guide for Publishers — 2024',
-  description: 'Understanding Google\'s policies is crucial for maintaining your account. Learn exactly what content triggers rejections and how to stay compliant.',
+  title: 'Complete AdSense Policy Guide for Publishers — 2026',
+  description: 'Understanding Google\'s policies is crucial for maintaining your AdSense account. Learn exactly what content triggers rejections and how to stay compliant long-term.',
+  keywords: ['adsense policy guide', 'adsense program policies', 'adsense policy violations', 'google adsense policies', 'adsense compliance'],
+  alternates: { canonical: 'https://www.adsensechecker.in/blog/adsense-policy-complete-guide' },
+  openGraph: {
+    type: 'article',
+    title: 'Complete AdSense Policy Guide for Publishers — 2026',
+    description: 'Learn exactly what content triggers AdSense rejections and how to stay compliant.',
+    url: 'https://www.adsensechecker.in/blog/adsense-policy-complete-guide',
+    siteName: 'AdSense Checker AI',
+  },
+}
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Complete AdSense Policy Guide for Publishers',
+  description: 'Understanding Google\'s policies is crucial for maintaining your AdSense account.',
+  url: 'https://www.adsensechecker.in/blog/adsense-policy-complete-guide',
+  datePublished: '2026-05-07',
+  dateModified: '2026-05-17',
+  author: { '@type': 'Organization', name: 'Navroll Studio', url: 'https://www.adsensechecker.in' },
+  publisher: { '@type': 'Organization', name: 'AdSense Checker AI', url: 'https://www.adsensechecker.in', logo: { '@type': 'ImageObject', url: 'https://www.adsensechecker.in/icon.svg' } },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://www.adsensechecker.in/blog/adsense-policy-complete-guide' },
+  breadcrumb: { '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.adsensechecker.in' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.adsensechecker.in/blog' },
+    { '@type': 'ListItem', position: 3, name: 'AdSense Policy Guide', item: 'https://www.adsensechecker.in/blog/adsense-policy-complete-guide' },
+  ]},
 }
 
 export default function BlogPost() {
@@ -18,6 +45,7 @@ export default function BlogPost() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       
       {/* Hero */}
       <section className="border-b border-border/60 bg-muted/20">

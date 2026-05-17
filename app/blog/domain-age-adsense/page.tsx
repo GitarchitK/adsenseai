@@ -7,8 +7,11 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle2, ArrowRight, Clock, Zap, Clock4, Shield, TrendingUp } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Does Domain Age Matter for AdSense? Truth Revealed',
-  description: 'New domain owners fear rejection due to age. Learn the truth about domain age requirements and strategies for newer sites to get approved.',
+  title: 'Does Domain Age Matter for AdSense Approval? The Truth (2026)',
+  description: 'New domain owners fear rejection due to age. Learn the truth about domain age requirements and proven strategies for newer sites to get AdSense approved.',
+  keywords: ['domain age adsense', 'does domain age matter adsense', 'new domain adsense approval', 'domain age google adsense', 'adsense new domain'],
+  alternates: { canonical: 'https://www.adsensechecker.in/blog/domain-age-adsense' },
+  openGraph: { type: 'article', title: 'Does Domain Age Matter for AdSense? The Truth', description: 'The truth about domain age and AdSense approval — plus strategies for new sites.', url: 'https://www.adsensechecker.in/blog/domain-age-adsense', siteName: 'AdSense Checker AI' },
 }
 
 export default function BlogPost() {
