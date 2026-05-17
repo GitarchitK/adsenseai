@@ -3,11 +3,12 @@
 import { useState } from 'react'
 import { Navbar } from '@/components/navbar'
 import { Button } from '@/components/ui/button'
-import { CheckCircle2, Lock, Zap, Crown, Star, ArrowRight } from 'lucide-react'
+import { CheckCircle2, Lock, Zap, Crown, Star, ArrowRight, Globe } from 'lucide-react'
 import Link from 'next/link'
 import { useProfile } from '@/hooks/use-profile'
 import { useRazorpay } from '@/hooks/use-razorpay'
 import { BuildBanner } from '@/components/build-banner'
+import { useCurrency } from '@/hooks/use-currency'
 const freeFeatures = [
   '5 free site scans / month',
   'AdSense readiness score (0–100)',
@@ -47,7 +48,10 @@ const faqs = [
 export default function PricingPage() {
   const { profile, token, isPro, getToken } = useProfile()
   const { openCheckout } = useRazorpay()
+  const { currency, country, loading: geoLoading } = useCurrency()
   const [loading, setLoading] = useState(false)
+
+  const isIndia = country === 'IN'
 
   const handleProUpgrade = async () => {
     if (!token) { window.location.href = '/auth/signup'; return }
@@ -90,8 +94,14 @@ export default function PricingPage() {
             Pay only for what you need
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            Start free. Unlock a full AI report for ₹19, or go Pro for 200 scans and AI on every analysis.
+            Start free. Unlock a full AI report for {geoLoading ? '₹19' : currency.reportUnlock}, or go Pro for 200 scans and AI on every analysis.
           </p>
+          {!geoLoading && !isIndia && (
+            <p className="text-xs text-muted-foreground/60 mt-2 flex items-center justify-center gap-1.5">
+              <Globe className="h-3 w-3" />
+              Prices shown in {currency.code} · Payments processed in INR via Razorpay
+            </p>
+          )}
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent" />
       </section>
@@ -138,9 +148,14 @@ export default function PricingPage() {
             <div className="mb-6">
               <p className="text-[11px] font-black text-primary uppercase tracking-widest mb-3">Report Unlock</p>
               <div className="flex items-baseline gap-1.5 mb-2">
-                <span className="text-5xl font-black text-foreground">₹19</span>
+                <span className="text-5xl font-black text-foreground">
+                  {geoLoading ? '₹19' : currency.reportUnlock}
+                </span>
                 <span className="text-muted-foreground text-sm font-medium">one-time</span>
               </div>
+              {!isIndia && !geoLoading && (
+                <p className="text-[10px] text-muted-foreground/60 mb-1">≈ {currency.reportUnlock} · charged as ₹19</p>
+              )}
               <p className="text-sm text-muted-foreground">Unlock the full AI report for one scan. Pay once, keep forever.</p>
             </div>
             <ul className="space-y-2.5 mb-8 flex-1">
@@ -166,9 +181,14 @@ export default function PricingPage() {
                 <Crown className="h-3.5 w-3.5" /> Pro
               </p>
               <div className="flex items-baseline gap-1.5 mb-2">
-                <span className="text-5xl font-black text-foreground">₹199</span>
+                <span className="text-5xl font-black text-foreground">
+                  {geoLoading ? '₹199' : currency.proMonthly.replace('/mo', '')}
+                </span>
                 <span className="text-muted-foreground text-sm font-medium">/month</span>
               </div>
+              {!isIndia && !geoLoading && (
+                <p className="text-[10px] text-muted-foreground/60 mb-1">≈ {currency.proMonthly} · charged as ₹199/mo</p>
+              )}
               <p className="text-sm text-muted-foreground">For serious publishers managing multiple sites.</p>
             </div>
             <ul className="space-y-2.5 mb-8 flex-1">
@@ -217,7 +237,7 @@ export default function PricingPage() {
                   <tr className="border-b border-border/60 bg-muted/30">
                     <th className="text-left px-6 py-4 font-semibold text-foreground">Feature</th>
                     <th className="text-center px-4 py-4 font-semibold text-muted-foreground">Free</th>
-                    <th className="text-center px-4 py-4 font-semibold text-primary">₹19 Unlock</th>
+                    <th className="text-center px-4 py-4 font-semibold text-primary">{geoLoading ? '₹19' : currency.reportUnlock} Unlock</th>
                     <th className="text-center px-4 py-4 font-semibold text-amber-600 dark:text-amber-400">Pro</th>
                   </tr>
                 </thead>

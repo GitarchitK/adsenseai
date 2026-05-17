@@ -12,6 +12,7 @@ import {
   MousePointer2, Layout, AlertCircle, Crown,
   Coins, DollarSign, Wallet,
 } from 'lucide-react'
+import { LocalPrice, CurrencyNote } from '@/components/pricing-display'
 
 export const metadata: Metadata = {
   title: 'AdSense Approval Checker — Free AI Website Audit Tool',
@@ -474,6 +475,7 @@ export default function Home() {
                   <span className="text-4xl font-black text-foreground">₹19</span>
                   <span className="text-muted-foreground text-sm">one-time</span>
                 </div>
+                <CurrencyNote inr="₹19" />
                 <p className="text-sm text-muted-foreground">Perfect for a single-site deep audit.</p>
               </div>
               <ul className="space-y-2.5 mb-8 flex-1">
@@ -499,6 +501,7 @@ export default function Home() {
                   <span className="text-4xl font-black text-foreground">₹199</span>
                   <span className="text-muted-foreground text-sm">/month</span>
                 </div>
+                <CurrencyNote inr="₹199/mo" />
                 <p className="text-sm text-muted-foreground">For serious publishers with multiple sites.</p>
               </div>
               <ul className="space-y-2.5 mb-8 flex-1">
