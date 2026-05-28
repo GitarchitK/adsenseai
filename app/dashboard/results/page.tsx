@@ -165,16 +165,17 @@ function ScoreRing({ score, status }: { score: number; status: string }) {
   const r = 52, circ = 2 * Math.PI * r, offset = circ - (score / 100) * circ
   const stroke = status === 'high' ? '#10b981' : status === 'moderate' ? '#f59e0b' : '#ef4444'
   return (
-    <div className="relative flex items-center justify-center w-36 h-36 flex-shrink-0">
-      <svg className="absolute inset-0 -rotate-90" width="144" height="144" viewBox="0 0 144 144">
-        <circle cx="72" cy="72" r={r} fill="none" stroke="currentColor" strokeWidth="8" className="text-muted/25" />
+    <div className="relative flex items-center justify-center w-32 h-32 md:w-40 md:h-40 flex-shrink-0 group">
+      <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary/20 to-transparent blur-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
+      <svg className="absolute inset-0 -rotate-90 w-full h-full drop-shadow-xl" viewBox="0 0 144 144">
+        <circle cx="72" cy="72" r={r} fill="none" stroke="currentColor" strokeWidth="8" className="text-white/5" />
         <circle cx="72" cy="72" r={r} fill="none" stroke={stroke} strokeWidth="8" strokeLinecap="round"
           strokeDasharray={circ} strokeDashoffset={offset}
           style={{ transition: 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)' }} />
       </svg>
       <div className="text-center z-10">
-        <span className={`text-4xl font-bold tabular-nums ${sc(score)}`}>{score}</span>
-        <span className="block text-[11px] text-muted-foreground font-medium mt-0.5">/ 100</span>
+        <span className={`text-4xl md:text-5xl font-black tabular-nums tracking-tighter drop-shadow-md ${sc(score)}`}>{score}</span>
+        <span className="block text-[10px] md:text-xs text-muted-foreground font-bold mt-1 tracking-widest uppercase">/ 100</span>
       </div>
     </div>
   )
@@ -182,18 +183,18 @@ function ScoreRing({ score, status }: { score: number; status: string }) {
 
 function WeightBar({ label, score, weight, plain }: { label: string; score: number; weight: string; plain?: string }) {
   return (
-    <div className="flex items-center gap-3">
-      <div className="w-36 flex-shrink-0">
-        <p className="text-xs font-semibold text-foreground">{label}</p>
-        <p className="text-[10px] text-muted-foreground">{weight}</p>
+    <div className="flex items-center gap-4 group">
+      <div className="w-28 md:w-36 flex-shrink-0">
+        <p className="text-xs font-bold text-foreground/90 group-hover:text-foreground transition-colors">{label}</p>
+        <p className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider">{weight}</p>
       </div>
-      <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-        <div className={`h-full rounded-full transition-all duration-700 ${bc(score)}`} style={{ width: `${score}%` }} />
+      <div className="flex-1 h-1.5 md:h-2 rounded-full bg-white/5 overflow-hidden ring-1 ring-white/5 shadow-inner">
+        <div className={`h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(255,255,255,0.2)] ${bc(score)}`} style={{ width: `${score}%` }} />
       </div>
-      <div className="text-right flex-shrink-0 w-28">
-        <span className={`text-sm font-bold font-mono tabular-nums ${sc(score)}`}>{score}</span>
-        <span className={`ml-1.5 text-[9px] font-black px-1.5 py-0.5 rounded-full ${scoreBadgeBg(score)}`}>{scoreLabel(score)}</span>
-        {plain && <p className="text-[9px] text-muted-foreground leading-tight mt-0.5">{plain}</p>}
+      <div className="text-right flex-shrink-0 w-24 md:w-28">
+        <span className={`text-xs md:text-sm font-black font-mono tabular-nums ${sc(score)}`}>{score}</span>
+        <span className={`ml-2 text-[8px] md:text-[9px] font-black px-2 py-0.5 rounded-full border border-white/5 ${scoreBadgeBg(score)}`}>{scoreLabel(score)}</span>
+        {plain && <p className="text-[9px] text-muted-foreground leading-tight mt-1 hidden sm:block">{plain}</p>}
       </div>
     </div>
   )
@@ -201,11 +202,14 @@ function WeightBar({ label, score, weight, plain }: { label: string; score: numb
 
 function StatPill({ icon, label, value, sub }: { icon: React.ReactNode; label: string; value: string | number; sub?: string }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-muted/40 border border-border/50">
-      <div className="text-primary flex-shrink-0">{icon}</div>
+    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] hover:bg-white/[0.04] transition-colors text-center sm:text-left group">
+      <div className="text-primary flex-shrink-0 p-2.5 rounded-xl bg-primary/10 ring-1 ring-primary/20 group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300">
+        {icon}
+      </div>
       <div>
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="text-sm font-black text-foreground tabular-nums">{value}{sub && <span className="text-xs font-normal text-muted-foreground ml-1">{sub}</span>}</p>
+        <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-widest">{label}</p>
+        <p className="text-lg font-black text-foreground tabular-nums mt-0.5 leading-none">{value}</p>
+        {sub && <p className="text-[10px] font-medium text-muted-foreground mt-1 opacity-80">{sub}</p>}
       </div>
     </div>
   )
@@ -213,14 +217,14 @@ function StatPill({ icon, label, value, sub }: { icon: React.ReactNode; label: s
 
 function IssueRow({ text, type }: { text: string; type: 'critical' | 'warning' | 'info' }) {
   const cfg = {
-    critical: { icon: <AlertCircle className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />, bg: 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800/40' },
-    warning:  { icon: <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />, bg: 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/40' },
-    info:     { icon: <Lightbulb className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />, bg: 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800/40' },
+    critical: { icon: <AlertCircle className="h-4 w-4 text-red-400" />, bg: 'bg-red-500/5 border-red-500/20 text-red-200' },
+    warning:  { icon: <AlertTriangle className="h-4 w-4 text-amber-400" />, bg: 'bg-amber-500/5 border-amber-500/20 text-amber-200' },
+    info:     { icon: <Lightbulb className="h-4 w-4 text-blue-400" />, bg: 'bg-blue-500/5 border-blue-500/20 text-blue-200' },
   }[type]
   return (
-    <div className={`flex items-start gap-3 p-3 rounded-xl border ${cfg.bg}`}>
-      {cfg.icon}
-      <p className="text-sm text-foreground leading-relaxed">{text}</p>
+    <div className={`flex items-start gap-3 p-3.5 rounded-xl border ${cfg.bg} shadow-sm backdrop-blur-sm transition-all hover:bg-white/5`}>
+      <div className="mt-0.5 flex-shrink-0 bg-white/5 p-1 rounded-md">{cfg.icon}</div>
+      <p className="text-[13px] font-medium leading-relaxed opacity-90">{text}</p>
     </div>
   )
 }
@@ -508,26 +512,26 @@ export default function ResultsPage() {
         </div>
 
         {/* ── Quick stats ── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <StatPill icon={<FileText className="h-4 w-4" />} label="Pages Crawled" value={data.total_pages} sub={data.sitemap_total && data.sitemap_total > data.total_pages ? `of ${data.sitemap_total} found` : undefined} />
-          <StatPill icon={<BookOpen className="h-4 w-4" />} label="Articles Found" value={articleCount} sub={articleCount >= 25 ? '✓ Good' : `/ 25 needed`} />
-          <StatPill icon={<Eye className="h-4 w-4" />}      label="Avg Word Count" value={avgWords} sub="words" />
-          <StatPill icon={<Target className="h-4 w-4" />}   label="Readiness Score" value={`${finalScore}/100`} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+          <StatPill icon={<FileText className="h-5 w-5" />} label="Pages Crawled" value={data.total_pages} sub={data.sitemap_total && data.sitemap_total > data.total_pages ? `of ${data.sitemap_total} found` : undefined} />
+          <StatPill icon={<BookOpen className="h-5 w-5" />} label="Articles Found" value={articleCount} sub={articleCount >= 25 ? '✓ Good' : `/ 25 needed`} />
+          <StatPill icon={<Eye className="h-5 w-5" />}      label="Avg Word Count" value={avgWords} sub="words" />
+          <StatPill icon={<Target className="h-5 w-5" />}   label="Readiness Score" value={`${finalScore}/100`} />
         </div>
 
         {/* ── Tabs ── */}
-        <div className="flex items-center gap-1 p-1 bg-muted/30 rounded-2xl border border-border/40 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-2 p-1.5 bg-muted/40 backdrop-blur-xl rounded-2xl border border-white/5 overflow-x-auto no-scrollbar snap-x shadow-inner">
           {tabs.map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex-1 justify-center relative ${
-                activeTab === tab.id ? 'bg-background text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+              className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap flex-1 justify-center relative snap-start ${
+                activeTab === tab.id ? 'bg-[#050505] text-primary shadow-[0_4px_20px_-5px_rgba(0,0,0,0.5)] border border-white/5' : 'text-muted-foreground hover:text-foreground hover:bg-white/5 border border-transparent'
               }`}>
               <tab.icon className="h-4 w-4 flex-shrink-0" />
               <span>{tab.label}</span>
               {tab.locked ? (
-                <Lock className="h-3 w-3 text-muted-foreground/60 flex-shrink-0" />
+                <Lock className="h-3.5 w-3.5 text-muted-foreground/50 flex-shrink-0" />
               ) : (
-                <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-1.5 py-0.5 rounded-full leading-none flex-shrink-0">FREE</span>
+                <span className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full leading-none flex-shrink-0 border border-emerald-500/20">FREE</span>
               )}
             </button>
           ))}
@@ -535,7 +539,7 @@ export default function ResultsPage() {
 
         {/* ── Plan comparison banner (only when not unlocked) ── */}
         {!isAiUnlocked && (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 rounded-2xl border border-border/60 bg-muted/20">
               <p className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
                 <CheckCircle2 className="h-3.5 w-3.5" /> Free Plan — Included
@@ -616,18 +620,24 @@ export default function ResultsPage() {
           <div className="space-y-6 animate-in fade-in duration-300">
 
             {/* Score card — always shown */}
-            <Card className="p-6 md:p-8 border-border/60 rounded-3xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
-              <div className="grid md:grid-cols-2 gap-8 items-center relative z-10">
-                <div className="flex flex-col sm:flex-row items-center gap-6">
+            <Card className="p-6 md:p-8 border-white/10 rounded-[2rem] bg-[#050505]/60 backdrop-blur-3xl relative overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+              <div className="absolute top-0 right-0 w-72 h-72 bg-violet-600/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-72 h-72 bg-emerald-600/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl pointer-events-none" />
+              
+              <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center relative z-10">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 md:gap-8">
                   <ScoreRing score={finalScore} status={status} />
-                  <div className="text-center sm:text-left space-y-2">
+                  <div className="space-y-3 flex-1">
                     <p className={`text-xs font-black uppercase tracking-[0.2em] ${sc(finalScore)}`}>AdSense Readiness</p>
-                    <h2 className="text-2xl font-black text-foreground">{statusLabel}</h2>
-                    <div className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full ${scoreBadgeBg(finalScore)}`}>
+                    <h2 className="text-3xl md:text-4xl font-black text-foreground">{statusLabel}</h2>
+                    <div className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full border ${
+                        finalScore >= 70 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                        : finalScore >= 55 ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' 
+                        : 'bg-red-500/10 text-red-400 border-red-500/20'
+                    }`}>
                       {scoreLabel(finalScore)}
                     </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                       {hasAiPreview && ai?.content?.summary
                         ? ai.content.summary
                         : finalScore >= 80 ? "Strong site — ready to apply for AdSense."
@@ -635,18 +645,18 @@ export default function ResultsPage() {
                         : "Significant issues found. AdSense will likely reject in current state."}
                     </p>
                     {isAiUnlocked && ai && (
-                      <div className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full ${
-                        ai.adsense_ready ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
-                          : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'}`}>
+                      <div className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full border ${
+                        ai.adsense_ready ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                          : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>
                         {ai.adsense_ready ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}
                         {ai.adsense_ready ? 'AdSense Ready' : 'Fix Recommended'}
                       </div>
                     )}
                   </div>
                 </div>
-                <div className="space-y-4 bg-muted/20 p-5 rounded-2xl border border-border/40">
+                <div className="space-y-5 bg-white/[0.02] p-6 rounded-3xl border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
                   {!hasAiPreview && (
-                    <p className="text-[10px] text-amber-600 dark:text-amber-400 italic">Based on site structure only. Unlock AI for content & policy scores.</p>
+                    <p className="text-[10px] text-amber-400/80 italic font-medium">Based on site structure only. Unlock AI for content & policy scores.</p>
                   )}
                   <WeightBar label="Content Quality"   score={qualityScore} weight="30% weight" plain={scoreExplain('quality', qualityScore)} />
                   <WeightBar label="Policy Compliance" score={policyScore}  weight="25% weight" plain={scoreExplain('policy', policyScore)} />
@@ -659,17 +669,21 @@ export default function ResultsPage() {
             </Card>
 
             {/* When to Apply — always shown, richer when unlocked */}
-            <Card className={`p-5 rounded-2xl border-2 ${
+            <Card className={`p-6 rounded-[2rem] border bg-white/[0.02] backdrop-blur-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300 ${
               isAiUnlocked && ai
-                ? ai.adsense_ready ? 'border-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/20' : 'border-amber-300 bg-amber-50/50 dark:bg-amber-950/20'
-                : finalScore >= 70 ? 'border-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/20' : 'border-amber-300 bg-amber-50/50 dark:bg-amber-950/20'
+                ? ai.adsense_ready ? 'border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]'
+                : finalScore >= 70 ? 'border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]'
             }`}>
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="flex items-start gap-3 flex-1">
-                  <Zap className={`h-5 w-5 flex-shrink-0 mt-0.5 ${finalScore >= 70 ? 'text-emerald-500' : 'text-amber-500'}`} />
-                  <div>
-                    <p className="font-bold text-foreground text-sm mb-1">When to Apply</p>
-                    <p className="text-sm text-foreground font-semibold">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-5">
+                <div className="flex items-start gap-4 flex-1">
+                  <div className={`h-12 w-12 rounded-2xl flex items-center justify-center flex-shrink-0 ring-1 shadow-inner ${
+                    finalScore >= 70 ? 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/20' : 'bg-amber-500/10 text-amber-400 ring-amber-500/20'
+                  }`}>
+                    <Zap className="h-6 w-6" />
+                  </div>
+                  <div className="pt-0.5">
+                    <p className="font-black text-lg text-foreground mb-1">When to Apply</p>
+                    <p className="text-sm text-foreground/90 font-medium leading-relaxed">
                       {hasAiPreview && ai ? ai.application_timeline
                         : finalScore >= 80 ? 'Your site looks ready — apply to AdSense now.'
                         : finalScore >= 65 ? 'Apply in 1–2 weeks after fixing the issues below.'
@@ -677,30 +691,30 @@ export default function ResultsPage() {
                         : 'Wait 6–8 weeks — significant work needed before applying.'}
                     </p>
                     {hasAiPreview && ai?.application_timeline_reason && (
-                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{ai.application_timeline_reason}</p>
+                      <p className="text-xs text-muted-foreground mt-2 leading-relaxed">{ai.application_timeline_reason}</p>
                     )}
                   </div>
                 </div>
-                <button onClick={() => setActiveTab('plan')} className="text-xs font-bold text-primary hover:underline flex items-center gap-1 flex-shrink-0">
-                  View Plan <ArrowRight className="h-3 w-3" />
+                <button onClick={() => setActiveTab('plan')} className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-bold hover:bg-primary/20 transition-all flex items-center justify-center gap-2 flex-shrink-0 ring-1 ring-primary/20">
+                  View Plan <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
             </Card>
 
             {/* Mandatory Pages Checklist */}
             {data.site_structure && (
-              <Card className="p-5 border-border/60 rounded-2xl">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
-                    <ShieldCheck className="h-5 w-5" />
+              <Card className="p-6 bg-white/[0.02] backdrop-blur-xl border-white/5 rounded-[2rem] shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 ring-1 ring-primary/20">
+                    <ShieldCheck className="h-6 w-6" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-foreground">Compliance Checklist</p>
-                    <p className="text-xs text-muted-foreground">Mandatory pages required for AdSense approval</p>
+                    <p className="font-black text-lg text-foreground">Compliance Checklist</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">Mandatory pages required for AdSense approval</p>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                   {[
                     { label: 'Privacy',     found: data.site_structure.has_privacy },
                     { label: 'Terms',       found: data.site_structure.has_terms },
@@ -708,12 +722,12 @@ export default function ResultsPage() {
                     { label: 'About Us',    found: data.site_structure.has_about },
                     { label: 'Contact Us',  found: data.site_structure.has_contact },
                   ].map((p) => (
-                    <div key={p.label} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-[11px] font-bold transition-colors ${
+                    <div key={p.label} className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border text-[13px] font-bold transition-all hover:scale-[1.02] ${
                       p.found 
-                        ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-600 dark:text-emerald-400' 
-                        : 'bg-red-500/5 border-red-500/20 text-red-600 dark:text-red-400'
+                        ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]' 
+                        : 'bg-red-500/10 border-red-500/20 text-red-400 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]'
                     }`}>
-                      {p.found ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertCircle className="h-3.5 w-3.5" />}
+                      {p.found ? <CheckCircle2 className="h-4 w-4 drop-shadow-md" /> : <AlertCircle className="h-4 w-4 drop-shadow-md" />}
                       {p.label}
                     </div>
                   ))}
@@ -722,9 +736,9 @@ export default function ResultsPage() {
             )}
 
             {/* Issues — always shown, richer when unlocked */}
-            <Card className="p-5 border-border/60 rounded-2xl">
-              <p className="text-xs font-black uppercase tracking-widest text-foreground mb-3 flex items-center gap-2">
-                <Lightbulb className="h-3.5 w-3.5 text-amber-500" />
+            <Card className="p-6 bg-white/[0.02] backdrop-blur-xl border-white/5 rounded-[2rem] shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
+              <p className="text-xs font-black uppercase tracking-widest text-foreground mb-4 flex items-center gap-2">
+                <Lightbulb className="h-4 w-4 text-amber-400 drop-shadow-md" />
                 {hasAiPreview && ai && ai.top_issues && ai.top_issues.length > 0 ? 'Top Issues Found' : 'Quick Wins — Fix These First'}
               </p>
               <div className="space-y-2">
