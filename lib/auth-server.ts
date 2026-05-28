@@ -151,10 +151,24 @@ export async function updateUserProfile(
   } catch (err) { console.error("[DB] updateUserProfile:", (err as Error).message) }
 }
 
+function serializeTimestamp(val: any): string {
+  if (!val) return new Date().toISOString()
+  if (typeof val === 'string') return val
+  if (typeof val.toDate === 'function') return val.toDate().toISOString()
+  if (val._seconds) return new Date(val._seconds * 1000).toISOString()
+  if (val.seconds) return new Date(val.seconds * 1000).toISOString()
+  return new Date().toISOString()
+}
+
 export async function adminGetUsers(limit = 50): Promise<UserProfile[]> {
   try {
     const snap = await adminDb.collection("users").orderBy("createdAt", "desc").limit(limit).get()
-    return snap.docs.map(d => d.data() as UserProfile)
+    return snap.docs.map(d => {
+      const data = d.data()
+      if (data.createdAt) data.createdAt = serializeTimestamp(data.createdAt)
+      if (data.updatedAt) data.updatedAt = serializeTimestamp(data.updatedAt)
+      return data as UserProfile
+    })
   } catch (err) { console.error("[DB] adminGetUsers:", (err as Error).message); return [] }
 }
 
@@ -181,7 +195,13 @@ export async function adminDeleteUser(userId: string): Promise<void> {
 export async function adminGetPayments(limit = 50): Promise<Record<string, unknown>[]> {
   try {
     const snap = await adminDb.collection("payments").orderBy("createdAt", "desc").limit(limit).get()
-    if (!snap.empty) return snap.docs.map(d => ({ id: d.id, ...d.data() }))
+    if (!snap.empty) {
+      return snap.docs.map(d => {
+        const data = d.data()
+        if (data.createdAt) data.createdAt = serializeTimestamp(data.createdAt)
+        return { id: d.id, ...data }
+      })
+    }
     // Fallback: derive payments from users with pro plan
     const users = await adminGetUsers(100)
     return users
