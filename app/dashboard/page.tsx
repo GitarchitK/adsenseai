@@ -166,9 +166,7 @@ export default function DashboardPage() {
       setUrl(decodeURIComponent(scanUrl))
     }
 
-    if (profile?.activePlanId && profile?.planStatus === 'active') {
-      router.push('/dashboard/plan')
-    }
+
   }, [searchParams, isScanning, profile, router])
 
   // Auto-start scan if URL is provided in params
