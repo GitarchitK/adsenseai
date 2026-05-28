@@ -12,7 +12,7 @@ export const maxDuration = 120
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { planId: string } }
+  { params }: { params: Promise<{ planId: string }> }
 ) {
   // Allow cron or authenticated user
   const authHeader = request.headers.get('authorization')
@@ -30,7 +30,8 @@ export async function POST(
   }
 
   try {
-    const planRef = adminDb.collection('plans').doc(params.planId)
+    const { planId } = await params
+    const planRef = adminDb.collection('plans').doc(planId)
     const planSnap = await planRef.get()
     
     if (!planSnap.exists) {
@@ -48,7 +49,7 @@ export async function POST(
       return NextResponse.json({ error: 'Plan is not active.' }, { status: 400 })
     }
 
-    console.log(`[recrawl] Starting re-crawl for plan ${params.planId}, URL: ${plan.url}`)
+    console.log(`[recrawl] Starting re-crawl for plan ${planId}, URL: ${plan.url}`)
 
     // 1. Re-crawl the site
     const crawler = new WebsiteCrawler(plan.url, { maxPages: 150, timeout: 60000, fullSitemap: true })
@@ -93,7 +94,7 @@ export async function POST(
       updatedAt: new Date().toISOString()
     })
 
-    console.log(`[recrawl] Successfully adapted roadmap for plan ${params.planId}`)
+    console.log(`[recrawl] Successfully adapted roadmap for plan ${planId}`)
 
     return NextResponse.json({ success: true, newTotalDays: adaptResult.newTotalDays, scanId })
   } catch (err) {

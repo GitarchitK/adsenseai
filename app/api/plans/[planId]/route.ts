@@ -5,13 +5,14 @@ import type { UserPlan } from '@/lib/firebase-types'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { planId: string } }
+  { params }: { params: Promise<{ planId: string }> }
 ) {
   const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
   if (!profile) return NextResponse.json({ error: 'Authentication required.' }, { status: 401 })
 
   try {
-    const planSnap = await adminDb.collection('plans').doc(params.planId).get()
+    const { planId } = await params
+    const planSnap = await adminDb.collection('plans').doc(planId).get()
     if (!planSnap.exists) {
       return NextResponse.json({ error: 'Plan not found.' }, { status: 404 })
     }

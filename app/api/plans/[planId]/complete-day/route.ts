@@ -6,7 +6,7 @@ import type { UserPlan } from '@/lib/firebase-types'
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { planId: string } }
+  { params }: { params: Promise<{ planId: string }> }
 ) {
   const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
   if (!profile) return NextResponse.json({ error: 'Authentication required.' }, { status: 401 })
@@ -23,7 +23,8 @@ export async function PATCH(
   }
 
   try {
-    const planRef = adminDb.collection('plans').doc(params.planId)
+    const { planId } = await params
+    const planRef = adminDb.collection('plans').doc(planId)
     const planSnap = await planRef.get()
     
     if (!planSnap.exists) {
