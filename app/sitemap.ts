@@ -11,6 +11,17 @@ const blogPosts: Array<{ slug: string; date: string; priority: number }> = [
   { slug: 'how-to-check-adsense-approval',         date: '2026-05-17', priority: 0.9 },
   { slug: 'adsense-low-value-content-fix',         date: '2026-05-17', priority: 0.85 },
   { slug: 'adsense-rejected-how-to-fix',           date: '2026-05-17', priority: 0.85 },
+  // New SEO & Technical Guides (Added 2026-05-29)
+  { slug: 'adsense-high-cpc-niches-2026',           date: '2026-05-29', priority: 0.9 },
+  { slug: 'fix-adsense-valuable-inventory-under-construction', date: '2026-05-29', priority: 0.9 },
+  { slug: 'adsense-vs-ezoic-vs-mediavine',          date: '2026-05-29', priority: 0.9 },
+  { slug: 'how-to-increase-adsense-cpc-rpm',        date: '2026-05-29', priority: 0.9 },
+  { slug: 'does-google-adsense-allow-ai-content',   date: '2026-05-29', priority: 0.85 },
+  { slug: 'how-long-to-earn-100-on-adsense',        date: '2026-05-29', priority: 0.85 },
+  { slug: 'adsense-account-disabled-appeal-guide',  date: '2026-05-29', priority: 0.85 },
+  { slug: 'add-adsense-auto-ads-nextjs-react',      date: '2026-05-29', priority: 0.85 },
+  { slug: 'adsense-tax-information-explained',      date: '2026-05-29', priority: 0.85 },
+  { slug: 'best-traffic-sources-for-adsense',       date: '2026-05-29', priority: 0.85 },
   // New high-quality guides
   { slug: 'how-to-get-adsense-approved-first-time', date: '2026-05-17', priority: 0.85 },
   { slug: 'adsense-policy-complete-guide',          date: '2026-05-17', priority: 0.85 },
