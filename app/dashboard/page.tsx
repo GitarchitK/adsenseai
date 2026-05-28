@@ -348,7 +348,7 @@ export default function DashboardPage() {
                       )}
                     </div>
                   )}
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative flex-1">
                       <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -357,14 +357,14 @@ export default function DashboardPage() {
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}
                         disabled={isScanning || !canScan}
-                        className="pl-10 h-12 text-base bg-muted/30 border-border/80 focus:bg-background transition-colors rounded-xl"
+                        className="pl-10 h-12 text-base bg-muted/30 border-border/80 focus:bg-background transition-colors rounded-xl w-full"
                         required
                       />
                     </div>
                     <Button 
                       type="submit" 
                       disabled={isScanning || !canScan || !url} 
-                      className="h-12 px-8 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 transition-all active:scale-95"
+                      className="h-12 px-8 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 transition-all active:scale-95 w-full sm:w-auto"
                     >
                       Scan Site
                     </Button>
