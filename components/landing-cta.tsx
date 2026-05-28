@@ -30,13 +30,13 @@ export function LandingCTA({ size = 'lg' }: { size?: 'lg' | 'xl' }) {
   }
 
   const btnCls = size === 'xl'
-    ? 'h-14 px-10 text-base gap-2.5 shadow-xl shadow-primary/25 hover:shadow-primary/40 transition-shadow'
-    : 'h-12 px-8 text-base gap-2 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow'
+    ? 'h-14 px-10 text-base gap-2.5 bg-violet-600 hover:bg-violet-700 text-white shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] border-0 transition-all'
+    : 'h-12 px-8 text-base gap-2 bg-violet-600 hover:bg-violet-700 text-white shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] border-0 transition-all'
 
   if (isLoggedIn) {
     return (
       <Link href="/dashboard">
-        <Button size="lg" className={btnCls}>
+        <Button className={btnCls}>
           <LayoutDashboard className="h-5 w-5" /> Go to Dashboard
         </Button>
       </Link>
@@ -46,7 +46,7 @@ export function LandingCTA({ size = 'lg' }: { size?: 'lg' | 'xl' }) {
   return (
     <div className="flex flex-col sm:flex-row gap-3">
       <Link href="/auth/signup">
-        <Button size="lg" className={btnCls}>
+        <Button className={btnCls}>
           Analyze My Site Free <ArrowRight className="h-4 w-4" />
         </Button>
       </Link>

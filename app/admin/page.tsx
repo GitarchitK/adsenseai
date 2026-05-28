@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import {
   Crown, Users, BarChart3, RefreshCw, Trash2,
   CreditCard, AlertCircle, CheckCircle2, DollarSign,
+  Mail, Send, Loader2
 } from 'lucide-react'
 import { useProfile } from '@/hooks/use-profile'
 
@@ -34,31 +35,71 @@ interface Payment {
 }
 
 export default function AdminPage() {
-  const { token, profile, isLoading } = useProfile()
+  const { token, profile, isLoading, getToken } = useProfile()
   const [users, setUsers] = useState<AdminUser[]>([])
   const [payments, setPayments] = useState<Payment[]>([])
   const [loading, setLoading] = useState(true)
   const [paymentsLoading, setPaymentsLoading] = useState(false)
   const [updating, setUpdating] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'users' | 'payments'>('users')
+  const [activeTab, setActiveTab] = useState<'users' | 'payments' | 'marketing'>('users')
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+
+  // Marketing state
+  const [marketingSubject, setMarketingSubject] = useState('')
+  const [marketingBody, setMarketingBody] = useState('')
+  const [marketingAudience, setMarketingAudience] = useState<'all' | 'free' | 'pro'>('all')
+  const [marketingSending, setMarketingSending] = useState(false)
+  const [marketingResult, setMarketingResult] = useState<{success?: boolean, msg: string} | null>(null)
+
+  const sendMarketingCampaign = async () => {
+    const t = await getToken()
+    if (!t) return
+    if (!marketingSubject.trim() || !marketingBody.trim()) {
+      setMarketingResult({ success: false, msg: 'Subject and Body are required.' })
+      return
+    }
+    setMarketingSending(true)
+    setMarketingResult(null)
+    try {
+      const res = await fetch('/api/admin/marketing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
+        body: JSON.stringify({ subject: marketingSubject, html: marketingBody, audience: marketingAudience })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to send campaign.')
+      setMarketingResult({ success: true, msg: data.message })
+      setMarketingSubject('')
+      setMarketingBody('')
+    } catch (err: any) {
+      setMarketingResult({ success: false, msg: err.message })
+    } finally {
+      setMarketingSending(false)
+    }
+  }
 
   const fetchUsers = async () => {
-    if (!token) return
+    const t = await getToken()
+    if (!t) return
     setLoading(true)
-    const res = await fetch('/api/admin/users', { headers: { Authorization: `Bearer ${token}` } })
+    setErrorMsg(null)
+    const res = await fetch('/api/admin/users?limit=1000', { headers: { Authorization: `Bearer ${t}` } })
     if (res.ok) {
       const data = await res.json()
       setUsers(data.users ?? [])
+    } else {
+      if (res.status === 403) setErrorMsg("You are not authorized to view this page, or your session expired. Please log out and back in.")
     }
     setLoading(false)
   }
 
   const fetchPayments = async () => {
-    if (!token) return
+    const t = await getToken()
+    if (!t) return
     setPaymentsLoading(true)
-    const res = await fetch('/api/admin/users?type=payments', { headers: { Authorization: `Bearer ${token}` } })
+    const res = await fetch('/api/admin/users?type=payments&limit=1000', { headers: { Authorization: `Bearer ${t}` } })
     if (res.ok) {
       const data = await res.json()
       setPayments(data.payments ?? [])
@@ -73,11 +114,12 @@ export default function AdminPage() {
   }, [activeTab]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const togglePlan = async (userId: string, currentPlan: string) => {
-    if (!token) return
+    const t = await getToken()
+    if (!t) return
     setUpdating(userId)
     await fetch('/api/admin/users', {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
       body: JSON.stringify({ user_id: userId, plan: currentPlan === 'pro' ? 'free' : 'pro' }),
     })
     await fetchUsers()
@@ -85,11 +127,12 @@ export default function AdminPage() {
   }
 
   const deleteUser = async (userId: string) => {
-    if (!token) return
+    const t = await getToken()
+    if (!t) return
     setDeleting(userId)
     const res = await fetch('/api/admin/users', {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
       body: JSON.stringify({ user_id: userId }),
     })
     if (res.ok) {
@@ -120,6 +163,14 @@ export default function AdminPage() {
           </Button>
         </div>
 
+        {/* Error Message */}
+        {errorMsg && (
+          <div className="p-4 bg-red-50 text-red-600 dark:bg-red-950/30 rounded-xl font-semibold flex items-center gap-2">
+            <AlertCircle className="h-5 w-5" />
+            {errorMsg}
+          </div>
+        )}
+
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
@@ -143,11 +194,11 @@ export default function AdminPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 p-1 bg-muted/30 rounded-xl border border-border/40 w-fit">
-          {(['users', 'payments'] as const).map(tab => (
+        <div className="flex gap-1 p-1 bg-muted/30 rounded-xl border border-border/40 w-fit flex-wrap">
+          {(['users', 'payments', 'marketing'] as const).map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`px-5 py-2 rounded-lg text-sm font-bold transition-all capitalize ${activeTab === tab ? 'bg-background text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
-              {tab === 'users' ? <><Users className="h-3.5 w-3.5 inline mr-1.5" />Users ({users.length})</> : <><CreditCard className="h-3.5 w-3.5 inline mr-1.5" />Payments ({payments.length})</>}
+              {tab === 'users' ? <><Users className="h-3.5 w-3.5 inline mr-1.5" />Users ({users.length})</> : tab === 'payments' ? <><CreditCard className="h-3.5 w-3.5 inline mr-1.5" />Payments ({payments.length})</> : <><Mail className="h-3.5 w-3.5 inline mr-1.5" />Marketing</>}
             </button>
           ))}
         </div>
@@ -278,6 +329,57 @@ export default function AdminPage() {
                 )}
               </div>
             )}
+          </Card>
+        )}
+
+        {/* Marketing Tab */}
+        {activeTab === 'marketing' && (
+          <Card className="p-6 border-border/60">
+            <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><Mail className="h-5 w-5 text-primary" /> New Marketing Campaign</h2>
+            
+            {marketingResult && (
+              <div className={`p-4 rounded-xl mb-6 text-sm font-semibold flex items-center gap-2 ${marketingResult.success ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30' : 'bg-red-50 text-red-600 dark:bg-red-950/30'}`}>
+                {marketingResult.success ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                {marketingResult.msg}
+              </div>
+            )}
+            
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Audience</label>
+                <div className="flex flex-wrap gap-2">
+                  {(['all', 'free', 'pro'] as const).map(aud => (
+                    <button key={aud} onClick={() => setMarketingAudience(aud)}
+                      className={`px-4 py-2 rounded-lg text-sm font-bold transition-all capitalize border ${marketingAudience === aud ? 'bg-primary/10 border-primary text-primary' : 'bg-transparent border-border text-muted-foreground hover:bg-muted/50'}`}>
+                      {aud} Users {aud === 'all' && `(${users.length})`}
+                      {aud === 'free' && `(${users.filter(u => u.plan !== 'pro' && !u.razorpaySubscriptionId).length})`}
+                      {aud === 'pro' && `(${users.filter(u => u.plan === 'pro' || !!u.razorpaySubscriptionId).length})`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Email Subject</label>
+                <input type="text" value={marketingSubject} onChange={(e) => setMarketingSubject(e.target.value)}
+                  placeholder="e.g. Special Offer: 50% Off Coaching Plan!"
+                  className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1.5 flex justify-between items-end">
+                  <span>Email Body (HTML Supported)</span>
+                  <span className="text-xs text-muted-foreground font-normal">Use &lt;br&gt; for line breaks, &lt;strong&gt; for bold, etc.</span>
+                </label>
+                <textarea value={marketingBody} onChange={(e) => setMarketingBody(e.target.value)}
+                  placeholder="<p>Hey there,</p><br/><p>We are running a special discount...</p>" rows={10}
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/50" />
+              </div>
+              
+              <Button onClick={sendMarketingCampaign} disabled={marketingSending} className="w-full sm:w-auto min-w-[200px] h-11 gap-2 font-bold shadow-lg shadow-primary/20">
+                {marketingSending ? <><Loader2 className="h-4 w-4 animate-spin" /> Sending to {marketingAudience} users...</> : <><Send className="h-4 w-4" /> Send Campaign</>}
+              </Button>
+            </div>
           </Card>
         )}
 

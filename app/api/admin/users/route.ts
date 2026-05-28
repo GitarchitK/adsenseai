@@ -10,12 +10,13 @@ function isAdmin(email: string) {
 export async function GET(request: NextRequest) {
   const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
   if (!profile || !isAdmin(profile.email)) {
-    return NextResponse.json({ error: 'Forbidden.' }, { status: 403 })
+    console.error('[Admin API] 403 Forbidden. Profile:', profile?.email, 'Admin Emails:', ADMIN_EMAILS)
+    return NextResponse.json({ error: 'Forbidden.', email: profile?.email, expected: ADMIN_EMAILS }, { status: 403 })
   }
 
   const { searchParams } = new URL(request.url)
   const type = searchParams.get('type') ?? 'users'
-  const limit = Math.min(Number(searchParams.get('limit') ?? 50), 100)
+  const limit = Math.min(Number(searchParams.get('limit') ?? 1000), 5000)
 
   if (type === 'payments') {
     const payments = await adminGetPayments(limit)

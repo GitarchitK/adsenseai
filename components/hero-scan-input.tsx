@@ -50,9 +50,8 @@ export function HeroScanInput() {
         </div>
         <Button
           type="submit"
-          size="lg"
           disabled={isLoading}
-          className="h-14 px-8 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold gap-2 shadow-lg shadow-primary/20 transition-all active:scale-95 whitespace-nowrap"
+          className="h-14 px-8 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold gap-2 shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] transition-all active:scale-95 whitespace-nowrap border-0"
         >
           {isLoading ? (
             <div className="h-5 w-5 rounded-full border-2 border-white/20 border-t-white animate-spin" />

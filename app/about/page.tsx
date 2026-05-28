@@ -2,7 +2,6 @@ import { Navbar } from '@/components/navbar'
 import { SiteFooter } from '@/components/site-footer'
 import { Zap, Target, Users, Shield, TrendingUp } from 'lucide-react'
 import type { Metadata } from 'next'
-import { BuildBanner } from '@/components/build-banner'
 
 export const metadata: Metadata = {
   title: 'About AdSense Checker AI — Free AdSense Approval Checker Tool',
@@ -104,10 +103,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      <div className="container mx-auto px-6 pb-12 max-w-4xl">
-        <BuildBanner />
-      </div>
 
       <SiteFooter />
     </div>

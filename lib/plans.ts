@@ -5,6 +5,7 @@ export const PRICES = {
   report_unlock:   1900,   // ₹19 — one-time per scan AI report unlock
   pro_monthly:    19900,   // ₹199 — monthly Pro subscription
   thumbnail:        500,   // ₹5 — per thumbnail generation (DALL-E 3 is expensive)
+  coaching_day:     500,   // ₹5 — per day of coaching subscription
 } as const
 
 // ── Plan definitions ──────────────────────────────────────────────────────────
@@ -31,6 +32,13 @@ export const PLANS = {
     article_analyzer: true,
     thumbnail_credits: 20,     // 20 thumbnails/month included
   },
+} as const
+
+// ── Coaching plan constraints ─────────────────────────────────────────────────
+export const COACHING_PLAN = {
+  min_days: 14,
+  max_days: 90,
+  price_per_day_paise: 500,
 } as const
 
 export type PlanFeatures = typeof PLANS[Plan]

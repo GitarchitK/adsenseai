@@ -6,6 +6,7 @@ import { generateAIReport } from '@/services/ai-report'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getAuthenticatedProfile, incrementScanCount, saveScan } from '@/lib/auth-server'
 import { canRunScan } from '@/lib/plans'
+import { sendEmail, scanCompleteEmailTemplate } from '@/lib/email'
 
 export const maxDuration = 120
 
@@ -150,6 +151,22 @@ export async function POST(request: NextRequest) {
 
     if (!scanId) {
       return NextResponse.json({ success: false, error: 'Failed to save scan.' }, { status: 500 })
+    }
+
+    // ── Send Email (Non-blocking) ───────────────────────────────────────────
+    if (profile.email) {
+      const emailHtml = scanCompleteEmailTemplate(
+        profile.fullName || 'Creator',
+        normalizedUrl,
+        aiReport?.final_score ?? scores.final_score,
+        aiReport?.status_label ?? scores.status_label,
+        isPro
+      )
+      sendEmail({
+        to: profile.email,
+        subject: `Your AdSense Scan is Ready (${getDomain(normalizedUrl)})`,
+        html: emailHtml
+      }).catch(e => console.error('[crawl] Failed to send scan complete email:', e))
     }
 
     return NextResponse.json({

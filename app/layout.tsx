@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import Script from 'next/script'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
@@ -309,43 +310,44 @@ const jsonLd = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* Ahrefs Analytics */}
-        <script
-          src="https://analytics.ahrefs.com/analytics.js"
-          data-key="3jWlJ1FQDS72Uvc3Xjv2qQ"
-          async
-        />
+      <head suppressHydrationWarning>
         {/* Preconnect to external domains for faster resource loading */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         <link rel="dns-prefetch" href="https://checkout.razorpay.com" />
-
-        {/* Google Analytics — defer to not block rendering */}
-        <script
-          async
-          defer
-          src="https://www.googletagmanager.com/gtag/js?id=G-RLS9PPGJ6W"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-RLS9PPGJ6W', { send_page_view: false });`
-          }}
-        />
-        {/* AdSense — async so it never blocks rendering */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6517018802484773"
-          crossOrigin="anonymous"
-        />
+        
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body suppressHydrationWarning className={`${geist.variable} ${geistMono.variable} font-sans antialiased`}>
+        {/* Ahrefs Analytics */}
+        <Script
+          id="ahrefs-analytics"
+          src="https://analytics.ahrefs.com/analytics.js"
+          data-key="3jWlJ1FQDS72Uvc3Xjv2qQ"
+          strategy="afterInteractive"
+        />
+        {/* Google Analytics */}
+        <Script
+          id="gtm-script"
+          src="https://www.googletagmanager.com/gtag/js?id=G-RLS9PPGJ6W"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-RLS9PPGJ6W', { send_page_view: false });`}
+        </Script>
+        {/* AdSense */}
+        <Script
+          id="adsense-script"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6517018802484773"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+        
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {children}
         </ThemeProvider>

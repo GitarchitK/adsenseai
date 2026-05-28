@@ -9,6 +9,7 @@ import { Moon, Sun, LayoutDashboard, LogOut, User } from 'lucide-react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { signOut } from '@/lib/auth'
+import { useProfile } from '@/hooks/use-profile'
 
 export function Navbar() {
   const { theme, setTheme } = useTheme()
@@ -16,6 +17,7 @@ export function Navbar() {
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const { profile } = useProfile()
 
   useEffect(() => {
     setMounted(true)
@@ -50,8 +52,8 @@ export function Navbar() {
             <img src="/icon.svg" alt="AdSense Checker AI" className="w-full h-full object-cover" />
           </div>
           <span className="font-semibold text-foreground text-[15px]">
-            <span className="md:hidden">AdSense <span className="text-primary">Checker</span></span>
-            <span className="hidden md:inline">AdSense Approval <span className="text-primary">Checker AI</span></span>
+            <span className="md:hidden">AdSense <span className="text-violet-400">Checker</span></span>
+            <span className="hidden md:inline">AdSense Approval <span className="text-violet-400">Checker AI</span></span>
           </span>
         </Link>
 
@@ -80,6 +82,13 @@ export function Navbar() {
                       <LayoutDashboard className="h-4 w-4" /> Dashboard
                     </Button>
                   </Link>
+                  {profile?.activePlanId && (
+                    <Link href="/dashboard/plan">
+                      <Button variant="ghost" size="sm" className="gap-2 text-sm font-medium hidden md:inline-flex text-indigo-600">
+                        My Plan
+                      </Button>
+                    </Link>
+                  )}
                   <Button
                     variant="outline"
                     size="sm"
@@ -103,13 +112,13 @@ export function Navbar() {
                     <Button variant="ghost" size="sm" className="text-sm font-medium">Sign In</Button>
                   </Link>
                   <Link href="/auth/signup" className="hidden md:block">
-                    <Button size="sm" className="text-sm font-medium shadow-sm">
+                    <Button size="sm" className="text-sm font-medium shadow-sm bg-violet-600 hover:bg-violet-700 text-white border-0">
                       Get Started Free
                     </Button>
                   </Link>
                   {/* Mobile — login button */}
                   <Link href="/auth/login" className="md:hidden">
-                    <Button size="sm" className="gap-1.5 text-xs font-bold h-8 px-3 rounded-lg shadow-sm">
+                    <Button size="sm" className="gap-1.5 text-xs font-bold h-8 px-3 rounded-lg shadow-sm bg-violet-600 hover:bg-violet-700 text-white border-0">
                       <User className="h-3.5 w-3.5" />
                       Login
                     </Button>

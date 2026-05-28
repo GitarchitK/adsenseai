@@ -14,7 +14,6 @@ import Link from 'next/link'
 import { useProfile } from '@/hooks/use-profile'
 import { useRazorpay } from '@/hooks/use-razorpay'
 import DashboardLoading from './loading'
-import { BuildBanner } from '@/components/build-banner'
 
 interface ScanRow {
   id: string
@@ -166,7 +165,11 @@ export default function DashboardPage() {
     if (scanUrl && !isScanning) {
       setUrl(decodeURIComponent(scanUrl))
     }
-  }, [searchParams, isScanning])
+
+    if (profile?.activePlanId && profile?.planStatus === 'active') {
+      router.push('/dashboard/plan')
+    }
+  }, [searchParams, isScanning, profile, router])
 
   // Auto-start scan if URL is provided in params
   useEffect(() => {
@@ -220,28 +223,7 @@ export default function DashboardPage() {
     }
   }
 
-  const handleProUpgrade = async () => {
-    const t = await getToken()
-    if (!t) return
-    const res = await fetch('/api/razorpay/order', { method: 'POST', headers: { Authorization: `Bearer ${t}` } })
-    const order = await res.json()
-    if (!order.orderId) return
-
-    await openCheckout({
-      key: order.keyId, amount: order.amount, currency: order.currency,
-      name: 'AdSense Checker AI', description: 'Pro Plan — ₹199/month', order_id: order.orderId,
-      handler: async (r: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
-        await fetch('/api/razorpay/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
-          body: JSON.stringify({ orderId: r.razorpay_order_id, paymentId: r.razorpay_payment_id, signature: r.razorpay_signature, plan: 'pro' }),
-        })
-        window.location.href = '/dashboard?upgraded=1'
-      },
-      prefill: { email: profile?.email ?? '' },
-      theme: { color: '#7c3aed' },
-    })
-  }
+  // handleProUpgrade removed as we pivoted to Coaching Plans
 
   if (isLoading) return <DashboardLoading />
 
@@ -275,14 +257,7 @@ export default function DashboardPage() {
               {isPro ? '✦ Pro Plan · 200 scans/month with AI' : 'Free Plan · 5 scans/month'}
             </p>
           </div>
-          {!isPro && (
-            <Button
-              onClick={handleProUpgrade}
-              className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0 shadow-lg shadow-violet-500/25 rounded-xl"
-            >
-              <Crown className="h-4 w-4" /> Upgrade to Pro — ₹199/mo
-            </Button>
-          )}
+          {/* Pro upgrade button removed */}
           {isPro && (
             <div className="flex flex-col items-end gap-1">
               <div className="flex items-center gap-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-bold px-3 py-1.5">
@@ -342,7 +317,6 @@ export default function DashboardPage() {
             {usagePct >= 100 && (
               <p className="text-xs text-red-600 dark:text-red-400 mt-2 flex items-center gap-1.5">
                 <AlertCircle className="h-3.5 w-3.5" /> Limit reached.
-                <button onClick={handleProUpgrade} className="underline font-semibold">Upgrade to Pro</button> for 200 scans/month.
               </p>
             )}
           </Card>
@@ -370,7 +344,7 @@ export default function DashboardPage() {
                       <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
                       <span>{urlError}</span>
                       {urlError.includes('limit') && (
-                        <button type="button" onClick={handleProUpgrade} className="ml-auto text-xs font-bold underline flex-shrink-0">Upgrade</button>
+                        <Link href="/pricing" className="ml-auto text-xs font-bold underline flex-shrink-0">View Plans</Link>
                       )}
                     </div>
                   )}
@@ -446,35 +420,7 @@ export default function DashboardPage() {
           </div>
         </Card>
 
-        {/* ── Pro upsell (free users) ── */}
-        {!isPro && (
-          <Card className="p-6 border-border/60 rounded-2xl bg-gradient-to-br from-violet-50 to-indigo-50 dark:from-violet-950/20 dark:to-indigo-950/20 border-violet-200 dark:border-violet-800/50">
-            <div className="flex items-start justify-between gap-4 flex-wrap">
-              <div className="flex items-start gap-4">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/15 flex-shrink-0">
-                  <Crown className="h-5 w-5 text-violet-600 dark:text-violet-400" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-foreground mb-1">Upgrade to Pro — ₹199/month</h3>
-                  <p className="text-sm text-muted-foreground mb-3">200 scans/month · AI on every scan · All tools unlocked</p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1">
-                    {['200 scans/month', 'AI reports included', 'Content rewriting', 'Privacy Policy generator'].map(f => (
-                      <span key={f} className="text-xs text-violet-700 dark:text-violet-300 flex items-center gap-1">
-                        <CheckCircle2 className="h-3 w-3" /> {f}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <Button
-                onClick={handleProUpgrade}
-                className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white border-0 shadow-lg shadow-violet-500/25 rounded-xl flex-shrink-0"
-              >
-                <Crown className="h-4 w-4" /> Upgrade Now
-              </Button>
-            </div>
-          </Card>
-        )}
+        {/* Pro upsell card removed */}
 
         {/* ── Features & Extension ── */}
         <div className="grid md:grid-cols-2 gap-6">
@@ -554,9 +500,6 @@ export default function DashboardPage() {
             </div>
           )}
         </div>
-
-        {/* ── Build your own tools site banner ── */}
-        <BuildBanner name={firstName} />
 
         {/* ── Quick links ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

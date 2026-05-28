@@ -45,12 +45,12 @@ export function SiteFooter() {
               <div className="flex h-8 w-8 items-center justify-center rounded-xl overflow-hidden">
                 <img src="/icon.svg" alt="AdSense Checker AI" className="w-full h-full object-cover" />
               </div>
-              <span className="font-black text-foreground">AdSense Approval <span className="text-primary">Checker AI</span></span>
+              <span className="font-black text-foreground">AdSense Approval <span className="text-violet-400">Checker AI</span></span>
             </Link>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-[180px] mb-2">
               AI-powered AdSense readiness analysis for publishers.
             </p>
-            <p className="text-[10px] font-bold text-primary uppercase tracking-wider">
+            <p className="text-[10px] font-bold text-violet-400 uppercase tracking-wider">
               A Product of Navroll Studio
             </p>
           </div>

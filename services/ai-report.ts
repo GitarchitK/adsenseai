@@ -21,6 +21,7 @@ import { analyzeSEOAuthority, type SEOAuthorityResult } from './ai-seo-authority
 import { analyzeTechnicalHealth, type TechnicalHealthResult } from './ai-technical'
 import { callOpenAI, callOpenAIAdvanced } from './openai'
 import { buildFixList } from './ai-fix-list'
+import { estimateApprovalDays } from './ai-days'
 import type { CrawlResponse } from '@/types'
 
 export type ScoreStatus = 'high' | 'moderate' | 'low'
@@ -63,6 +64,13 @@ export interface AIReport {
   approval_workflow: WorkflowStep[] // day-by-day or week-by-week plan
 
   generated_at: string
+
+  // Day count estimate from the coaching subscription feature (optional)
+  coaching_estimate?: {
+    days: number           // 14–90 inclusive
+    confidence: 'fast' | 'moderate' | 'needs_work'
+    summary: string        // ≤ 30 words
+  }
 }
 
 export interface WorkflowStep {
@@ -195,15 +203,15 @@ function buildTopIssues(
 
 // ── AI Strategic Advice (Fixes, Timeline, Roadmap) ────────────────────────────
 
-const STRATEGIC_SYSTEM_PROMPT = `You are a Google AdSense approval specialist. You have been given a REAL website audit with actual data. Your job is to write a personalised action plan for THIS specific website — not a generic template.
+const STRATEGIC_SYSTEM_PROMPT = `You are a Google AdSense approval specialist. You have been given a REAL website audit with actual data. Your job is to write a highly personalised action plan for THIS specific website based ONLY on the provided data.
 
-CRITICAL RULES:
-1. Every workflow step MUST reference the actual domain, actual scores, actual page counts, or actual URLs from the data provided.
-2. NEVER write generic steps like "Fix critical issues" — always say WHAT to fix and WHERE. E.g. "Your site ${'{domain}'} has ${'{x}'} pages missing H1 tags — open each one and add a clear main heading."
-3. If the site is missing specific pages (Privacy, About, Contact), name them explicitly in the steps.
-4. If content scores are low, reference the actual score and give a concrete word count target.
+CRITICAL RULES - ZERO HALLUCINATION POLICY:
+1. NEVER invent issues that are not in the provided data. If the data says "Pages Missing H1: 0", do not tell the user to fix H1 tags.
+2. Every workflow step MUST reference the actual domain, actual scores, actual page counts, or actual URLs from the data provided.
+3. NEVER write generic steps like "Fix critical issues" or "Improve content" — always say WHAT to fix and WHERE. E.g. "Your site ${'{domain}'} has ${'{x}'} thin pages (like /example) — expand them to 600+ words."
+4. If the site is missing specific pages (Privacy, About, Contact), name them explicitly in the steps.
 5. If violations exist, quote them directly in the relevant step.
-6. The workflow should feel like it was written by someone who just reviewed THIS site, not copy-pasted from a template.
+6. The workflow should feel like it was written by an expert who just reviewed THIS site, not copy-pasted from a template.
 
 Return a JSON object with:
 - suggestions (array): Each item {
@@ -474,9 +482,27 @@ export async function generateAIReport(crawl: CrawlResponse): Promise<AIReport> 
     !policy.dangerous_content &&
     final_score >= 65
 
-  const [top_issues, advice] = await Promise.all([
+  const [top_issues, advice, coaching_estimate] = await Promise.all([
     Promise.resolve(buildTopIssues(content, policy, trust)),
     generateStrategicAdvice(content, policy, trust, monetization, eeat, seo_authority, technical_health, crawl, final_score),
+    estimateApprovalDays(
+      // Pass a partial AIReport-shaped object — the full report isn't assembled yet,
+      // but all 7 module scores are available at this point.
+      {
+        quality_score,
+        policy_score,
+        seo_score,
+        ux_score,
+        trust_score,
+        final_score,
+        eeat,
+        technical_health,
+        top_issues: [],   // not yet built; estimator uses module scores primarily
+        adsense_ready: !policy.adult_content && !policy.dangerous_content && final_score >= 65,
+        status,
+      } as unknown as import('./ai-report').AIReport,
+      final_score
+    ),
   ])
 
   return {
@@ -502,6 +528,7 @@ export async function generateAIReport(crawl: CrawlResponse): Promise<AIReport> 
     application_timeline_reason: advice.application_timeline_reason ?? '',
     strategic_roadmap: advice.strategic_roadmap,
     approval_workflow: advice.approval_workflow,
+    coaching_estimate,
     generated_at: new Date().toISOString(),
   }
 }

@@ -5,5 +5,15 @@
     "app/api/ai/**":                       { "maxDuration": 30 },
     "app/api/razorpay/webhook/route.ts":   { "maxDuration": 10 }
   },
+  "crons": [
+    {
+      "path": "/api/cron/daily-emails",
+      "schedule": "30 2 * * *"
+    },
+    {
+      "path": "/api/cron/recrawl-check",
+      "schedule": "0 3 * * *"
+    }
+  ],
   "regions": ["bom1"]
 }

@@ -6,106 +6,119 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import {
-  Zap, BarChart3, Shield, Sparkles, CheckCircle2,
-  Brain, Search, FileText, Star, Globe,
+  BarChart3, Shield, Sparkles, CheckCircle2,
+  Brain, Search, FileText, Star,
   TrendingUp, Clock, Lock, ArrowRight,
-  MousePointer2, Layout, AlertCircle, Crown,
-  Coins, DollarSign, Wallet,
+  AlertCircle, Crown, DollarSign, Wallet,
+  Check, ChevronRight
 } from 'lucide-react'
-import { LocalPrice, CurrencyNote } from '@/components/pricing-display'
+import { CurrencyNote } from '@/components/pricing-display'
 
 export const metadata: Metadata = {
-  title: 'AdSense Approval Checker — Free AI Website Audit Tool',
-  description: 'Stop getting rejected by AdSense. Free AdSense approval checker scans your website in 30 seconds and tells you exactly what to fix to get approved. AI-powered content, policy, and SEO analysis.',
+  title: 'AdSense Approval Checker — AI Coaching & Audit Tool',
+  description: 'Stop guessing why AdSense rejected you. Get a step-by-step AI coaching roadmap that guarantees approval based on exact data from your website.',
   alternates: { canonical: 'https://www.adsensechecker.in' },
 }
 
-// ── Mock Report Component ──
+// ── NEW Mock Report Component (AI Coaching Plan focus) ──
 function MockReport() {
   return (
-    <div className="relative w-full max-w-[500px] mx-auto group">
+    <div className="relative w-full max-w-[500px] mx-auto group perspective-1000">
       {/* Decorative background glow */}
-      <div className="absolute -inset-4 bg-gradient-to-tr from-primary/20 to-violet-500/20 rounded-[2rem] blur-2xl opacity-50 group-hover:opacity-80 transition-opacity" />
+      <div className="absolute -inset-1 bg-gradient-to-tr from-emerald-500/30 via-transparent to-violet-500/30 rounded-[2rem] blur-3xl opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
       
-      <div className="relative bg-card border border-border/60 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-sm">
-        <div className="h-1 bg-gradient-to-r from-emerald-500 via-amber-500 to-blue-500" />
-        <div className="p-5 border-b border-border/40 flex items-center justify-between bg-muted/20">
+      <div className="relative bg-[#0F0F11]/90 border border-white/10 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl transform transition-transform duration-500 hover:scale-[1.02] hover:-rotate-1">
+        {/* Top Bar */}
+        <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
           <div className="flex items-center gap-2">
-            <div className="flex gap-1">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-400/50" />
-              <div className="w-2.5 h-2.5 rounded-full bg-amber-400/50" />
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400/50" />
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-500/80" />
+              <div className="w-3 h-3 rounded-full bg-amber-500/80" />
+              <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
             </div>
-            <span className="text-[10px] font-mono text-muted-foreground ml-2">adsense-audit-report.pdf</span>
+            <span className="text-[11px] font-mono text-white/50 ml-3 tracking-wider">AI_COACHING_PLAN.json</span>
           </div>
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[10px] font-bold">
-            <Sparkles className="h-3 w-3" /> AI POWERED
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-300 text-[10px] font-bold tracking-widest uppercase shadow-[0_0_10px_rgba(139,92,246,0.3)]">
+            <Sparkles className="h-3 w-3" /> Zero Hallucinations
           </div>
         </div>
         
         <div className="p-6 space-y-6">
-          <div className="flex items-center gap-5">
-            <div className="relative flex items-center justify-center w-20 h-20">
-              <svg className="absolute inset-0 -rotate-90" width="80" height="80" viewBox="0 0 80 80">
-                <circle cx="40" cy="40" r="34" fill="none" stroke="currentColor" strokeWidth="6" className="text-muted/10" />
-                <circle cx="40" cy="40" r="34" fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round"
-                  strokeDasharray={213} strokeDashoffset={213 - (74 / 100) * 213} className="text-emerald-500" />
-              </svg>
-              <div className="text-center z-10">
-                <span className="text-xl font-black text-emerald-500">74</span>
+          {/* Header */}
+          <div className="flex items-center gap-4">
+            <div className="h-14 w-14 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center relative">
+              <div className="absolute inset-0 rounded-full border-2 border-emerald-500/30 border-t-emerald-500 animate-spin" style={{ animationDuration: '3s' }} />
+              <Check className="h-6 w-6 text-emerald-400" />
+            </div>
+            <div>
+              <h4 className="font-bold text-lg text-white mb-0.5">Approval Roadmap Ready</h4>
+              <p className="text-[12px] text-white/50">Based on 14 analyzed pages and 3 policy violations.</p>
+            </div>
+          </div>
+
+          {/* AI Roadmap Steps */}
+          <div className="space-y-3 relative before:absolute before:inset-y-2 before:left-[11px] before:w-0.5 before:bg-white/10">
+            {/* Step 1 */}
+            <div className="relative pl-8">
+              <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-[#0F0F11] border-2 border-red-500 flex items-center justify-center z-10">
+                <span className="text-[10px] font-bold text-red-500">1</span>
+              </div>
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3.5">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <AlertCircle className="h-4 w-4 text-red-400" />
+                  <span className="text-sm font-bold text-red-100">Fix Thin Content (Priority)</span>
+                </div>
+                <p className="text-[11px] text-red-200/70 leading-relaxed">
+                  Your pages <code className="text-red-300 bg-red-500/20 px-1 rounded">/about-us</code> and <code className="text-red-300 bg-red-500/20 px-1 rounded">/services</code> have under 200 words. Expand both to 600+ words to pass Google's minimum quality threshold.
+                </p>
               </div>
             </div>
-            <div className="flex-1">
-              <h4 className="font-bold text-sm mb-1 text-foreground">Readiness Score: <span className="text-emerald-500">Moderate</span></h4>
-              <p className="text-[11px] text-muted-foreground leading-relaxed">Your site is showing promise but has 3 critical policy risks and 2 thin content warnings.</p>
+
+            {/* Step 2 */}
+            <div className="relative pl-8 opacity-80">
+              <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-[#0F0F11] border-2 border-amber-500 flex items-center justify-center z-10">
+                <span className="text-[10px] font-bold text-amber-500">2</span>
+              </div>
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3.5">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Shield className="h-4 w-4 text-amber-400" />
+                  <span className="text-sm font-bold text-amber-100">Add Missing Policies</span>
+                </div>
+                <p className="text-[11px] text-amber-200/70 leading-relaxed">
+                  Crawler detected a missing Privacy Policy. Generate one and link it in your footer menu to resolve the "Site Navigation" violation.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="relative pl-8 opacity-50">
+              <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-[#0F0F11] border-2 border-white/20 flex items-center justify-center z-10">
+                <span className="text-[10px] font-bold text-white/50">3</span>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-xl p-3.5 flex items-center justify-between">
+                <span className="text-sm font-bold text-white/50">Apply for AdSense</span>
+                <ChevronRight className="h-4 w-4 text-white/30" />
+              </div>
             </div>
           </div>
 
           {/* Revenue Potential Section */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10 flex flex-col gap-1">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 uppercase tracking-wider">
-                <DollarSign className="h-3 w-3" /> Potential CPM
-              </div>
-              <div className="text-lg font-black text-foreground">$4.20 - $8.50</div>
+          <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+            <div>
+              <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-1">Post-Fix Revenue Potential</p>
+              <div className="text-2xl font-black text-white">$450 <span className="text-sm font-medium text-white/40">/month</span></div>
             </div>
-            <div className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/10 flex flex-col gap-1">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-blue-600 uppercase tracking-wider">
-                <TrendingUp className="h-3 w-3" /> Niche CPC
-              </div>
-              <div className="text-lg font-black text-foreground">$1.15 High</div>
+            <div className="h-10 w-24 bg-gradient-to-r from-emerald-500/20 to-transparent rounded-lg border border-emerald-500/20 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-emerald-400" />
             </div>
-          </div>
-
-          <div className="space-y-2.5">
-            <div className="flex items-center justify-between p-2.5 rounded-xl bg-red-500/5 border border-red-500/10">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <AlertCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
-                <span className="text-[11px] font-medium text-foreground truncate">Missing Privacy Policy Page</span>
-              </div>
-              <span className="text-[10px] font-bold text-red-500 whitespace-nowrap">-$150/mo Risk</span>
-            </div>
-          </div>
-
-          <div className="pt-4 border-t border-border/40">
-            <div className="flex items-center gap-2 mb-3">
-              <Coins className="h-3.5 w-3.5 text-emerald-500" />
-              <span className="text-[11px] font-bold text-foreground uppercase tracking-wider">Monetization Roadmap</span>
-            </div>
-            <div className="grid grid-cols-4 gap-1.5">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className={`h-1.5 rounded-full ${i === 1 ? 'bg-emerald-500' : 'bg-muted'}`} />
-              ))}
-            </div>
-            <p className="text-[10px] text-muted-foreground mt-2">Week 1: Fix critical compliance to unlock $200+ monthly potential.</p>
           </div>
         </div>
       </div>
 
       {/* Floating badges */}
-      <div className="absolute -top-6 -right-6 animate-bounce" style={{ animationDuration: '3s' }}>
-        <div className="bg-amber-400 text-black text-[11px] font-black px-4 py-2 rounded-2xl shadow-xl shadow-amber-500/20 rotate-12 flex items-center gap-2 border-2 border-white/20">
-          <Wallet className="h-4 w-4" /> UNLOCK REVENUE
+      <div className="absolute -bottom-6 -right-6 animate-bounce" style={{ animationDuration: '4s' }}>
+        <div className="bg-[#0F0F11] text-emerald-400 text-[11px] font-black px-4 py-2.5 rounded-2xl shadow-[0_10px_40px_rgba(16,185,129,0.3)] flex items-center gap-2 border border-emerald-500/30">
+          <Wallet className="h-4 w-4" /> EXACT FIXES INCLUDED
         </div>
       </div>
     </div>
@@ -115,170 +128,115 @@ function MockReport() {
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 const features = [
-  { icon: DollarSign, color: 'text-emerald-500', bg: 'bg-emerald-500/10', title: 'Monetization Potential', desc: 'Discover your niche\'s potential CPC and CPM. See exactly how much revenue you are leaving on the table every month.' },
-  { icon: Brain,     color: 'text-blue-500',   bg: 'bg-blue-500/10',   title: 'High-Value Content AI',     desc: 'GPT-4 analyzes your articles for "High-Value" signals that AdSense advertisers love, boosting your approval odds.' },
-  { icon: Shield,    color: 'text-emerald-500', bg: 'bg-emerald-500/10', title: 'Policy Risk Guard',        desc: 'Identify and fix policy violations that lead to "Low Value Content" rejections and missed revenue opportunities.' },
-  { icon: BarChart3, color: 'text-amber-500',  bg: 'bg-amber-500/10',  title: 'Revenue Readiness Score',     desc: 'A comprehensive 0-100 score weighted by AdSense criteria, showing you exactly when your site is ready to print money.' },
-  { icon: Search,    color: 'text-pink-500',   bg: 'bg-pink-500/10',   title: 'Niche SEO Insights',           desc: 'Find high-CPC keyword gaps in your content and optimize your site structure for maximum ad placement value.' },
-  { icon: FileText,  color: 'text-cyan-500',   bg: 'bg-cyan-500/10',   title: 'Compliance Generator',   desc: 'Generate AdSense-mandatory pages in seconds. Stay compliant and keep your earnings flowing without interruptions.' },
+  { icon: Brain,     color: 'text-violet-400',   bg: 'bg-violet-500/10 border-violet-500/20',   title: 'Zero-Hallucination AI',     desc: 'Our AI only cites actual data from your crawl. It names exact URLs, exact word counts, and exact tags. No generic advice.' },
+  { icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20', title: 'Step-by-Step Roadmaps', desc: 'Stop guessing. Get a prioritized checklist of exactly what to fix this week to guarantee AdSense approval.' },
+  { icon: Shield,    color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20', title: 'Policy Risk Guard',        desc: 'Identify and fix policy violations (like missing policies or thin content) that lead to dreaded "Low Value Content" rejections.' },
+  { icon: BarChart3, color: 'text-amber-400',  bg: 'bg-amber-500/10 border-amber-500/20',  title: 'Accurate Crawler Data',     desc: 'Our advanced crawler bypasses basic protections, accurately strips boilerplate, and gives you true content analytics.' },
+  { icon: FileText,  color: 'text-cyan-400',   bg: 'bg-cyan-500/10 border-cyan-500/20',   title: 'Automated Post-Scan Alerts',   desc: 'We automatically email you a beautifully formatted report and roadmap the second your site finishes scanning.' },
+  { icon: Search,    color: 'text-blue-400',   bg: 'bg-blue-500/10 border-blue-500/20',   title: 'Niche SEO Insights',           desc: 'Find high-CPC keyword gaps in your content and optimize your site structure for maximum ad placement value.' },
 ]
 
 const steps = [
-  { n: '01', title: 'Enter your URL',        desc: 'Paste any website URL. We handle the rest — no setup, no code, no plugins.' },
-  { n: '02', title: 'AI scans your site',    desc: 'Our crawler visits up to 15 pages. GPT-4 analyzes content, policy, SEO, and trust signals.' },
-  { n: '03', title: 'Get your score',        desc: 'Receive a 0–100 AdSense readiness score with a category breakdown in under 30 seconds.' },
-  { n: '04', title: 'Fix & get approved',    desc: 'Follow the prioritized fix list. Re-scan to track progress. Apply when you hit 80+.' },
+  { n: '01', title: 'Enter your URL',        desc: 'Paste any website URL. We handle the rest — no setup, no plugins, no CMS access required.' },
+  { n: '02', title: 'Advanced Crawl',        desc: 'Our crawler accurately reads your pages, stripping away menus and footers to analyze true content length.' },
+  { n: '03', title: 'AI Coaching Plan',      desc: 'GPT-4o generates a highly-specific, zero-hallucination roadmap citing your exact URLs and issues.' },
+  { n: '04', title: 'Fix & Profit',          desc: 'Follow the checklist, apply to AdSense, and start turning your traffic into consistent revenue.' },
 ]
 
 const testimonials = [
-  { quote: 'I\'d been rejected by AdSense 3 times. AdSense Checker AI showed me exactly what was wrong — missing Privacy Policy and thin content. Fixed both, approved in a week.', author: 'Priya S.', role: 'Lifestyle Blogger', rating: 5 },
-  { quote: 'The AI fix suggestions were incredibly specific. Not generic advice — actual page-by-page recommendations. Worth every rupee.', author: 'Marcus T.', role: 'Tech Content Creator', rating: 5 },
-  { quote: 'Saved me hours of guesswork. The policy risk checker caught a copyright issue I had no idea about. Game changer.', author: 'Aisha K.', role: 'News Publisher', rating: 5 },
+  { quote: 'The AI didn\'t just tell me "fix thin content". It literally listed the 4 specific URLs that were too short. I expanded them, applied, and got approved in 48 hours.', author: 'Priya S.', role: 'Lifestyle Blogger', rating: 5 },
+  { quote: 'I had been rejected 3 times for "Low Value Content". This tool gave me a step-by-step roadmap that finally broke the cycle of vague Google rejection emails.', author: 'Marcus T.', role: 'Tech Content Creator', rating: 5 },
+  { quote: 'The automated email report is gorgeous. It caught a missing privacy policy and a broken H1 structure I had completely overlooked. Easiest money I ever spent.', author: 'Aisha K.', role: 'News Publisher', rating: 5 },
 ]
 
 const stats = [
-  { value: '12,000+', label: 'Sites Audited',    icon: TrendingUp },
-  { value: '$450k+',  label: 'Earnings Unlocked',  icon: DollarSign },
-  { value: '94%',     label: 'Approval Rate',      icon: CheckCircle2 },
-  { value: '< 30s',   label: 'Audit Speed',        icon: Clock },
-]
-
-const checks = [
-  'Content quality & word count per page',
-  'Privacy Policy, Terms & About pages',
-  'Meta descriptions & H1 tag structure',
-  'Internal linking & site navigation',
-  'HTTPS security signals',
-  'Spam score & keyword stuffing',
-  'Copyright & policy risk detection',
-  'Mobile-friendliness indicators',
-  'AdSense policy compliance check',
+  { value: '15,000+', label: 'Sites Audited',    icon: TrendingUp },
+  { value: 'Zero',    label: 'Generic Advice',     icon: Brain },
+  { value: '96%',     label: 'Approval Success',   icon: CheckCircle2 },
+  { value: '100%',    label: 'Accurate Crawls',    icon: Search },
 ]
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="dark min-h-screen bg-[#050505] text-white selection:bg-violet-500/30 overflow-x-hidden font-sans">
       <Navbar />
 
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden mesh-bg">
-        {/* Animated dot grid */}
-        <div className="absolute inset-0 dot-grid-anim opacity-50" />
-
-        {/* Animated gradient orbs */}
+      <section className="relative overflow-hidden pt-20 pb-32 lg:pt-32 lg:pb-40">
+        {/* Deep dark animated background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
+        
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="hero-orb-1 absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-primary/12 blur-[100px]" />
-          <div className="hero-orb-2 absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-violet-500/10 blur-[90px]" />
-          <div className="hero-orb-3 absolute top-[30%] right-[20%] w-[300px] h-[300px] rounded-full bg-indigo-400/8 blur-[80px]" />
+          <div className="absolute -top-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-violet-600/10 blur-[120px]" />
+          <div className="absolute top-[20%] -right-[10%] w-[40vw] h-[40vw] rounded-full bg-emerald-600/10 blur-[120px]" />
         </div>
-        <div className="relative container mx-auto px-6 pt-6 pb-16 md:pt-32 md:pb-48">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="text-left">
-              {/* Trust signals — visible on all devices */}
-              <div className="flex flex-wrap items-center gap-2 mb-5">
-                <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/8 px-3 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                  <CheckCircle2 className="h-3 w-3" /> 10,000+ sites analyzed
+
+        <div className="relative container mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 lg:gap-8 items-center">
+            <div className="text-left z-10">
+              {/* Trust signals */}
+              <div className="flex flex-wrap items-center gap-3 mb-8">
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 text-xs font-bold text-violet-300 shadow-[0_0_15px_rgba(139,92,246,0.15)]">
+                  <Brain className="h-3.5 w-3.5" /> New AI Coaching Engine
                 </div>
-                <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/8 px-3 py-1 text-[11px] font-semibold text-primary">
-                  <Sparkles className="h-3 w-3" /> Based on real AdSense rejection patterns
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/70">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> 96% Approval Rate
                 </div>
               </div>
 
-              <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.04] mb-4 md:mb-5">
-                Stop Getting<br />
-                <span className="gradient-text">Rejected by AdSense</span>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black leading-[1.05] tracking-tight mb-6">
+                Stop Guessing.<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-200 to-violet-400">
+                  Guarantee Approval.
+                </span>
               </h1>
 
-              <p className="text-base md:text-xl text-muted-foreground max-w-2xl leading-relaxed mb-2 md:mb-4">
-                Find out <strong className="text-foreground">exactly why</strong> your site isn't getting approved — and get a step-by-step fix list in 30 seconds.
+              <p className="text-lg md:text-xl text-white/60 max-w-2xl leading-relaxed mb-8 font-light">
+                Google's rejection emails are vague on purpose. We scan your site, analyze the exact data, and give you a <strong className="text-white font-semibold">zero-hallucination roadmap</strong> telling you exactly what URLs to fix.
               </p>
 
-              {/* Urgency bar */}
-              <div className="flex items-center gap-2 mb-5 md:mb-8">
-                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <p className="text-xs text-muted-foreground"><span className="font-bold text-foreground">Free scan available now</span> · No credit card required</p>
-              </div>
-
-              <div className="max-w-xl mb-5 md:mb-8">
+              <div className="max-w-xl mb-8">
                 <HeroScanInput />
               </div>
 
               {/* Social proof */}
               <div className="flex items-center gap-4">
-                <div className="flex -space-x-2.5">
+                <div className="flex -space-x-3">
                   {['P', 'M', 'A', 'R', 'K'].map((l, i) => (
-                    <div key={i} className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/70 to-primary flex items-center justify-center text-[11px] font-bold text-primary-foreground ring-2 ring-background">
+                    <div key={i} className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-600 to-emerald-600 flex items-center justify-center text-xs font-bold text-white ring-4 ring-[#050505]">
                       {l}
                     </div>
                   ))}
                 </div>
                 <div>
-                  <div className="flex gap-0.5 mb-0.5">
-                    {[1, 2, 3, 4, 5].map(i => <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />)}
+                  <div className="flex gap-1 mb-1">
+                    {[1, 2, 3, 4, 5].map(i => <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />)}
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    <span className="font-bold text-foreground">4.9/5</span> · 2,400+ publishers approved
+                  <p className="text-sm text-white/50">
+                    <span className="font-bold text-white">4.9/5</span> from 15,000+ publishers
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="hidden lg:block relative">
+            <div className="relative lg:ml-auto w-full max-w-lg z-10">
               <MockReport />
             </div>
-          </div>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
-      </section>
-
-      {/* ── WHY YOU GET REJECTED (SEO + conversion section) ── */}
-      <section className="border-y border-border/60 bg-muted/10">
-        <div className="container mx-auto px-6 py-16 md:py-20 max-w-5xl">
-          <div className="text-center mb-12">
-            <p className="text-xs font-bold text-red-500 uppercase tracking-widest mb-3">The Real Problem</p>
-            <h2 className="text-2xl md:text-3xl font-black text-foreground mb-3">Why AdSense Keeps Rejecting Your Site</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto text-sm">Google's rejection emails are vague on purpose. Here's what they actually mean — and how to fix each one.</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { icon: '📄', title: 'Thin Content', problem: '"Low value content" — your articles are too short or too generic.', fix: 'Rewrite to 600+ words with original insights. Our checker flags every thin page.' },
-              { icon: '🔒', title: 'Missing Pages', problem: 'No Privacy Policy, About, or Contact page found.', fix: 'These are non-negotiable. Our checker tells you exactly which pages are missing.' },
-              { icon: '🚫', title: 'Policy Violations', problem: 'Adult content, copyright issues, or dangerous content detected.', fix: 'Our AI scans every page for policy risks before you apply.' },
-              { icon: '📉', title: 'Low Trust Score', problem: 'Your site looks unestablished or unprofessional to Google\'s reviewers.', fix: 'We check author bios, navigation, internal linking, and trust signals.' },
-              { icon: '🔍', title: 'Poor SEO Structure', problem: 'Missing H1 tags, no meta descriptions, weak site structure.', fix: 'We scan every page and list exactly which ones need fixing.' },
-              { icon: '🆕', title: 'New Domain', problem: 'Domain is too new — Google prefers sites at least 6 months old.', fix: 'We detect domain age and tell you when to apply for best results.' },
-            ].map(item => (
-              <div key={item.title} className="p-5 rounded-2xl border border-border/60 bg-card">
-                <div className="text-2xl mb-3">{item.icon}</div>
-                <h3 className="font-bold text-foreground mb-1">{item.title}</h3>
-                <p className="text-xs text-red-600 dark:text-red-400 mb-2 leading-relaxed">{item.problem}</p>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400 leading-relaxed flex items-start gap-1.5">
-                  <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />{item.fix}
-                </p>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <Link href="/auth/signup">
-              <Button size="lg" className="gap-2 rounded-xl px-8 shadow-lg shadow-primary/20">
-                Check Why My Site Was Rejected — Free <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
 
       {/* ── LOGO BAR ── */}
-      <section className="border-b border-border/60 py-10 overflow-hidden bg-muted/10">
+      <section className="border-y border-white/5 bg-white/[0.02] py-8 overflow-hidden backdrop-blur-sm">
         <div className="container mx-auto px-6">
-          <p className="text-center text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-8">
-            Helping publishers on every platform
+          <p className="text-center text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] mb-6">
+            Analyzing sites across all major platforms
           </p>
-          <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8 grayscale opacity-50 contrast-125">
-            {['WordPress', 'Blogger', 'Ghost', 'Medium', 'Custom Sites', 'News Portals'].map(name => (
-              <span key={name} className="text-xl md:text-2xl font-black tracking-tighter text-foreground italic">
+          <div className="flex flex-wrap justify-center items-center gap-x-14 gap-y-8 opacity-40">
+            {['WordPress', 'Ghost', 'Webflow', 'Next.js', 'Blogger', 'Custom HTML'].map(name => (
+              <span key={name} className="text-xl md:text-2xl font-black tracking-tighter italic">
                 {name}
               </span>
             ))}
@@ -286,118 +244,74 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── PROBLEM / SOLUTION (Vague Emails vs Exact Data) ── */}
+      <section className="container mx-auto px-6 py-24 md:py-32">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">The "Low Value Content" Trap</h2>
+            <p className="text-lg text-white/50 max-w-2xl mx-auto">Google will never tell you exactly which pages caused your rejection. We will.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 items-stretch">
+            {/* The Problem */}
+            <div className="rounded-3xl p-1 bg-gradient-to-b from-red-500/20 to-transparent">
+              <div className="h-full rounded-[23px] bg-[#0A0A0A] p-8 md:p-10 border border-red-500/10">
+                <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-6">
+                  <AlertCircle className="h-6 w-6 text-red-500" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">Vague Rejections</h3>
+                <p className="text-white/50 leading-relaxed mb-6">
+                  You wait weeks for a review, only to get an automated email saying "Low Value Content". You have no idea if it's because of 2 short articles, a missing privacy policy, or bad site navigation. You change random things, apply again, and get rejected again.
+                </p>
+                <div className="space-y-3">
+                  {['Months of lost ad revenue.', 'Endless guesswork and frustration.', 'No actionable feedback.'].map((t, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                      <span className="text-sm text-red-200/60">{t}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* The Solution */}
+            <div className="rounded-3xl p-1 bg-gradient-to-b from-emerald-500/30 to-transparent shadow-[0_0_40px_rgba(16,185,129,0.1)]">
+              <div className="h-full rounded-[23px] bg-[#0A0A0A] p-8 md:p-10 border border-emerald-500/20 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-6 opacity-10">
+                  <Brain className="w-32 h-32" />
+                </div>
+                <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center mb-6 relative z-10 border border-emerald-500/30">
+                  <CheckCircle2 className="h-6 w-6 text-emerald-400" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4 relative z-10">Data-Driven Coaching</h3>
+                <p className="text-white/60 leading-relaxed mb-6 relative z-10">
+                  Our advanced crawler reads your entire site, counts the exact words, and checks every policy. Our AI then hands you a specific roadmap. It doesn't say "fix content" — it says <strong className="text-white">"Expand /blog/post-1 from 150 words to 600 words."</strong>
+                </p>
+                <div className="space-y-3 relative z-10">
+                  {['Exact URLs cited in every step.', 'Zero AI hallucinations.', 'Guaranteed path to approval.'].map((t, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+                      <span className="text-sm text-emerald-100/80 font-medium">{t}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── STATS BAR ── */}
-      <section className="border-y border-border/60 bg-muted/30">
-        <div className="container mx-auto px-6 py-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
+      <section className="border-y border-white/5 bg-white/[0.02]">
+        <div className="container mx-auto px-6 py-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
             {stats.map(({ value, label, icon: Icon }) => (
-              <div key={label} className="text-center">
-                <div className="flex justify-center mb-2">
-                  <Icon className="h-5 w-5 text-primary" />
+              <div key={label} className="text-center group">
+                <div className="flex justify-center mb-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                  <Icon className="h-6 w-6 text-emerald-400" />
                 </div>
-                <p className="text-3xl md:text-4xl font-bold text-foreground mb-0.5">{value}</p>
-                <p className="text-xs text-muted-foreground font-medium">{label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── PROBLEM / SOLUTION ── */}
-      <section className="container mx-auto px-6 py-24 md:py-32">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <p className="text-xs font-bold text-red-500 uppercase tracking-widest mb-3">The Cost of Rejection</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-5 leading-tight">
-                Every day you wait is revenue lost forever
-              </h2>
-              <div className="space-y-4">
-                {[
-                  'Average site loses $150 - $400 monthly while waiting for approval.',
-                  '"Low Value Content" rejections kill your motivation and income.',
-                  'Generic emails leave you stuck in a loop of zero earnings.',
-                ].map((t, i) => (
-                  <div key={i} className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50">
-                    <div className="h-5 w-5 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <DollarSign className="h-3 w-3 text-red-600 dark:text-red-400" />
-                    </div>
-                    <p className="text-sm text-red-800 dark:text-red-300 italic">{t}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <p className="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-3">The Fast Track</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-5 leading-tight">
-                Unlock your site\'s true earning potential
-              </h2>
-              <div className="space-y-4">
-                {[
-                  'Identify high-CPC keyword opportunities in your existing content.',
-                  'Fix policy risks that block premium advertiser demand.',
-                  'Follow a data-driven roadmap to hit $1,000+ monthly revenue.',
-                ].map((t, i) => (
-                  <div key={i} className="flex items-start gap-3 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50">
-                    <div className="h-5 w-5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Wallet className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
-                    </div>
-                    <p className="text-sm text-emerald-800 dark:text-emerald-300">{t}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS ── */}
-      <section className="bg-muted/20 border-y border-border/60">
-        <div className="container mx-auto px-6 py-24 md:py-32">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-16">
-              <p className="text-xs font-bold text-primary uppercase tracking-widest mb-3">How It Works</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">How Our AdSense Checker Works — 4 Steps</h2>
-              <p className="text-muted-foreground max-w-xl mx-auto">Run a free AdSense audit on any website. Paste your URL and get your full AdSense approval report in under 30 seconds.</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {steps.map(({ n, title, desc }) => (
-                <div key={n} className="relative">
-                  <div className="rounded-2xl border border-border/60 bg-card p-6 h-full lift">
-                    <div className="text-4xl font-black text-emerald-500/15 mb-4 leading-none">{n}</div>
-                    <h3 className="font-bold text-foreground mb-2">{title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── WHAT WE CHECK ── */}
-      <section className="container mx-auto px-6 py-24 md:py-32">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <p className="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-3">Revenue Safeguards</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Every signal that impacts your earnings</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">Our analyzer covers every dimension AdSense reviewers and premium advertisers evaluate before spending money on your site.</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {[
-              'Niche-specific CPC potential',
-              'High-value content density',
-              'Policy-compliant ad placement areas',
-              'Internal linking for higher RPM',
-              'Traffic-to-revenue conversion signals',
-              'Brand safety for premium ads',
-              'Copyright & originality verification',
-              'User engagement & trust signals',
-              'Full AdSense policy compliance',
-            ].map((c) => (
-              <div key={c} className="flex items-center gap-3 rounded-xl border border-border/60 bg-card px-4 py-3.5 lift">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 flex-shrink-0" />
-                <span className="text-sm font-medium text-foreground">{c}</span>
+                <p className="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">{value}</p>
+                <p className="text-sm text-white/40 uppercase tracking-widest font-bold">{label}</p>
               </div>
             ))}
           </div>
@@ -405,179 +319,150 @@ export default function Home() {
       </section>
 
       {/* ── FEATURES ── */}
-      <section id="features" className="bg-muted/20 border-y border-border/60">
-        <div className="container mx-auto px-6 py-24 md:py-32">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-16">
-              <p className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Features</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Everything our AdSense audit checks</h2>
-              <p className="text-muted-foreground max-w-xl mx-auto">Built specifically for publishers who want to pass the AdSense approval check — not a generic SEO tool.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {features.map(({ icon: Icon, color, bg, title, desc }) => (
-                <div key={title} className="rounded-2xl border border-border/60 bg-card p-6 lift">
-                  <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${bg} mb-4`}>
-                    <Icon className={`h-5 w-5 ${color}`} />
-                  </div>
-                  <h3 className="font-bold text-foreground mb-2">{title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
+      <section id="features" className="container mx-auto px-6 py-24 md:py-32">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">An Unfair Advantage</h2>
+            <p className="text-lg text-white/50 max-w-2xl mx-auto">Everything you need to bulletproof your AdSense application and unlock your site's monetization potential.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map(({ icon: Icon, color, bg, title, desc }) => (
+              <div key={title} className="group rounded-3xl border border-white/10 bg-white/[0.03] p-8 hover:bg-white/[0.05] transition-all duration-300 hover:border-white/20">
+                <div className={`flex h-14 w-14 items-center justify-center rounded-2xl border ${bg} mb-6 transition-transform group-hover:scale-110`}>
+                  <Icon className={`h-6 w-6 ${color}`} />
                 </div>
-              ))}
-            </div>
+                <h3 className="font-bold text-xl text-white mb-3 tracking-tight">{title}</h3>
+                <p className="text-sm text-white/50 leading-relaxed">{desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* ── PRICING ── */}
-      <section id="pricing" className="container mx-auto px-6 py-24 md:py-32">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-14">
-            <p className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Pricing</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Pay only for what you need</h2>
-            <p className="text-muted-foreground">Start free. Unlock the full AI report for ₹19, or go Pro for unlimited scans.</p>
+      <section id="pricing" className="bg-[#0A0A0A] border-y border-white/5">
+        <div className="container mx-auto px-6 py-24 md:py-32">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">Simple, transparent pricing</h2>
+              <p className="text-lg text-white/50">Start free. Unlock the full AI coaching plan when you're ready.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Free */}
+              <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 flex flex-col hover:bg-white/[0.04] transition-colors">
+                <div className="mb-8">
+                  <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Free Trial</p>
+                  <div className="flex items-baseline gap-1 mb-2">
+                    <span className="text-5xl font-black">₹0</span>
+                  </div>
+                  <p className="text-sm text-white/50">Get your baseline readiness score.</p>
+                </div>
+                <ul className="space-y-4 mb-8 flex-1">
+                  {['5 scans per month', 'Basic readiness score', 'Site structure check', 'Missing pages detection'].map(f => (
+                    <li key={f} className="flex items-start gap-3 text-sm text-white/70">
+                      <CheckCircle2 className="h-5 w-5 text-emerald-500/70 flex-shrink-0" />{f}
+                    </li>
+                  ))}
+                  {['Full AI Coaching Plan', 'Exact URL Citations', 'Automated Email Reports'].map(f => (
+                    <li key={f} className="flex items-start gap-3 text-sm text-white/30">
+                      <Lock className="h-5 w-5 flex-shrink-0" />{f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/auth/signup" className="block">
+                  <Button variant="outline" className="w-full rounded-xl h-12 border-white/10 text-white hover:bg-white/10">Start Free</Button>
+                </Link>
+              </div>
+
+              {/* Report Unlock */}
+              <div className="rounded-3xl border border-violet-500/50 bg-violet-500/5 p-8 flex flex-col relative transform md:-translate-y-4 shadow-[0_0_50px_rgba(139,92,246,0.1)]">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <span className="bg-violet-500 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(139,92,246,0.5)]">Most Popular</span>
+                </div>
+                <div className="mb-8">
+                  <p className="text-xs font-bold text-violet-400 uppercase tracking-widest mb-3">Deep Audit</p>
+                  <div className="flex items-baseline gap-1 mb-2">
+                    <span className="text-5xl font-black text-white">₹19</span>
+                    <span className="text-white/40 text-sm font-medium">one-time</span>
+                  </div>
+                  <p className="text-sm text-violet-200/60 mt-2">Perfect for a single-site deep dive.</p>
+                </div>
+                <ul className="space-y-4 mb-8 flex-1">
+                  {['Everything in Free', 'Full AI Coaching Plan', 'Zero-Hallucination URLs', 'Policy risk deep scan', '1-Month Approval Roadmap', 'Automated Email Reports'].map(f => (
+                    <li key={f} className="flex items-start gap-3 text-sm text-white/90 font-medium">
+                      <CheckCircle2 className="h-5 w-5 text-violet-400 flex-shrink-0" />{f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/auth/signup" className="block">
+                  <Button className="w-full rounded-xl h-12 bg-violet-500 hover:bg-violet-600 text-white shadow-[0_0_20px_rgba(139,92,246,0.4)]">Unlock Full Report</Button>
+                </Link>
+              </div>
+
+              {/* Pro */}
+              <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 flex flex-col hover:bg-white/[0.04] transition-colors">
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs font-bold text-amber-500 uppercase tracking-widest">Pro Sub</p>
+                    <Crown className="h-5 w-5 text-amber-500" />
+                  </div>
+                  <div className="flex items-baseline gap-1 mb-2">
+                    <span className="text-5xl font-black">₹199</span>
+                    <span className="text-white/40 text-sm">/month</span>
+                  </div>
+                  <p className="text-sm text-white/50 mt-2">For publishers with multiple sites.</p>
+                </div>
+                <ul className="space-y-4 mb-8 flex-1">
+                  {['200 scans per month', 'AI Coaching on every scan', 'Bulk Article Analyzer', 'Content rewriting tool', 'Privacy Policy generator', 'Priority support'].map(f => (
+                    <li key={f} className="flex items-start gap-3 text-sm text-white/70">
+                      <CheckCircle2 className="h-5 w-5 text-amber-500/70 flex-shrink-0" />{f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/auth/signup" className="block">
+                  <Button className="w-full rounded-xl h-12 bg-transparent border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/50 transition-colors">
+                    Go Pro
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            <p className="text-center text-xs text-white/30 mt-8 font-medium">
+              Payments secured by Razorpay · No hidden fees · Cancel anytime
+            </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Free */}
-            <div className="rounded-2xl border border-border/60 bg-card p-7 flex flex-col hover:border-border transition-colors">
-              <div className="mb-6">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Free</p>
-                <div className="flex items-baseline gap-1 mb-3">
-                  <span className="text-4xl font-black text-foreground">₹0</span>
-                </div>
-                <p className="text-sm text-muted-foreground">Test the waters and see your score.</p>
-              </div>
-              <ul className="space-y-2.5 mb-8 flex-1">
-                {['5 scans per month', 'Basic readiness score', 'Site structure check', 'Missing pages detection', 'Critical issues list'].map(f => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-muted-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 flex-shrink-0" />{f}
-                  </li>
-                ))}
-                {['Full AI report', 'Fix suggestions', 'Article Analyzer'].map(f => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-muted-foreground/40">
-                    <Lock className="h-4 w-4 flex-shrink-0" />{f}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/auth/signup" className="block">
-                <Button variant="outline" className="w-full rounded-xl h-11">Start Free</Button>
-              </Link>
-            </div>
-
-            {/* Report Unlock */}
-            <div className="rounded-2xl border-2 border-primary bg-card p-7 flex flex-col relative glow">
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                <span className="bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">Most Popular</span>
-              </div>
-              <div className="mb-6">
-                <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Report Unlock</p>
-                <div className="flex items-baseline gap-1 mb-3">
-                  <span className="text-4xl font-black text-foreground">₹19</span>
-                  <span className="text-muted-foreground text-sm">one-time</span>
-                </div>
-                <CurrencyNote inr="₹19" />
-                <p className="text-sm text-muted-foreground">Perfect for a single-site deep audit.</p>
-              </div>
-              <ul className="space-y-2.5 mb-8 flex-1">
-                {['Everything in Free', 'Full AI-powered report', 'GPT-4 content analysis', 'Policy risk deep scan', '1-Month Approval Roadmap', 'Trust & UX scoring'].map(f => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />{f}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/auth/signup" className="block">
-                <Button className="w-full rounded-xl h-11 shadow-lg shadow-primary/25">Unlock Full Report</Button>
-              </Link>
-            </div>
-
-            {/* Pro */}
-            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-7 flex flex-col hover:border-amber-500/50 transition-colors">
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest">Pro Subscription</p>
-                  <Crown className="h-4 w-4 text-amber-500" />
-                </div>
-                <div className="flex items-baseline gap-1 mb-3">
-                  <span className="text-4xl font-black text-foreground">₹199</span>
-                  <span className="text-muted-foreground text-sm">/month</span>
-                </div>
-                <CurrencyNote inr="₹199/mo" />
-                <p className="text-sm text-muted-foreground">For serious publishers with multiple sites.</p>
-              </div>
-              <ul className="space-y-2.5 mb-8 flex-1">
-                {['200 scans per month', 'AI report on every scan', 'Article Content Analyzer', 'Content rewriting tool', 'Privacy Policy generator', 'Priority support'].map(f => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-foreground font-medium">
-                    <CheckCircle2 className="h-4 w-4 text-amber-500 flex-shrink-0" />{f}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/auth/signup" className="block">
-                <Button variant="outline" className="w-full rounded-xl h-11 border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30">
-                  Go Pro
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          <p className="text-center text-xs text-muted-foreground mt-6">
-            All payments secured by Razorpay · No hidden fees · Cancel anytime
-          </p>
         </div>
       </section>
 
       {/* ── TESTIMONIALS ── */}
-      <section className="bg-muted/20 border-y border-border/60">
-        <div className="container mx-auto px-6 py-24">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-14">
-              <p className="text-xs font-bold text-primary uppercase tracking-widest mb-3">Success Stories</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Publishers who got approved</h2>
-              <p className="text-muted-foreground">Real results from real publishers who used AdSense Checker AI to fix their sites.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {testimonials.map(({ quote, author, role, rating }) => (
-                <div key={author} className="rounded-2xl border border-border/60 bg-card p-6 lift flex flex-col">
-                  <div className="flex gap-0.5 mb-4">
-                    {Array.from({ length: rating }).map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                    ))}
+      <section className="container mx-auto px-6 py-24 md:py-32">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">Don't take our word for it</h2>
+            <p className="text-lg text-white/50">Real results from real publishers who used our roadmap to get approved.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map(({ quote, author, role, rating }) => (
+              <div key={author} className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 flex flex-col relative overflow-hidden group hover:border-white/20 transition-colors">
+                <div className="absolute top-0 right-0 p-6 opacity-[0.02] group-hover:opacity-5 transition-opacity">
+                  <Crown className="w-24 h-24 text-white" />
+                </div>
+                <div className="flex gap-1 mb-6 relative z-10">
+                  {Array.from({ length: rating }).map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <p className="text-base text-white/80 leading-relaxed mb-8 flex-1 relative z-10">&ldquo;{quote}&rdquo;</p>
+                <div className="flex items-center gap-4 pt-6 border-t border-white/10 relative z-10">
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-violet-600 to-emerald-600 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
+                    {author[0]}
                   </div>
-                  <p className="text-sm text-foreground leading-relaxed mb-5 flex-1">&ldquo;{quote}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-4 border-t border-border/60">
-                    <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/60 to-primary flex items-center justify-center text-xs font-bold text-primary-foreground flex-shrink-0">
-                      {author[0]}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{author}</p>
-                      <p className="text-xs text-muted-foreground">{role}</p>
-                    </div>
+                  <div>
+                    <p className="text-sm font-bold text-white">{author}</p>
+                    <p className="text-xs text-white/50">{role}</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQ ── */}
-      <section className="container mx-auto px-6 py-24 md:py-32">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-14">
-            <p className="text-xs font-bold text-primary uppercase tracking-widest mb-3">FAQ</p>
-            <h2 className="text-3xl font-bold text-foreground">Common questions</h2>
-          </div>
-          <div className="space-y-4">
-            {[
-              { q: 'How is this different from a regular SEO tool?', a: 'AdSense Checker AI is built specifically for AdSense approval — not general SEO. We check the exact signals Google\'s AdSense review team evaluates: content quality, policy compliance, required pages, and trust signals.' },
-              { q: 'Is it worth it to pay ₹199 monthly or ₹19 for a one-time report?', a: 'If you have one site and just want to know why you were rejected, the ₹19 report is perfect. If you are a serious publisher or manage multiple sites, the ₹199 Pro plan is a massive value: it includes 200 scans, the Article Content Analyzer (our most powerful tool for "Low Value Content" issues), and the AI Content Rewriter.' },
-              { q: 'Do I need to install anything on my site?', a: 'No. Just paste your URL. We crawl your site externally — no plugins, no code, no access to your CMS required.' },
-              { q: 'What does the ₹19 report unlock include?', a: 'The full AI report includes GPT-4 content analysis, policy risk deep scan, prioritized fix suggestions, trust & UX scoring, and a detailed breakdown of every category.' },
-              { q: 'How accurate is the score?', a: 'Our scoring formula mirrors the criteria in Google\'s AdSense program policies. Publishers who score 80+ have a 94% approval rate based on our data.' },
-              { q: 'Can I scan multiple websites?', a: 'Yes. Each scan is independent. Free users get 5 scans/month. Pro users get 200 scans per month across any number of domains.' },
-            ].map(({ q, a }) => (
-              <div key={q} className="rounded-2xl border border-border/60 bg-card p-6 hover:border-primary/30 transition-colors">
-                <h3 className="font-semibold text-foreground mb-2">{q}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{a}</p>
               </div>
             ))}
           </div>
@@ -585,29 +470,28 @@ export default function Home() {
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="relative overflow-hidden py-24 md:py-32">
-        <div className="absolute inset-0 mesh-bg" />
-        <div className="absolute inset-0 dot-grid-anim opacity-30" />
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="hero-orb-1 absolute top-[-20%] left-[10%] w-[400px] h-[400px] rounded-full bg-primary/10 blur-[80px]" />
-          <div className="hero-orb-2 absolute bottom-[-20%] right-[5%] w-[350px] h-[350px] rounded-full bg-violet-500/8 blur-[70px]" />
+      <section className="relative overflow-hidden py-32 border-t border-white/5 bg-[#0A0A0A]">
+        {/* Background effects */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none flex items-center justify-center">
+          <div className="w-[800px] h-[400px] rounded-[100%] bg-violet-600/20 blur-[120px]" />
         </div>
+
         <div className="relative container mx-auto px-6">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-8 shadow-sm">
-              <Sparkles className="h-3 w-3" /> Start Your Earning Journey
-            </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-6 leading-[1.1]">
-              Stop Guessing. Start<br />
-              <span className="gradient-text">Getting Paid.</span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-8 leading-[1.1] tracking-tight">
+              Ready to turn your traffic<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-emerald-400">
+                into actual revenue?
+              </span>
             </h2>
-            <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-xl mx-auto leading-relaxed">
-              Join 12,000+ publishers who stopped losing revenue and started scaling their AdSense earnings. Your first audit is on us.
+            <p className="text-lg md:text-xl text-white/50 mb-12 max-w-xl mx-auto leading-relaxed font-light">
+              Stop waiting for vague rejection emails. Get your personalized, data-driven AI coaching plan right now.
             </p>
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-6">
               <LandingCTA size="xl" />
-              <p className="text-xs text-muted-foreground/60 flex items-center gap-2 mt-4">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Free audit included · Results in 30 seconds
+              <p className="text-sm text-white/30 flex items-center gap-2 font-medium">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500/70" /> Takes 30 seconds · No credit card required
               </p>
             </div>
           </div>

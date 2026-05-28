@@ -13,7 +13,6 @@ import { useProfile } from '@/hooks/use-profile'
 import { useRazorpay } from '@/hooks/use-razorpay'
 import { useRouter } from 'next/navigation'
 import { signOut } from '@/lib/auth'
-import { BuildBanner } from '@/components/build-banner'
 
 export default function SettingsPage() {
   const { profile, token, isPro, isLoading, usage } = useProfile()
@@ -296,8 +295,6 @@ export default function SettingsPage() {
           <Shield className="h-3.5 w-3.5" /> Delete Account
         </Button>
       </Card>
-
-      <BuildBanner name={profile?.fullName?.split(' ')[0]} />
 
     </div>
   )

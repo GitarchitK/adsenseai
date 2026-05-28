@@ -49,8 +49,6 @@ export function cleanTextContent(text: string): string {
     text
       // Remove extra whitespace and newlines
       .replace(/\s+/g, ' ')
-      // Remove common navigation/footer patterns
-      .replace(/(?:home|about|contact|privacy|terms|cookies|login|signup|shop|blog|news|help|faq|sitemap)[\s\n]*/gi, '')
       // Clean up remaining text
       .trim()
       .slice(0, 10000) // Limit to 10k characters for efficiency
@@ -88,10 +86,13 @@ export function stripHtmlTags(html: string): string {
       // Remove script and style tags
       .replace(/<script[^>]*>.*?<\/script>/gi, '')
       .replace(/<style[^>]*>.*?<\/style>/gi, '')
-      // Remove nav/footer/aside content (often boilerplate)
+      // Remove common boilerplate blocks (menus, footers, headers, forms)
       .replace(/<nav[^>]*>.*?<\/nav>/gi, '')
       .replace(/<footer[^>]*>.*?<\/footer>/gi, '')
       .replace(/<aside[^>]*>.*?<\/aside>/gi, '')
+      .replace(/<header[^>]*>.*?<\/header>/gi, '')
+      .replace(/<form[^>]*>.*?<\/form>/gi, '')
+      .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '')
       // Remove all remaining HTML tags
       .replace(/<[^>]+>/g, '')
       // Decode HTML entities

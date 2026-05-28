@@ -17,7 +17,6 @@ import type { CrawlResponse } from '@/types'
 import type { ScoreBreakdown } from '@/lib/scores'
 import type { AIReport, FixSuggestion } from '@/services/ai-report'
 import type { WhoisData } from '@/app/api/whois/route'
-import { BuildBanner } from '@/components/build-banner'
 
 interface CrawlResult extends CrawlResponse {
   scores?: ScoreBreakdown
@@ -226,6 +225,64 @@ function IssueRow({ text, type }: { text: string; type: 'critical' | 'warning' |
   )
 }
 
+// ── Custom Loaders ─────────────────────────────────────────────────────────────
+function EstimatingLoader() {
+  const [idx, setIdx] = useState(0)
+  const icons = [Brain, Search, Calendar, Zap]
+  const labels = ['Analyzing site...', 'Finding fixes...', 'Building roadmap...', 'Calculating cost...']
+  
+  useEffect(() => {
+    const t = setInterval(() => setIdx(i => (i + 1) % 4), 800)
+    return () => clearInterval(t)
+  }, [])
+
+  return (
+    <div className="flex items-center gap-3 mb-3 h-8">
+      <div className="flex gap-1.5">
+        {icons.map((Icon, i) => {
+          const isActive = i === idx;
+          return (
+            <div 
+              key={i} 
+              className={`flex items-center justify-center h-7 w-7 rounded-md transition-all duration-500 ${
+                isActive ? 'bg-primary text-primary-foreground shadow-md' : 'bg-primary/10 text-primary/40'
+              }`} 
+              style={{ 
+                transform: isActive ? 'perspective(400px) rotateY(360deg) scale(1.1)' : 'perspective(400px) rotateY(0deg) scale(0.9)',
+              }}
+            >
+              <Icon className="h-4 w-4" />
+            </div>
+          )
+        })}
+      </div>
+      <div className="w-32">
+        <p className="text-[10px] font-black text-primary animate-pulse uppercase tracking-wider">{labels[idx]}</p>
+      </div>
+    </div>
+  )
+}
+
+// ── Custom Loaders ─────────────────────────────────────────────────────────────
+function CountdownTimer() {
+  const [timeLeft, setTimeLeft] = useState(15 * 60)
+  
+  useEffect(() => {
+    const timer = setInterval(() => setTimeLeft(p => p > 0 ? p - 1 : 0), 1000)
+    return () => clearInterval(timer)
+  }, [])
+  
+  const m = Math.floor(timeLeft / 60)
+  const s = timeLeft % 60
+  
+  return (
+    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-[10px] font-black tracking-wider uppercase mb-3 shadow-sm shadow-red-500/10">
+      <Clock className="h-3 w-3 animate-pulse" />
+      Offer expires in {m.toString().padStart(2, '0')}:{s.toString().padStart(2, '0')}
+    </div>
+  )
+}
+
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function ResultsPage() {
   const { isPro, getToken } = useProfile()
@@ -233,8 +290,9 @@ export default function ResultsPage() {
   const [data, setData] = useState<CrawlResult | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [isUnlocking, setIsUnlocking] = useState(false)
-  const [unlockError, setUnlockError] = useState('')
+  const [isStartingPlan, setIsStartingPlan] = useState(false)
+  const [planError, setPlanError] = useState('')
+  const [estimate, setEstimate] = useState<{days: number; price: number} | null>(null)
   const [aiReport, setAiReport] = useState<AIReport | null>(null)
   const [activeTab, setActiveTab] = useState<'overview' | 'issues' | 'plan' | 'pages' | 'deep'>('overview')
   const [copied, setCopied] = useState(false)
@@ -266,97 +324,89 @@ export default function ResultsPage() {
       .finally(() => setWhoisLoading(false))
   }, [data?.domain])
 
+  // Fetch Coaching Estimate for Free Users
   useEffect(() => {
-    if ((isPro || data?.isAiUnlocked) && data && !aiReport && !isUnlocking) handleUnlock()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPro, data, aiReport])
+    if (!data?.scan_id || isPro || data?.isAiUnlocked) return
+    let active = true
+    const fetchEst = async () => {
+      try {
+        const t = await getToken()
+        const res = await fetch('/api/plans/estimate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(t && { Authorization: `Bearer ${t}` }) },
+          body: JSON.stringify({ scanId: data.scan_id })
+        })
+        if (!res.ok) return
+        const est = await res.json()
+        if (active && est.days) setEstimate(est)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    fetchEst()
+    return () => { active = false }
+  }, [data?.scan_id, isPro, data?.isAiUnlocked, getToken])
 
-  const handleUnlock = async () => {
-    setUnlockError('')
-    setIsUnlocking(true)
+  const handleStartCoaching = async () => {
+    setPlanError('')
+    setIsStartingPlan(true)
     try {
       const t = await getToken()
-      if (!t) { setUnlockError('Please sign in again.'); setIsUnlocking(false); return }
+      if (!t) { setPlanError('Please sign in again.'); setIsStartingPlan(false); return }
       const scanId = data?.scan_id ?? 'temp_' + Date.now()
 
-      if (isPro) {
-        const res = await fetch('/api/razorpay/unlock', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
-          body: JSON.stringify({ action: 'pro_unlock', scanId, crawlData: data?.crawl_data ?? data }),
-        })
-        if (res.ok) {
-          const result = await res.json()
-          if (result.ai_report) {
-            setAiReport(result.ai_report)
-            sessionStorage.setItem('lastCrawlData', JSON.stringify({ ...data, ai_report: result.ai_report }))
-          }
-        } else {
-          const err = await res.json().catch(() => ({}))
-          setUnlockError(err.error ?? 'Failed to generate report.')
-        }
-        setIsUnlocking(false)
-        return
-      }
-
-      const orderRes = await fetch('/api/razorpay/unlock', {
+      const orderRes = await fetch('/api/razorpay/plan-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
-        body: JSON.stringify({ action: 'create_order_direct', scanId }),
+        body: JSON.stringify({ scanId, url: data?.domain || '', days: estimate?.days }),
       })
       if (!orderRes.ok) {
         const err = await orderRes.json().catch(() => ({}))
-        setUnlockError(err.error ?? 'Server error. Please try again.')
-        setIsUnlocking(false)
+        setPlanError(err.error ?? 'Server error. Please try again.')
+        setIsStartingPlan(false)
         return
       }
+      
       const order = await orderRes.json()
-      if (!order.orderId) { setUnlockError('Could not create payment order.'); setIsUnlocking(false); return }
+      if (!order.orderId) { setPlanError('Could not create payment order.'); setIsStartingPlan(false); return }
 
       await openCheckout({
         key: order.keyId, amount: order.amount, currency: order.currency,
-        name: 'AdSense Checker AI', description: 'Full AI Report — One-time ₹19', order_id: order.orderId,
+        name: 'AdSense Checker AI', description: `Coaching Plan — ₹${order.amount / 100}`, order_id: order.orderId,
         handler: async (r: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
           try {
-            // Build a clean CrawlResponse — strip non-crawl fields before sending
-            const crawlPayload = data?.crawl_data ?? data
-            const verifyRes = await fetch('/api/razorpay/unlock', {
+            const verifyRes = await fetch('/api/razorpay/plan-verify', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
               body: JSON.stringify({
-                action:    'verify',
-                scanId:    data?.scan_id ?? scanId,
                 orderId:   r.razorpay_order_id,
                 paymentId: r.razorpay_payment_id,
                 signature: r.razorpay_signature,
-                crawlData: crawlPayload,
+                scanId:    data?.scan_id ?? scanId,
+                url:       data?.domain || ''
               }),
             })
-            const result = await verifyRes.json()
-            if (verifyRes.ok && result.ai_report) {
-              setAiReport(result.ai_report)
-              sessionStorage.setItem('lastCrawlData', JSON.stringify({ ...data, ai_report: result.ai_report, isAiUnlocked: true }))
+            if (verifyRes.ok) {
+              window.location.href = '/dashboard/plan'
             } else {
-              const msg = result.error ?? 'Report generation failed after payment. Contact support.'
-              setUnlockError(msg)
-              console.error('[Verify]', result)
+              const result = await verifyRes.json().catch(() => ({}))
+              setPlanError(result.error ?? 'Plan creation failed after payment. Contact support.')
             }
           } catch (err) {
-            console.error('[Verify handler]', err)
-            setUnlockError('Payment succeeded but report failed. Contact support.')
+            setPlanError('Payment succeeded but plan failed. Contact support.')
           } finally {
-            setIsUnlocking(false)
+            setIsStartingPlan(false)
           }
         },
         prefill: {}, theme: { color: '#7c3aed' },
-        modal: { ondismiss: () => setIsUnlocking(false) },
+        modal: { ondismiss: () => setIsStartingPlan(false) },
       })
-      // Don't set isUnlocking false here — handler does it
-      return
-    } catch (err) {
-      console.error('[Unlock]', err)
-      setUnlockError('Something went wrong. Please try again.')
-      setIsUnlocking(false)
+    } catch (err: any) {
+      if (err?.message !== 'dismissed') {
+        console.error('[Coaching Plan Error]', err)
+        setPlanError('Something went wrong. Please try again.')
+      }
+      setIsStartingPlan(false)
     }
   }
 
@@ -464,7 +514,7 @@ export default function ResultsPage() {
                 Free Plan
               </div>
             )}
-            {unlockError && <p className="text-xs text-red-500 mt-2 text-right">{unlockError}</p>}
+            {planError && <p className="text-xs text-red-500 mt-2 text-right">{planError}</p>}
           </div>
         </div>
 
@@ -509,21 +559,63 @@ export default function ResultsPage() {
                 <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-emerald-500 flex-shrink-0" /> Pages tab</li>
               </ul>
             </div>
-            <div className="p-4 rounded-2xl border-2 border-primary/30 bg-primary/5 relative overflow-hidden">
-              <div className="absolute top-2 right-2 text-[9px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full">₹19 ONE-TIME</div>
-              <p className="text-xs font-black text-primary uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5" /> Unlock — What You Get
-              </p>
-              <ul className="space-y-1.5 text-xs text-muted-foreground">
-                <li className="flex items-center gap-1.5"><Lock className="h-3 w-3 text-primary flex-shrink-0" /> <span className="text-foreground font-semibold">Full fix list</span> with exact page URLs</li>
-                <li className="flex items-center gap-1.5"><Lock className="h-3 w-3 text-primary flex-shrink-0" /> <span className="text-foreground font-semibold">30-day action plan</span> for your site</li>
-                <li className="flex items-center gap-1.5"><Lock className="h-3 w-3 text-primary flex-shrink-0" /> <span className="text-foreground font-semibold">Revenue estimate</span> after approval</li>
-                <li className="flex items-center gap-1.5"><Lock className="h-3 w-3 text-primary flex-shrink-0" /> <span className="text-foreground font-semibold">Missing topics</span> to write next</li>
-              </ul>
-              <Button onClick={handleUnlock} disabled={isUnlocking} size="sm" className="w-full mt-3 gap-1.5 rounded-xl font-bold text-xs h-8">
-                {isUnlocking ? <div className="h-3.5 w-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Lock className="h-3.5 w-3.5" />}
-                Unlock Now — ₹19
-              </Button>
+            <div className="p-4 rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 to-primary/5 relative overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="absolute top-2 right-2 flex flex-col items-end">
+                  {estimate ? (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] text-muted-foreground line-through decoration-red-500/50 decoration-2 font-bold">
+                        ₹{(estimate.days * 25).toLocaleString('en-IN')}
+                      </span>
+                      <span className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full shadow-sm">
+                        ₹{estimate.price / 100} ONE-TIME
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="text-[9px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full">CALCULATING...</div>
+                  )}
+                </div>
+                
+                <CountdownTimer />
+                
+                <p className="text-xs font-black text-primary uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-amber-500 animate-pulse" /> AI Coaching Roadmap
+                </p>
+                {estimate ? (
+                  <p className="text-sm font-semibold text-foreground mb-4">
+                    Your site needs <span className="text-primary font-black">{estimate.days} days</span> of work.
+                  </p>
+                ) : (
+                  <EstimatingLoader />
+                )}
+                
+                <ul className="space-y-2 text-xs text-muted-foreground mb-4">
+                  <li className="flex items-center gap-2"><div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"><Lock className="h-2.5 w-2.5 text-primary" /></div> Day-by-day task drip feed</li>
+                  <li className="flex items-center gap-2"><div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"><Lock className="h-2.5 w-2.5 text-primary" /></div> Daily email reminders</li>
+                  <li className="flex items-center gap-2"><div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"><Lock className="h-2.5 w-2.5 text-primary" /></div> Re-crawl & adjust every 5 days</li>
+                  <li className="flex items-center gap-2"><div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"><Lock className="h-2.5 w-2.5 text-primary" /></div> Full AI analysis unlocked</li>
+                </ul>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-1.5 mb-2.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-1 rounded-md border border-amber-200 dark:border-amber-900/50">
+                  <span className="relative flex h-2 w-2 flex-shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                  </span>
+                  🔥 Join 1,429+ creators who got approved
+                </div>
+                
+                <Button onClick={handleStartCoaching} disabled={isStartingPlan || !estimate} size="sm" className="w-full gap-1.5 rounded-xl font-black text-xs h-10 shadow-xl shadow-primary/30 relative overflow-hidden group transition-all hover:scale-[1.02]">
+                  <div className="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-1000 -skew-x-12 -translate-x-full" />
+                  {isStartingPlan ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                  {estimate ? `Unlock Roadmap — ₹${estimate.price / 100}` : 'Estimating...'}
+                </Button>
+                
+                <p className="text-[9px] text-muted-foreground text-center mt-2.5 flex items-center justify-center gap-1 font-semibold">
+                  <ShieldCheck className="h-3 w-3 text-emerald-500" /> 100% Money-Back Guarantee
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -1773,9 +1865,6 @@ export default function ResultsPage() {
             )}
           </div>
         )}
-
-        {/* ── Footer CTA ── */}
-        <BuildBanner name={data.domain ? undefined : undefined} />
 
         <Card className="p-8 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 rounded-3xl text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 -translate-x-1/2 blur-2xl pointer-events-none" />
