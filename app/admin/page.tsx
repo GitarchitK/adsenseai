@@ -9,7 +9,9 @@ import {
   Mail, Send, Loader2
 } from 'lucide-react'
 import { useProfile } from '@/hooks/use-profile'
-
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer
+} from 'recharts'
 interface AdminUser {
   uid: string
   email: string
@@ -42,7 +44,7 @@ export default function AdminPage() {
   const [paymentsLoading, setPaymentsLoading] = useState(false)
   const [updating, setUpdating] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'users' | 'payments' | 'marketing'>('users')
+  const [activeTab, setActiveTab] = useState<'analytics' | 'users' | 'payments' | 'marketing'>('analytics')
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
@@ -148,6 +150,18 @@ export default function AdminPage() {
   const proUsers = users.filter(u => u.plan === 'pro').length
   const totalRevenue = payments.reduce((s, p) => s + (p.amount ?? 0), 0)
 
+  // Generate chart data
+  const chartData = [...users].reverse().reduce((acc: any[], user) => {
+    const date = new Date(user.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
+    const existing = acc.find(item => item.date === date)
+    if (existing) {
+      existing.users += 1
+    } else {
+      acc.push({ date, users: 1 })
+    }
+    return acc
+  }, [])
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -195,13 +209,46 @@ export default function AdminPage() {
 
         {/* Tabs */}
         <div className="flex gap-1 p-1 bg-muted/30 rounded-xl border border-border/40 w-fit flex-wrap">
-          {(['users', 'payments', 'marketing'] as const).map(tab => (
+          {(['analytics', 'users', 'payments', 'marketing'] as const).map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`px-5 py-2 rounded-lg text-sm font-bold transition-all capitalize ${activeTab === tab ? 'bg-background text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
-              {tab === 'users' ? <><Users className="h-3.5 w-3.5 inline mr-1.5" />Users ({users.length})</> : tab === 'payments' ? <><CreditCard className="h-3.5 w-3.5 inline mr-1.5" />Payments ({payments.length})</> : <><Mail className="h-3.5 w-3.5 inline mr-1.5" />Marketing</>}
+              {tab === 'analytics' ? <><BarChart3 className="h-3.5 w-3.5 inline mr-1.5" />Analytics</> : tab === 'users' ? <><Users className="h-3.5 w-3.5 inline mr-1.5" />Users ({users.length})</> : tab === 'payments' ? <><CreditCard className="h-3.5 w-3.5 inline mr-1.5" />Payments ({payments.length})</> : <><Mail className="h-3.5 w-3.5 inline mr-1.5" />Marketing</>}
             </button>
           ))}
         </div>
+
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && (
+          <Card className="p-6 border-border/60">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-lg font-bold text-foreground">User Growth</h2>
+                <p className="text-sm text-muted-foreground">New signups over time</p>
+              </div>
+            </div>
+            
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
+                  <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#888888' }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#888888' }} />
+                  <RechartsTooltip 
+                    contentStyle={{ backgroundColor: '#09090b', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                    itemStyle={{ color: '#8b5cf6', fontWeight: 'bold' }}
+                  />
+                  <Area type="monotone" dataKey="users" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+        )}
 
         {/* Users Tab */}
         {activeTab === 'users' && (
@@ -236,8 +283,11 @@ export default function AdminPage() {
                         </td>
                         <td className="px-4 py-3 text-right tabular-nums text-foreground">{user.totalScans || 0}</td>
                         <td className="px-4 py-3 text-right tabular-nums text-foreground">{user.scansThisMonth || 0}</td>
-                        <td className="px-4 py-3 text-muted-foreground text-xs">
-                          {new Date(user.createdAt).toLocaleDateString('en-IN')}
+                        <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">
+                          {new Date(user.createdAt).toLocaleDateString('en-IN')} <br/>
+                          <span className="text-[10px] opacity-70 font-mono">
+                            {new Date(user.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                          </span>
                         </td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex items-center justify-end gap-2">
