@@ -44,9 +44,7 @@ export default function TermsPage() {
             },
             {
               title: '5. Payments & Refunds',
-              content: `Free plan: No payment required for 1 scan.
-Report Unlock (₹19): One-time payment to unlock the AI report for a specific scan. Non-refundable once the report is generated.
-Pro Plan (₹199/month): Monthly subscription. You may cancel at any time. No refunds for partial months. Cancellation takes effect at the end of the current billing period.`,
+              content: 'AdSense Checker AI is completely free to use.',
             },
             {
               title: '6. Disclaimer of Warranties',

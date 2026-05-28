@@ -119,7 +119,14 @@ export const welcomeEmailTemplate = (userName: string) => `
 </html>
 `
 
-export const scanCompleteEmailTemplate = (userName: string, websiteUrl: string, finalScore: number, statusLabel: string, isPro: boolean) => `
+export const scanCompleteEmailTemplate = (
+  userName: string, 
+  websiteUrl: string, 
+  finalScore: number, 
+  statusLabel: string, 
+  summary: string, 
+  coachingPlanTeaser: string
+) => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -153,28 +160,19 @@ export const scanCompleteEmailTemplate = (userName: string, websiteUrl: string, 
                 <p style="margin:0; font-size:16px; font-weight:bold;">Status: ${statusLabel}</p>
               </div>
 
-              ${isPro ? `
-              <p>Great news! Since you have the Pro plan, your full AI report and step-by-step roadmap are ready for you in your dashboard.</p>
+              <h3 style="color:#1e293b; border-bottom:2px solid #e2e8f0; padding-bottom:5px;">Report Summary</h3>
+              <p style="line-height:1.6; color:#475569;">${summary}</p>
               
-              <div style="text-align:center; margin:30px 0;">
-                <a href="https://www.adsensechecker.in/dashboard/scans" style="background:#16a34a; color:#ffffff; padding:14px 30px; text-decoration:none; border-radius:8px; font-weight:bold; display:inline-block;">View Full Report</a>
-              </div>
-              ` : `
-              <p>Your website is currently losing potential AdSense revenue due to undetected issues. Generic advice won't fix it — you need a tailored plan.</p>
-              
-              <h3 style="margin-top:25px; margin-bottom:10px; color:#1e293b;">Unlock the AI Coaching Plan 🚀</h3>
-              <p>Don't waste months getting rejected. Let our AI tell you <strong>exactly what to change on your specific website</strong> to guarantee approval.</p>
-              
-              <ul style="padding-left:20px; line-height:1.8;">
-                <li><strong>Exact fixes</strong> for Policy Violations & Low-Value Content</li>
-                <li><strong>Step-by-step roadmap</strong> customized to your niche</li>
-                <li><strong>100% Money-Back Guarantee</strong> if you follow the steps and still get rejected</li>
-              </ul>
+              <h3 style="color:#1e293b; border-bottom:2px solid #e2e8f0; padding-bottom:5px; margin-top:25px;">Your Coaching Plan Sneak Peek</h3>
+              <p style="line-height:1.6; color:#475569; font-style:italic; background:#f1f5f9; padding:15px; border-left:4px solid #7c3aed; border-radius:4px;">
+                "${coachingPlanTeaser}"
+              </p>
+
+              <p style="margin-top:25px; line-height:1.6;">Your full <strong>AI Coaching Plan</strong> and <strong>Fix List</strong> are waiting for you in your dashboard — completely free.</p>
               
               <div style="text-align:center; margin:35px 0;">
-                <a href="https://www.adsensechecker.in/dashboard/results" style="background:#7c3aed; color:#ffffff; padding:16px 32px; text-decoration:none; border-radius:8px; font-weight:bold; font-size:16px; display:inline-block; box-shadow: 0 4px 14px 0 rgba(124, 58, 237, 0.39);">Unlock My Coaching Plan Now</a>
+                <a href="https://www.adsensechecker.in/dashboard/results" style="background:#7c3aed; color:#ffffff; padding:16px 32px; text-decoration:none; border-radius:8px; font-weight:bold; font-size:16px; display:inline-block; box-shadow: 0 4px 14px 0 rgba(124, 58, 237, 0.39);">View Full Coaching Plan</a>
               </div>
-              `}
             </td>
           </tr>
           

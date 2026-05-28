@@ -122,26 +122,8 @@ const jsonLd = {
           priceCurrency: 'INR',
           description: '5 free AdSense approval checks per month',
         },
-        {
-          '@type': 'Offer',
-          name: 'Report Unlock',
-          price: '19',
-          priceCurrency: 'INR',
-          description: 'Full AI-powered AdSense audit report — one-time unlock',
-        },
-        {
-          '@type': 'Offer',
-          name: 'Pro Plan',
-          price: '199',
-          priceCurrency: 'INR',
-          description: '200 AdSense checks per month with full AI reports',
-          priceSpecification: {
-            '@type': 'UnitPriceSpecification',
-            price: '199',
-            priceCurrency: 'INR',
-            unitCode: 'MON',
-          },
-        },
+
+
       ],
       aggregateRating: {
         '@type': 'AggregateRating',
@@ -267,7 +249,7 @@ const jsonLd = {
           name: 'Is AdSense Checker AI free to use?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes. AdSense Checker AI is free to use with 5 scans per month. You get your AdSense readiness score, site structure analysis, missing pages detection, and critical issues list at no cost. A full AI-powered report with fix suggestions is available for ₹19 (one-time).',
+            text: 'Yes. AdSense Checker AI is completely free to use. You get your AdSense readiness score, site structure analysis, missing pages detection, critical issues list, and a full AI-powered report with fix suggestions at no cost.',
           },
         },
         {

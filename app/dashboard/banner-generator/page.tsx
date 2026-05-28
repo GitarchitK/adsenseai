@@ -30,7 +30,8 @@ const TABS       = [
 ] as const
 
 export default function BannerGeneratorPage() {
-  const { isPro, getToken } = useProfile()
+  const { getToken } = useProfile()
+  const isPro = true
 
   // Form state
   const [headline,    setHeadline]    = useState('The Future of Artificial Intelligence is Here')
@@ -77,34 +78,6 @@ export default function BannerGeneratorPage() {
     a.click()
   }
 
-  // ── Locked state for free users ───────────────────────────────────────────
-  if (!isPro) {
-    return (
-      <div className="container mx-auto px-4 md:px-6 py-8 max-w-5xl">
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-2xl font-black text-foreground">Banner Generator</h1>
-            <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 uppercase tracking-widest">New</span>
-          </div>
-          <p className="text-sm text-muted-foreground">Create stunning article banners in seconds with AI</p>
-        </div>
-        <Card className="p-12 text-center border-dashed border-2 border-border/60 rounded-3xl">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-100 dark:bg-violet-900/30 mx-auto mb-4">
-            <Lock className="h-8 w-8 text-violet-600 dark:text-violet-400" />
-          </div>
-          <h2 className="text-xl font-black text-foreground mb-2">Pro Feature</h2>
-          <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
-            Banner Generator uses ChatGPT image generation to create professional article banners. Upgrade to Pro to unlock it.
-          </p>
-          <Link href="/pricing">
-            <Button className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-0 shadow-lg shadow-violet-500/25">
-              <Crown className="h-4 w-4" /> Upgrade to Pro — ₹199/mo
-            </Button>
-          </Link>
-        </Card>
-      </div>
-    )
-  }
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-8 max-w-6xl">

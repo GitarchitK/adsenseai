@@ -87,7 +87,7 @@ function SignupForm() {
           </div>
         ))}
         <div className="pt-2 border-t border-border/60 space-y-2">
-          {['Full AI report (₹19 unlock)', 'Unlimited scans (₹199/mo Pro)'].map(item => (
+          {['Unlimited free scans', 'Full AI coaching plan'].map(item => (
             <div key={item} className="flex items-center gap-2.5 text-sm text-muted-foreground/50">
               <Lock className="h-4 w-4 flex-shrink-0" />
               {item}

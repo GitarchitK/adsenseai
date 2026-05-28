@@ -29,17 +29,17 @@ function MockReport() {
       
       <div className="relative bg-[#0F0F11]/90 border border-white/10 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl transform transition-transform duration-500 hover:scale-[1.02] hover:-rotate-1">
         {/* Top Bar */}
-        <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+        <div className="p-3 sm:p-4 border-b border-white/5 flex flex-wrap gap-2 items-center justify-between bg-white/[0.02]">
           <div className="flex items-center gap-2">
             <div className="flex gap-1.5">
               <div className="w-3 h-3 rounded-full bg-red-500/80" />
               <div className="w-3 h-3 rounded-full bg-amber-500/80" />
               <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
             </div>
-            <span className="text-[11px] font-mono text-white/50 ml-3 tracking-wider">AI_COACHING_PLAN.json</span>
+            <span className="text-[10px] sm:text-[11px] font-mono text-white/50 ml-1 sm:ml-3 tracking-wider hidden xs:inline-block">AI_COACHING.json</span>
           </div>
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-300 text-[10px] font-bold tracking-widest uppercase shadow-[0_0_10px_rgba(139,92,246,0.3)]">
-            <Sparkles className="h-3 w-3" /> Zero Hallucinations
+          <div className="flex items-center gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1 rounded-full bg-violet-500/20 border border-violet-500/30 text-violet-300 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase shadow-[0_0_10px_rgba(139,92,246,0.3)]">
+            <Sparkles className="h-3 w-3" /> <span className="hidden sm:inline">Zero Hallucinations</span><span className="sm:hidden">Zero Hallucination</span>
           </div>
         </div>
         
@@ -116,7 +116,7 @@ function MockReport() {
       </div>
 
       {/* Floating badges */}
-      <div className="absolute -bottom-6 -right-6 animate-bounce" style={{ animationDuration: '4s' }}>
+      <div className="absolute -bottom-4 right-2 sm:-bottom-6 sm:-right-6 animate-bounce" style={{ animationDuration: '4s' }}>
         <div className="bg-[#0F0F11] text-emerald-400 text-[11px] font-black px-4 py-2.5 rounded-2xl shadow-[0_10px_40px_rgba(16,185,129,0.3)] flex items-center gap-2 border border-emerald-500/30">
           <Wallet className="h-4 w-4" /> EXACT FIXES INCLUDED
         </div>
@@ -339,101 +339,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── PRICING ── */}
-      <section id="pricing" className="bg-[#0A0A0A] border-y border-white/5">
-        <div className="container mx-auto px-6 py-24 md:py-32">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">Simple, transparent pricing</h2>
-              <p className="text-lg text-white/50">Start free. Unlock the full AI coaching plan when you're ready.</p>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Free */}
-              <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 flex flex-col hover:bg-white/[0.04] transition-colors">
-                <div className="mb-8">
-                  <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Free Trial</p>
-                  <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-5xl font-black">₹0</span>
-                  </div>
-                  <p className="text-sm text-white/50">Get your baseline readiness score.</p>
-                </div>
-                <ul className="space-y-4 mb-8 flex-1">
-                  {['5 scans per month', 'Basic readiness score', 'Site structure check', 'Missing pages detection'].map(f => (
-                    <li key={f} className="flex items-start gap-3 text-sm text-white/70">
-                      <CheckCircle2 className="h-5 w-5 text-emerald-500/70 flex-shrink-0" />{f}
-                    </li>
-                  ))}
-                  {['Full AI Coaching Plan', 'Exact URL Citations', 'Automated Email Reports'].map(f => (
-                    <li key={f} className="flex items-start gap-3 text-sm text-white/30">
-                      <Lock className="h-5 w-5 flex-shrink-0" />{f}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/auth/signup" className="block">
-                  <Button variant="outline" className="w-full rounded-xl h-12 border-white/10 text-white hover:bg-white/10">Start Free</Button>
-                </Link>
-              </div>
-
-              {/* Report Unlock */}
-              <div className="rounded-3xl border border-violet-500/50 bg-violet-500/5 p-8 flex flex-col relative transform md:-translate-y-4 shadow-[0_0_50px_rgba(139,92,246,0.1)]">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="bg-violet-500 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-[0_0_15px_rgba(139,92,246,0.5)]">Most Popular</span>
-                </div>
-                <div className="mb-8">
-                  <p className="text-xs font-bold text-violet-400 uppercase tracking-widest mb-3">Deep Audit</p>
-                  <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-5xl font-black text-white">₹19</span>
-                    <span className="text-white/40 text-sm font-medium">one-time</span>
-                  </div>
-                  <p className="text-sm text-violet-200/60 mt-2">Perfect for a single-site deep dive.</p>
-                </div>
-                <ul className="space-y-4 mb-8 flex-1">
-                  {['Everything in Free', 'Full AI Coaching Plan', 'Zero-Hallucination URLs', 'Policy risk deep scan', '1-Month Approval Roadmap', 'Automated Email Reports'].map(f => (
-                    <li key={f} className="flex items-start gap-3 text-sm text-white/90 font-medium">
-                      <CheckCircle2 className="h-5 w-5 text-violet-400 flex-shrink-0" />{f}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/auth/signup" className="block">
-                  <Button className="w-full rounded-xl h-12 bg-violet-500 hover:bg-violet-600 text-white shadow-[0_0_20px_rgba(139,92,246,0.4)]">Unlock Full Report</Button>
-                </Link>
-              </div>
-
-              {/* Pro */}
-              <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 flex flex-col hover:bg-white/[0.04] transition-colors">
-                <div className="mb-8">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-xs font-bold text-amber-500 uppercase tracking-widest">Pro Sub</p>
-                    <Crown className="h-5 w-5 text-amber-500" />
-                  </div>
-                  <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-5xl font-black">₹199</span>
-                    <span className="text-white/40 text-sm">/month</span>
-                  </div>
-                  <p className="text-sm text-white/50 mt-2">For publishers with multiple sites.</p>
-                </div>
-                <ul className="space-y-4 mb-8 flex-1">
-                  {['200 scans per month', 'AI Coaching on every scan', 'Bulk Article Analyzer', 'Content rewriting tool', 'Privacy Policy generator', 'Priority support'].map(f => (
-                    <li key={f} className="flex items-start gap-3 text-sm text-white/70">
-                      <CheckCircle2 className="h-5 w-5 text-amber-500/70 flex-shrink-0" />{f}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/auth/signup" className="block">
-                  <Button className="w-full rounded-xl h-12 bg-transparent border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/50 transition-colors">
-                    Go Pro
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            <p className="text-center text-xs text-white/30 mt-8 font-medium">
-              Payments secured by Razorpay · No hidden fees · Cancel anytime
-            </p>
-          </div>
-        </div>
-      </section>
 
       {/* ── TESTIMONIALS ── */}
       <section className="container mx-auto px-6 py-24 md:py-32">

@@ -84,7 +84,7 @@ export default function AdsenseApprovalCheckerToolFree() {
                 { step: '1', title: 'Enter your website URL', desc: 'Go to adsensechecker.in and type your website URL in the input box. No setup required.' },
                 { step: '2', title: 'Wait 30 seconds', desc: 'Our AI crawls your site, analyzes every page, and runs 7 analysis modules simultaneously.' },
                 { step: '3', title: 'Review your score', desc: 'Get a readiness score from 0-100 with a breakdown by category: Content, Policy, SEO, UX, Trust.' },
-                { step: '4', title: 'Fix the issues', desc: 'The overview shows your top issues immediately. Unlock the full fix list for ₹19 to get specific, page-by-page fixes.' },
+                { step: '4', title: 'Fix the issues', desc: 'The overview shows your top issues immediately. Review the full fix list to get specific, page-by-page fixes.' },
                 { step: '5', title: 'Re-scan and apply', desc: 'After fixing issues, run a fresh scan to confirm your score is 70+, then apply to AdSense.' },
               ].map(item => (
                 <div key={item.step} className="flex items-start gap-4 p-4 rounded-xl border border-border/60 bg-muted/20">

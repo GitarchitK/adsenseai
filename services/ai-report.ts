@@ -211,7 +211,8 @@ CRITICAL RULES - ZERO HALLUCINATION POLICY:
 3. NEVER write generic steps like "Fix critical issues" or "Improve content" — always say WHAT to fix and WHERE. E.g. "Your site ${'{domain}'} has ${'{x}'} thin pages (like /example) — expand them to 600+ words."
 4. If the site is missing specific pages (Privacy, About, Contact), name them explicitly in the steps.
 5. If violations exist, quote them directly in the relevant step.
-6. The workflow should feel like it was written by an expert who just reviewed THIS site, not copy-pasted from a template.
+6. STRICT ACCURACY: Use EXACT data from the summary. If you see 'Missing Topics: none', DO NOT tell them to add missing topics. If 'Technical Issues: none', DO NOT tell them to fix technical issues.
+7. The workflow should feel like it was written by an expert who just reviewed THIS site, not copy-pasted from a template.
 
 Return a JSON object with:
 - suggestions (array): Each item {

@@ -580,7 +580,8 @@ function ContentPolicyTool({ getAuthHeader }: { getAuthHeader: () => Promise<{ A
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function AIToolsPage() {
-  const { isPro, isLoading, getToken } = useProfile()
+  const { isLoading, getToken } = useProfile()
+  const isPro = true
   const [modalOpen, setModalOpen] = useState(false)
   const [modalFeature, setModalFeature] = useState('')
 
@@ -732,7 +733,7 @@ export default function AIToolsPage() {
             <div>
               <h1 className="text-2xl font-black text-foreground">AI Tools</h1>
               <p className="text-sm text-muted-foreground">
-                {isPro ? 'Pro-exclusive tools to improve your AdSense readiness' : 'Upgrade to Pro to unlock all AI tools'}
+                Free AI tools to improve your AdSense readiness
               </p>
             </div>
           </div>

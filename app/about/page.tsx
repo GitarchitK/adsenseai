@@ -93,7 +93,7 @@ export default function AboutPage() {
             {[
               { title: 'Transparency first', desc: 'We show you exactly how your score is calculated — no black boxes, no mystery.' },
               { title: 'Actionable always',  desc: 'Every insight comes with a specific action. We never say "improve content quality" without telling you how.' },
-              { title: 'Fair pricing',       desc: 'Start free. Pay ₹19 for one report. ₹199/month for unlimited. No tricks, no hidden fees.' },
+              { title: 'Fair pricing',       desc: 'Start for free. Get a fully guided AI coaching plan exactly for the days you need.' },
             ].map(({ title, desc }) => (
               <div key={title} className="rounded-2xl border border-border/60 bg-card p-6">
                 <h3 className="font-bold text-foreground mb-2">{title}</h3>

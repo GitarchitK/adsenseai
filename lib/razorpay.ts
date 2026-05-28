@@ -33,15 +33,7 @@ export async function createReportUnlockOrder(userId: string, scanId: string) {
   })
 }
 
-/** ₹199/month Pro subscription order */
-export async function createProOrder(userId: string) {
-  return getRazorpay().orders.create({
-    amount:   PRICES.pro_monthly,
-    currency: CURRENCY,
-    receipt:  `pro_${userId.slice(0, 10)}_${Date.now()}`,
-    notes:    { userId, type: 'pro_subscription' },
-  })
-}
+
 
 export function verifyPaymentSignature(params: {
   orderId: string; paymentId: string; signature: string

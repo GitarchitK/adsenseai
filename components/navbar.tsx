@@ -65,9 +65,6 @@ export function Navbar() {
           <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/60">
             Blog
           </Link>
-          <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg hover:bg-muted/60">
-            Pricing
-          </Link>
         </div>
 
         {/* Actions */}
@@ -90,9 +87,9 @@ export function Navbar() {
                     </Link>
                   )}
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
-                    className="gap-2 text-sm font-medium hidden md:inline-flex"
+                    className="gap-2 text-sm font-medium hidden md:inline-flex text-muted-foreground hover:text-foreground"
                     onClick={handleSignOut}
                   >
                     <LogOut className="h-4 w-4" /> Sign Out

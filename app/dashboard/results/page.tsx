@@ -285,7 +285,8 @@ function CountdownTimer() {
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function ResultsPage() {
-  const { isPro, getToken } = useProfile()
+  const { getToken } = useProfile()
+  const isPro = true
   const { openCheckout } = useRazorpay()
   const [data, setData] = useState<CrawlResult | null>(null)
   const [loading, setLoading] = useState(true)
@@ -410,19 +411,7 @@ export default function ResultsPage() {
     }
   }
 
-  const handleUpgrade = async () => {
-    const t = await getToken()
-    if (!t) return
-    const res = await fetch('/api/razorpay/order', { method: 'POST', headers: { Authorization: `Bearer ${t}` } })
-    const order = await res.json()
-    if (!order.orderId) return
-    await openCheckout({
-      key: order.keyId, amount: order.amount, currency: order.currency,
-      name: 'AdSense Checker AI', description: 'Pro Plan — ₹199/month', order_id: order.orderId,
-      handler: async () => { window.location.href = '/dashboard?upgraded=1' },
-      prefill: {}, theme: { color: '#7c3aed' },
-    })
-  }
+
 
   const copyChecklist = (fixes: AIReport['fix_suggestions']) => {
     const text = fixes.map((f, i) => `${i + 1}. [${f.impact.toUpperCase()}] ${f.title}\n   ${f.description}`).join('\n\n')

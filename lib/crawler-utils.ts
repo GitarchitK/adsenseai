@@ -81,8 +81,20 @@ export function extractHeadings(htmlContent: string): { h1: string[]; h2: string
  * Removes HTML tags and cleans up content
  */
 export function stripHtmlTags(html: string): string {
+  // Attempt to extract main content area if it exists to avoid counting headers/footers
+  let contentToProcess = html;
+  
+  const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
+  const articleMatch = html.match(/<article[^>]*>([\s\S]*?)<\/article>/i);
+  
+  if (mainMatch && mainMatch[1]) {
+    contentToProcess = mainMatch[1];
+  } else if (articleMatch && articleMatch[1]) {
+    contentToProcess = articleMatch[1];
+  }
+
   return (
-    html
+    contentToProcess
       // Remove script and style tags
       .replace(/<script[^>]*>.*?<\/script>/gi, '')
       .replace(/<style[^>]*>.*?<\/style>/gi, '')

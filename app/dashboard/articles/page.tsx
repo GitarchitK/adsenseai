@@ -170,7 +170,8 @@ function ArticleCard({ article }: { article: ArticleAnalysis }) {
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function ArticlesPage() {
-  const { token, isPro, getToken } = useProfile()
+  const { token, getToken } = useProfile()
+  const isPro = true
   const [modalOpen, setModalOpen] = useState(false)
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
@@ -204,33 +205,7 @@ export default function ArticlesPage() {
     }
   }
 
-  if (!isPro) {
-    return (
-      <>
-        <UpgradeModal open={modalOpen} onClose={() => setModalOpen(false)} feature="Article Analyzer" />
-        <div className="container mx-auto px-6 py-8 max-w-3xl">
-          <Card
-            className="p-12 text-center border-border/60 rounded-2xl cursor-pointer hover:border-violet-300 dark:hover:border-violet-700 transition-colors"
-            onClick={() => setModalOpen(true)}
-          >
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-100 dark:bg-violet-900/30 mx-auto mb-4">
-              <Crown className="h-8 w-8 text-violet-500" />
-            </div>
-            <h2 className="text-xl font-bold text-foreground mb-2">Pro Feature</h2>
-            <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
-              Article-level content analysis with thin content detection and plagiarism signals requires the Pro plan.
-            </p>
-            <Button
-              className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-0 shadow-lg shadow-violet-500/25"
-              onClick={() => setModalOpen(true)}
-            >
-              <Crown className="h-4 w-4" /> Upgrade to Pro — ₹199/mo
-            </Button>
-          </Card>
-        </div>
-      </>
-    )
-  }
+
 
   const filtered = report?.articles.filter(a =>
     filter === 'all' ? true : a.adsense_risk === filter

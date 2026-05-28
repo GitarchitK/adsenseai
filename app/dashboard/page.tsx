@@ -285,7 +285,7 @@ export default function DashboardPage() {
             { icon: BarChart3,  label: 'Total Scans',   value: usage?.total_scans ?? 0,  color: 'text-violet-500', bg: 'bg-violet-500/10' },
             { icon: Zap,        label: 'This Month',    value: `${monthUsed} / ${isPro ? '200' : '5'}`, color: 'text-blue-500', bg: 'bg-blue-500/10' },
             { icon: TrendingUp, label: 'Plan',          value: isPro ? 'Pro ✦' : 'Free', color: 'text-amber-500', bg: 'bg-amber-500/10' },
-            { icon: Sparkles,   label: 'AI Reports',    value: isPro ? 'Auto' : '₹19/scan', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+            { icon: Sparkles,   label: 'AI Reports',    value: 'Included', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
           ].map(({ icon: Icon, label, value, color, bg }) => (
             <Card key={label} className="p-4 border-border/60 rounded-2xl">
               <div className="flex items-center gap-3">
@@ -370,7 +370,7 @@ export default function DashboardPage() {
                     </Button>
                   </div>
                   <p className="text-[10px] text-muted-foreground text-center">
-                    By scanning, you agree to our Terms of Service. AI reports require Pro or ₹19 unlock.
+                    By scanning, you agree to our Terms of Service.
                   </p>
                 </form>
 
@@ -382,8 +382,8 @@ export default function DashboardPage() {
                       { icon: BarChart3, text: 'AdSense readiness score (0–100)', free: true },
                       { icon: CheckCircle2, text: 'Site structure & missing pages', free: true },
                       { icon: AlertCircle,  text: 'Critical issues & warnings',     free: true },
-                      { icon: Sparkles,     text: 'Full AI report',                 free: false, price: '₹19 unlock' },
-                      { icon: Search,       text: 'Prioritized fix suggestions',    free: false, price: '₹19 unlock' },
+                      { icon: Sparkles,     text: 'Full AI report',                 free: true, price: 'Free' },
+                      { icon: Search,       text: 'Prioritized fix suggestions',    free: true, price: 'Free' },
                       { icon: FileText,     text: 'Privacy Policy generator',       free: false, price: 'Pro only' },
                     ].map(({ icon: Icon, text, free, price }) => (
                       <div key={text} className={`flex items-center gap-2.5 text-sm ${free ? 'text-foreground' : 'text-muted-foreground/60'}`}>
