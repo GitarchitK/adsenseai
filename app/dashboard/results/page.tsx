@@ -358,59 +358,32 @@ export default function ResultsPage() {
     try {
       const t = await getToken()
       if (!t) { setPlanError('Please sign in again.'); setIsStartingPlan(false); return }
-      const scanId = data?.scan_id ?? 'temp_' + Date.now()
+      const scanId = data?.scan_id
+      if (!scanId) { setPlanError('No scan ID found.'); setIsStartingPlan(false); return }
 
-      const orderRes = await fetch('/api/razorpay/plan-order', {
+      const createRes = await fetch('/api/plans/create-free', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
-        body: JSON.stringify({ scanId, url: data?.domain || '', days: estimate?.days }),
+        body: JSON.stringify({ scanId }),
       })
-      if (!orderRes.ok) {
-        const err = await orderRes.json().catch(() => ({}))
+      
+      if (!createRes.ok) {
+        const err = await createRes.json().catch(() => ({}))
         setPlanError(err.error ?? 'Server error. Please try again.')
         setIsStartingPlan(false)
         return
       }
       
-      const order = await orderRes.json()
-      if (!order.orderId) { setPlanError('Could not create payment order.'); setIsStartingPlan(false); return }
-
-      await openCheckout({
-        key: order.keyId, amount: order.amount, currency: order.currency,
-        name: 'AdSense Checker AI', description: `Coaching Plan — ₹${order.amount / 100}`, order_id: order.orderId,
-        handler: async (r: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
-          try {
-            const verifyRes = await fetch('/api/razorpay/plan-verify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
-              body: JSON.stringify({
-                orderId:   r.razorpay_order_id,
-                paymentId: r.razorpay_payment_id,
-                signature: r.razorpay_signature,
-                scanId:    data?.scan_id ?? scanId,
-                url:       data?.domain || ''
-              }),
-            })
-            if (verifyRes.ok) {
-              window.location.href = '/dashboard/plan'
-            } else {
-              const result = await verifyRes.json().catch(() => ({}))
-              setPlanError(result.error ?? 'Plan creation failed after payment. Contact support.')
-            }
-          } catch (err) {
-            setPlanError('Payment succeeded but plan failed. Contact support.')
-          } finally {
-            setIsStartingPlan(false)
-          }
-        },
-        prefill: {}, theme: { color: '#7c3aed' },
-        modal: { ondismiss: () => setIsStartingPlan(false) },
-      })
-    } catch (err: any) {
-      if (err?.message !== 'dismissed') {
-        console.error('[Coaching Plan Error]', err)
-        setPlanError('Something went wrong. Please try again.')
+      const result = await createRes.json()
+      if (result.planId) {
+        window.location.href = '/dashboard/plan'
+      } else {
+        setPlanError('Could not create plan. Please try again.')
+        setIsStartingPlan(false)
       }
+    } catch (err: any) {
+      console.error('[Coaching Plan Error]', err)
+      setPlanError('Something went wrong. Please try again.')
       setIsStartingPlan(false)
     }
   }
@@ -1268,10 +1241,31 @@ export default function ResultsPage() {
                   </div>
                 </div>
 
+                {/* Free Coaching Plan CTA */}
+                <Card className="p-6 border-primary/20 bg-primary/5 rounded-[2rem] shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6 animate-in fade-in slide-in-from-bottom-4">
+                  <div>
+                    <h3 className="text-lg font-black text-foreground mb-1">Generate Day-by-Day Coaching Plan</h3>
+                    <p className="text-sm text-muted-foreground">Get daily email tasks and a dedicated interactive roadmap to fix your site in exactly {ai.coaching_estimate?.days ?? 30} days. 100% Free.</p>
+                  </div>
+                  <Button 
+                    onClick={handleStartCoaching} 
+                    disabled={isStartingPlan} 
+                    size="lg" 
+                    className="w-full sm:w-auto font-black rounded-xl shadow-xl shadow-primary/20 hover:scale-105 transition-all"
+                  >
+                    {isStartingPlan ? (
+                      <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</>
+                    ) : (
+                      <><Calendar className="mr-2 h-4 w-4" /> Start Free Plan</>
+                    )}
+                  </Button>
+                </Card>
+                {planError && <p className="text-red-500 text-sm font-bold text-center">{planError}</p>}
+
                 {/* Timeline reason */}
                 {ai.application_timeline_reason && (
-                  <Card className="p-4 border-border/60 rounded-xl bg-muted/20">
-                    <p className="text-sm text-foreground leading-relaxed">{ai.application_timeline_reason}</p>
+                  <Card className="p-4 border-white/5 rounded-xl bg-white/[0.02]">
+                    <p className="text-sm text-foreground/90 leading-relaxed">{ai.application_timeline_reason}</p>
                   </Card>
                 )}
 
