@@ -69,7 +69,7 @@ export default function AdsenseNextjs() {
 
           <h2 className="text-2xl font-black text-foreground mt-8 mb-4">The Solution: Next.js Script Component</h2>
           <p>
-            Google provides a single `<script>` tag for Auto Ads. You want this script to load efficiently without blocking your main thread. In the App Router (`app/layout.tsx`), you can use `next/script` to achieve this.
+            Google provides a single `&lt;script&gt;` tag for Auto Ads. You want this script to load efficiently without blocking your main thread. In the App Router (`app/layout.tsx`), you can use `next/script` to achieve this.
           </p>
 
           <div className="p-4 bg-muted/20 border border-border/60 rounded-xl overflow-x-auto mb-6">
@@ -152,7 +152,7 @@ export default function AdBanner() {
 
           <h2 className="text-2xl font-black text-foreground mt-8 mb-4">Conclusion</h2>
           <p>
-            Adding AdSense to Next.js is straightforward if you leverage the built-in `<Script>` component. Avoid using standard HTML script tags to prevent hydration mismatches and performance bottlenecks.
+            Adding AdSense to Next.js is straightforward if you leverage the built-in `&lt;Script&gt;` component. Avoid using standard HTML script tags to prevent hydration mismatches and performance bottlenecks.
           </p>
         </div>
       </article>
