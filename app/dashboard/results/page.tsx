@@ -358,32 +358,59 @@ export default function ResultsPage() {
     try {
       const t = await getToken()
       if (!t) { setPlanError('Please sign in again.'); setIsStartingPlan(false); return }
-      const scanId = data?.scan_id
-      if (!scanId) { setPlanError('No scan ID found.'); setIsStartingPlan(false); return }
+      const scanId = data?.scan_id ?? 'temp_' + Date.now()
 
-      const createRes = await fetch('/api/plans/create-free', {
+      const orderRes = await fetch('/api/razorpay/plan-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
-        body: JSON.stringify({ scanId }),
+        body: JSON.stringify({ scanId, url: data?.domain || '', days: estimate?.days }),
       })
-      
-      if (!createRes.ok) {
-        const err = await createRes.json().catch(() => ({}))
+      if (!orderRes.ok) {
+        const err = await orderRes.json().catch(() => ({}))
         setPlanError(err.error ?? 'Server error. Please try again.')
         setIsStartingPlan(false)
         return
       }
       
-      const result = await createRes.json()
-      if (result.planId) {
-        window.location.href = '/dashboard/plan'
-      } else {
-        setPlanError('Could not create plan. Please try again.')
-        setIsStartingPlan(false)
-      }
+      const order = await orderRes.json()
+      if (!order.orderId) { setPlanError('Could not create payment order.'); setIsStartingPlan(false); return }
+
+      await openCheckout({
+        key: order.keyId, amount: order.amount, currency: order.currency,
+        name: 'AdSense Checker AI', description: `Coaching Plan — ₹${order.amount / 100}`, order_id: order.orderId,
+        handler: async (r: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+          try {
+            const verifyRes = await fetch('/api/razorpay/plan-verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
+              body: JSON.stringify({
+                orderId:   r.razorpay_order_id,
+                paymentId: r.razorpay_payment_id,
+                signature: r.razorpay_signature,
+                scanId:    data?.scan_id ?? scanId,
+                url:       data?.domain || ''
+              }),
+            })
+            if (verifyRes.ok) {
+              window.location.href = '/dashboard/plan'
+            } else {
+              const result = await verifyRes.json().catch(() => ({}))
+              setPlanError(result.error ?? 'Plan creation failed after payment. Contact support.')
+            }
+          } catch (err) {
+            setPlanError('Payment succeeded but plan failed. Contact support.')
+          } finally {
+            setIsStartingPlan(false)
+          }
+        },
+        prefill: {}, theme: { color: '#7c3aed' },
+        modal: { ondismiss: () => setIsStartingPlan(false) },
+      })
     } catch (err: any) {
-      console.error('[Coaching Plan Error]', err)
-      setPlanError('Something went wrong. Please try again.')
+      if (err?.message !== 'dismissed') {
+        console.error('[Coaching Plan Error]', err)
+        setPlanError('Something went wrong. Please try again.')
+      }
       setIsStartingPlan(false)
     }
   }
@@ -510,9 +537,8 @@ export default function ResultsPage() {
           ))}
         </div>
 
-        {/* ── Plan comparison banner (only when not unlocked) ── */}
-        {!isAiUnlocked && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* ── Plan comparison banner (always show for coaching upgrade) ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 rounded-2xl border border-border/60 bg-muted/20">
               <p className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
                 <CheckCircle2 className="h-3.5 w-3.5" /> Free Plan — Included
@@ -584,7 +610,6 @@ export default function ResultsPage() {
               </div>
             </div>
           </div>
-        )}
 
         {/* ══════════════════════════════════════════════════════════════════ */}
         {/* OVERVIEW TAB                                                       */}
@@ -1241,11 +1266,16 @@ export default function ResultsPage() {
                   </div>
                 </div>
 
-                {/* Free Coaching Plan CTA */}
+                {/* Coaching Plan CTA */}
                 <Card className="p-6 border-primary/20 bg-primary/5 rounded-[2rem] shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6 animate-in fade-in slide-in-from-bottom-4">
                   <div>
                     <h3 className="text-lg font-black text-foreground mb-1">Generate Day-by-Day Coaching Plan</h3>
-                    <p className="text-sm text-muted-foreground">Get daily email tasks and a dedicated interactive roadmap to fix your site in exactly {ai.coaching_estimate?.days ?? 30} days. 100% Free.</p>
+                    <p className="text-sm text-muted-foreground">Get daily email tasks and a dedicated interactive roadmap to fix your site in exactly {ai.coaching_estimate?.days ?? 30} days.</p>
+                    <div className="flex items-center gap-2 mt-3">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-primary/80 bg-primary/10 px-2 py-1 rounded-md">Cost Estimate</span>
+                      <span className="text-sm font-bold text-foreground">₹{((ai.coaching_estimate?.days ?? 30) * 5).toLocaleString('en-IN')}</span>
+                      <span className="text-xs text-muted-foreground">(₹5 per day)</span>
+                    </div>
                   </div>
                   <Button 
                     onClick={handleStartCoaching} 
@@ -1256,7 +1286,7 @@ export default function ResultsPage() {
                     {isStartingPlan ? (
                       <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...</>
                     ) : (
-                      <><Calendar className="mr-2 h-4 w-4" /> Start Free Plan</>
+                      <><Calendar className="mr-2 h-4 w-4" /> Start Coaching Plan</>
                     )}
                   </Button>
                 </Card>
