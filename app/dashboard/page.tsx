@@ -342,6 +342,7 @@ export default function DashboardPage() {
                         required
                       />
                     </div>
+                    <Button 
                       type="submit" 
                       disabled={isScanning || !url} 
                       className="h-12 px-8 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 transition-all active:scale-95 w-full sm:w-auto"
