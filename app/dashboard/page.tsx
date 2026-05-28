@@ -199,7 +199,7 @@ export default function DashboardPage() {
     e.preventDefault()
     setUrlError('')
     try { new URL(url) } catch { setUrlError('Please enter a valid URL including https://'); return }
-    if (!canScan) { setUrlError('Scan limit reached. Upgrade to Pro for 200 scans/month.'); return }
+    if (!url) { setUrlError('Please enter a URL'); return }
 
     setIsScanning(true)
     try {
@@ -254,7 +254,7 @@ export default function DashboardPage() {
               {firstName ? `Hey ${firstName} 👋` : 'Dashboard'}
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {isPro ? '✦ Pro Plan · 200 scans/month with AI' : 'Free Plan · 5 scans/month'}
+              Free Plan · Unlimited Scans
             </p>
           </div>
           {/* Pro upgrade button removed */}
@@ -283,7 +283,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { icon: BarChart3,  label: 'Total Scans',   value: usage?.total_scans ?? 0,  color: 'text-violet-500', bg: 'bg-violet-500/10' },
-            { icon: Zap,        label: 'This Month',    value: `${monthUsed} / ${isPro ? '200' : '5'}`, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+            { icon: Zap,        label: 'This Month',    value: monthUsed, color: 'text-blue-500', bg: 'bg-blue-500/10' },
             { icon: TrendingUp, label: 'Plan',          value: isPro ? 'Pro ✦' : 'Free', color: 'text-amber-500', bg: 'bg-amber-500/10' },
             { icon: Sparkles,   label: 'AI Reports',    value: 'Included', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
           ].map(({ icon: Icon, label, value, color, bg }) => (
@@ -301,26 +301,7 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {/* ── Usage bar (free only) ── */}
-        {!isPro && (
-          <Card className="p-4 border-border/60 rounded-2xl">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-semibold text-foreground">Monthly Scan Usage</p>
-              <p className="text-xs text-muted-foreground font-mono">{monthUsed} / {monthLimit}</p>
-            </div>
-            <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ${usagePct >= 100 ? 'bg-red-500' : 'bg-gradient-to-r from-violet-500 to-indigo-500'}`}
-                style={{ width: `${usagePct}%` }}
-              />
-            </div>
-            {usagePct >= 100 && (
-              <p className="text-xs text-red-600 dark:text-red-400 mt-2 flex items-center gap-1.5">
-                <AlertCircle className="h-3.5 w-3.5" /> Limit reached.
-              </p>
-            )}
-          </Card>
-        )}
+        {/* ── Usage bar removed ── */}
 
         {/* ── Scan card ── */}
         <Card className="overflow-hidden border-border/60 rounded-2xl shadow-xl shadow-primary/5">
@@ -356,14 +337,13 @@ export default function DashboardPage() {
                         placeholder="https://yourwebsite.com"
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}
-                        disabled={isScanning || !canScan}
+                        disabled={isScanning}
                         className="pl-10 h-12 text-base bg-muted/30 border-border/80 focus:bg-background transition-colors rounded-xl w-full"
                         required
                       />
                     </div>
-                    <Button 
                       type="submit" 
-                      disabled={isScanning || !canScan || !url} 
+                      disabled={isScanning || !url} 
                       className="h-12 px-8 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 transition-all active:scale-95 w-full sm:w-auto"
                     >
                       Scan Site

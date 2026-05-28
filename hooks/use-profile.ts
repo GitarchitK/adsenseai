@@ -62,7 +62,7 @@ export function useProfile() {
   const isPro = profile?.plan === 'pro'
   const limit = profile ? PLANS[profile.plan].scans_per_month : 1
   const used  = usage?.scans_this_month ?? 0
-  const canScan = used < limit
+  const canScan = true
 
   return { profile, usage, token, isLoading, isPro, canScan, getToken }
 }

@@ -289,8 +289,7 @@ function CountdownTimer() {
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function ResultsPage() {
-  const { getToken } = useProfile()
-  const isPro = true
+  const { isPro, getToken } = useProfile()
   const { openCheckout } = useRazorpay()
   const [data, setData] = useState<CrawlResult | null>(null)
   const [loading, setLoading] = useState(true)
@@ -331,7 +330,7 @@ export default function ResultsPage() {
 
   // Fetch Coaching Estimate for Free Users
   useEffect(() => {
-    if (!data?.scan_id || isPro || data?.isAiUnlocked) return
+    if (!data?.scan_id || data?.isAiUnlocked) return
     let active = true
     const fetchEst = async () => {
       try {
@@ -350,7 +349,7 @@ export default function ResultsPage() {
     }
     fetchEst()
     return () => { active = false }
-  }, [data?.scan_id, isPro, data?.isAiUnlocked, getToken])
+  }, [data?.scan_id, data?.isAiUnlocked, getToken])
 
   const handleStartCoaching = async () => {
     setPlanError('')
@@ -1233,9 +1232,9 @@ export default function ResultsPage() {
                       <p className="font-black text-foreground text-lg">Your Fix List is Ready</p>
                       <p className="text-sm text-muted-foreground">We found specific issues on <strong>{data.domain}</strong>. Unlock to see every fix with exact page URLs and step-by-step instructions.</p>
                     </div>
-                    <Button onClick={handleUnlock} disabled={isUnlocking} size="lg" className="gap-2 px-8 shadow-lg shadow-primary/20">
-                      {isUnlocking ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Lock className="h-4 w-4" />}
-                      Get My Fix List — ₹19
+                    <Button onClick={handleStartCoaching} disabled={isStartingPlan || !estimate} size="lg" className="gap-2 px-8 shadow-lg shadow-primary/20">
+                      {isStartingPlan ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Lock className="h-4 w-4" />}
+                      Unlock AI Coaching Roadmap — ₹{estimate ? estimate.price / 100 : '...'}
                     </Button>
                     <p className="text-[11px] text-muted-foreground">One-time payment · Instant access · No subscription</p>
                   </div>
@@ -1429,9 +1428,9 @@ export default function ResultsPage() {
                 <Card className="p-5 border-primary/20 bg-primary/5 rounded-2xl">
                   <p className="font-bold text-sm text-foreground mb-1 flex items-center gap-2"><Lock className="h-4 w-4 text-primary" /> Want a personalised day-by-day plan?</p>
                   <p className="text-xs text-muted-foreground mb-3">Unlock the AI report to get a custom 30-day roadmap, strategic tips, and missing topic suggestions.</p>
-                  <Button onClick={handleUnlock} disabled={isUnlocking} className="gap-2 h-10 rounded-xl font-bold text-sm">
-                    {isUnlocking ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Zap className="h-4 w-4" />}
-                    Get My 30-Day Approval Roadmap — ₹19
+                  <Button onClick={handleStartCoaching} disabled={isStartingPlan || !estimate} className="gap-2 h-10 rounded-xl font-bold text-sm">
+                    {isStartingPlan ? <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Zap className="h-4 w-4" />}
+                    Unlock AI Coaching Roadmap — ₹{estimate ? estimate.price / 100 : '...'}
                   </Button>
                 </Card>
               </div>
@@ -1887,7 +1886,7 @@ export default function ResultsPage() {
                 </div>
                 <p className="font-black text-foreground text-lg">{isPro ? 'Generating Analysis...' : 'Deep Analysis Locked'}</p>
                 <p className="text-sm text-muted-foreground">{isPro ? 'E-E-A-T, technical health, monetization, and policy details will appear here.' : 'Unlock the AI report to see E-E-A-T scores, technical health, monetization potential, and policy deep dive.'}</p>
-                {!isPro && <Button onClick={handleUnlock} disabled={isUnlocking} className="gap-2 px-8"><Lock className="h-4 w-4" /> Unlock — ₹19</Button>}
+                <Button onClick={handleStartCoaching} disabled={isStartingPlan || !estimate} className="gap-2 px-8"><Lock className="h-4 w-4" /> Unlock AI Coaching Roadmap</Button>
               </div>
             )}
           </div>

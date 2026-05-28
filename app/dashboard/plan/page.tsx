@@ -31,9 +31,10 @@ export default function PlanPage() {
         const profileRes = await fetch('/api/profile', {
           headers: { Authorization: `Bearer ${token}` }
         })
-        const profile = await profileRes.json()
+        const data = await profileRes.json()
+        const profile = data.profile
         
-        if (!profile.activePlanId) {
+        if (!profile?.activePlanId) {
           router.push('/dashboard')
           return
         }

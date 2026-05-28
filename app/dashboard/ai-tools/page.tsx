@@ -738,24 +738,7 @@ export default function AIToolsPage() {
             </div>
           </div>
 
-          {!isPro && (
-            <div
-              className="mt-4 flex items-center justify-between gap-4 rounded-2xl border border-violet-200 dark:border-violet-800/50 bg-violet-50 dark:bg-violet-950/20 px-5 py-4 cursor-pointer hover:bg-violet-100 dark:hover:bg-violet-950/30 transition-colors"
-              onClick={() => openUpgrade('AI Tools')}
-            >
-              <div className="flex items-center gap-3">
-                <Crown className="h-5 w-5 text-violet-500 flex-shrink-0" />
-                <div>
-                  <p className="font-semibold text-foreground text-sm">Unlock all AI tools with Pro</p>
-                  <p className="text-xs text-muted-foreground">₹199/month · 200 scans · Cancel anytime</p>
-                </div>
-              </div>
-              <Button size="sm" className="gap-1.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-0 shadow-sm shadow-violet-500/25 flex-shrink-0"
-                onClick={e => { e.stopPropagation(); openUpgrade('AI Tools') }}>
-                <Crown className="h-3.5 w-3.5" /> Upgrade
-              </Button>
-            </div>
-          )}
+
         </div>
 
         <div className="space-y-5">
