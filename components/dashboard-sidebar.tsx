@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard, Settings, LogOut, History,
-  Crown, Menu, X, Image,
+  Crown, Menu, X, FilePenLine,
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { useProfile } from '@/hooks/use-profile'
@@ -14,7 +14,7 @@ import { useState } from 'react'
 const navItems = [
   { name: 'Dashboard',        href: '/dashboard',                   icon: LayoutDashboard },
   { name: 'My Scans',         href: '/dashboard/scans',             icon: History         },
-  { name: 'Banner Generator', href: '/dashboard/banner-generator',  icon: Image, badge: 'NEW' },
+  { name: 'Article Studio',   href: '/dashboard/article-studio',    icon: FilePenLine     },
   { name: 'Settings',         href: '/dashboard/settings',          icon: Settings        },
 ]
 
