@@ -81,6 +81,10 @@ export interface CrawledPage {
   is_https?: boolean;             // page served over HTTPS
   status_code?: number;
   error?: string;
+  has_adsense_code?: boolean;
+  policy_violation_keywords?: string[];
+  footer_privacy_link?: boolean;
+  footer_contact_link?: boolean;
 }
 
 export interface SiteStructure {

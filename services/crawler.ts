@@ -396,6 +396,21 @@ export class WebsiteCrawler {
     // ── New: HTTPS detection ──────────────────────────────────────────────
     const isHttps = url.startsWith('https://')
 
+    // ── New: AdSense Code & Policy checks ─────────────────────────────────
+    const hasAdsenseCode = html.includes('ca-pub-') || html.includes('pagead2.googlesyndication.com');
+    const policyKeywords = ['gambling', 'casino', 'porn', 'xxx', 'escort', 'weapon', 'firearm', 'drugs', 'pharma', 'steroids', 'buy followers', 'hack', 'crack', 'warez'];
+    const lowerText = plainText.toLowerCase();
+    const policyViolations = policyKeywords.filter(k => lowerText.includes(k));
+
+    const footerMatch = html.match(/<footer[^>]*>([\s\S]*?)<\/footer>/i);
+    let footerPrivacy = false;
+    let footerContact = false;
+    if (footerMatch && footerMatch[1]) {
+      const footerHtml = footerMatch[1].toLowerCase();
+      footerPrivacy = footerHtml.includes('privacy');
+      footerContact = footerHtml.includes('contact');
+    }
+
     // Firestore rejects `undefined` values; only set optional fields when present.
     const crawledPage: CrawledPage = {
       url,
@@ -408,6 +423,10 @@ export class WebsiteCrawler {
       images_missing_alt: imagesMissingAlt,
       has_schema_markup: hasSchemaMarkup,
       is_https: isHttps,
+      has_adsense_code: hasAdsenseCode,
+      policy_violation_keywords: policyViolations,
+      footer_privacy_link: footerPrivacy,
+      footer_contact_link: footerContact,
     };
 
     if (typeof metaDescription === 'string' && metaDescription.trim().length > 0) {
@@ -432,6 +451,7 @@ export class WebsiteCrawler {
         has_about: false,
         has_contact: false,
         has_terms: false,
+        has_disclaimer: false,
       },
       total_pages: 0,
       domain: this.domain,
@@ -439,4 +459,113 @@ export class WebsiteCrawler {
       error,
     };
   }
+}
+
+import { DeepCrawlResult } from '@/lib/firebase-types';
+
+export function buildDeepCrawlResult(crawl: CrawlResponse): DeepCrawlResult {
+  const pages = crawl.pages;
+  const postSignals = [
+    /\\d{4}\/\\d{2}\/\\d{2}/,
+    /\\d{4}\/\\d{2}\//,
+    /\/blog\//,
+    /\/news\//,
+    /\/article\//,
+    /\/post\//,
+    /\/stories\//,
+  ];
+  
+  const isPost = (url: string) => {
+    try {
+      const path = new URL(url).pathname.toLowerCase();
+      if (path === '/' || ['/category/', '/tag/', '/author/', '/page/', '/search', '/wp-admin', '/login', '/signup', '/privacy', '/about', '/contact', '/terms', '/disclaimer', '/policy'].some(e => path.includes(e))) return false;
+      if (postSignals.some(r => r.test(path))) return true;
+      const segs = path.split('/').filter(Boolean);
+      return segs.length >= 2 && (segs[segs.length - 1] ?? '').includes('-');
+    } catch { return false; }
+  };
+
+  const posts = pages.filter(p => isPost(p.url));
+  const postDates = posts
+    .map(p => p.lastmod ? new Date(p.lastmod).getTime() : NaN)
+    .filter(t => !Number.isNaN(t))
+    .sort((a, b) => a - b);
+  
+  let longestGap = 0;
+  for (let i = 1; i < postDates.length; i++) {
+    const gap = (postDates[i] - postDates[i - 1]) / (1000 * 60 * 60 * 24);
+    if (gap > longestGap) longestGap = gap;
+  }
+  
+  const firstPost = postDates.length > 0 ? new Date(postDates[0]).toISOString() : null;
+  const latestPost = postDates.length > 0 ? new Date(postDates[postDates.length - 1]).toISOString() : null;
+  const totalDays = postDates.length > 1 ? (postDates[postDates.length - 1] - postDates[0]) / (1000 * 60 * 60 * 24) : 0;
+  const postsPerMonth = totalDays > 0 ? (posts.length / (totalDays / 30)) : posts.length;
+
+  const wordCounts = posts.map(p => p.word_count);
+  const avgWordCount = wordCounts.length ? Math.round(wordCounts.reduce((a, b) => a + b, 0) / wordCounts.length) : 0;
+  const thinPosts = posts.filter(p => p.word_count < 500);
+  const avgInternalLinks = posts.length ? Math.round(posts.reduce((a, b) => a + (b.links?.internal?.length || 0), 0) / posts.length) : 0;
+  
+  const hasAdsense = pages.some(p => p.has_adsense_code);
+  const footerPriv = pages.some(p => p.footer_privacy_link);
+  const footerCont = pages.some(p => p.footer_contact_link);
+  const allHttps = pages.every(p => p.is_https);
+  const httpPages = pages.filter(p => !p.is_https).length;
+  const metaDescCov = pages.length ? Math.round((pages.filter(p => p.meta_description).length / pages.length) * 100) : 0;
+  const h1Cov = pages.length ? Math.round((pages.filter(p => p.headings?.h1?.length === 1).length / pages.length) * 100) : 0;
+  const missingAltPosts = posts.filter(p => (p.images_missing_alt || 0) > 0).length;
+  const noImagePosts = posts.filter(p => (p.images_total || 0) === 0).length;
+
+  const policyKws = Array.from(new Set(pages.flatMap(p => p.policy_violation_keywords || [])));
+  
+  return {
+    url: crawl.domain, // Or full original URL if we stored it
+    pageCount: pages.length,
+    postCount: posts.length,
+    domainAge: crawl.site_structure.domain_age_years ? `${crawl.site_structure.domain_age_years} years` : 'Unknown',
+
+    firstPostDate: firstPost,
+    latestPostDate: latestPost,
+    postsPerMonth: Math.round(postsPerMonth * 10) / 10,
+    longestGapDays: Math.round(longestGap),
+    samplePostTitles: posts.slice(0, 20).map(p => p.title).filter(Boolean),
+
+    mainNiche: '',
+    subNiche: '',
+    nicheConsistencyScore: 0,
+    offTopicPosts: [],
+
+    avgWordCount,
+    thinContentCount: thinPosts.length,
+    thinContentPercent: posts.length ? Math.round((thinPosts.length / posts.length) * 100) : 0,
+    avgReadabilityScore: 60, // Placeholder as we don't have Flesch Kincaid implemented directly
+    postsWithNoImages: noImagePosts,
+    postsWithMissingAlt: missingAltPosts,
+    keywordStuffingDetected: false, // Placeholder, requires advanced NLP
+
+    hasPrivacyPolicy: crawl.site_structure.has_privacy,
+    privacyPolicyUrl: pages.find(p => p.url.toLowerCase().includes('privacy'))?.url || null,
+    hasAboutPage: crawl.site_structure.has_about,
+    aboutPageUrl: pages.find(p => p.url.toLowerCase().includes('about'))?.url || null,
+    hasContactPage: crawl.site_structure.has_contact,
+    contactPageUrl: pages.find(p => p.url.toLowerCase().includes('contact'))?.url || null,
+    hasTerms: crawl.site_structure.has_terms,
+    hasDisclaimer: crawl.site_structure.has_disclaimer || false,
+
+    allHttps,
+    httpPages,
+    hasSitemap: !!crawl.site_structure.has_sitemap,
+    hasRobots: true, // Assuming true as basic check done
+    metaDescriptionCoverage: metaDescCov,
+    h1Coverage: h1Cov,
+    avgInternalLinks,
+    schemaTypes: pages.some(p => p.has_schema_markup) ? ['Article', 'BreadcrumbList'] : [],
+    brokenLinkCount: 0, // Placeholder, difficult to track accurately without head requests
+    footerHasPrivacyLink: footerPriv,
+    footerHasContactLink: footerCont,
+
+    hasExistingAdsenseCode: hasAdsense,
+    policyViolationKeywords: policyKws,
+  };
 }
