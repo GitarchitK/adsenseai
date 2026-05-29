@@ -105,7 +105,8 @@ export async function POST(request: NextRequest) {
         
         previewReport.topIssues = allIssues.slice(0, 3).map(i => ({
           issue: i.issue,
-          severity: i.severity
+          severity: i.severity,
+          detail: i.detail
         }))
         
       } catch (err) {

@@ -160,14 +160,27 @@ export default function ResultsPage() {
 
         <div>
           <h2 className="text-xl font-black mb-4">Top Issues Found</h2>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {ai.topIssues?.map((issue: any, i: number) => (
-              <div key={i} className="p-4 rounded-xl border border-border/60 bg-card flex gap-3">
-                {issue.severity === 'critical' ? <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0" /> : <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0" />}
-                <div>
-                  <p className="text-sm font-bold">{issue.issue}</p>
-                  <div className="mt-2 h-4 w-48 bg-muted rounded animate-pulse" />
-                  <div className="mt-1 h-4 w-32 bg-muted rounded animate-pulse" />
+              <div key={i} className="p-5 rounded-2xl border border-border/60 bg-card flex flex-col sm:flex-row gap-4">
+                <div className="flex-shrink-0 mt-1">
+                  {issue.severity === 'critical' ? <AlertTriangle className="h-6 w-6 text-red-500" /> : <AlertTriangle className="h-6 w-6 text-amber-500" />}
+                </div>
+                <div className="flex-1">
+                  <p className="text-base font-bold text-foreground mb-1">{issue.issue}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{issue.detail}</p>
+                  
+                  <div className="mt-4 p-4 rounded-xl bg-muted/30 border border-border/30 relative overflow-hidden group cursor-pointer" onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}>
+                     <div className="filter blur-[4px] opacity-70 pointer-events-none select-none">
+                       <p className="text-xs font-bold uppercase mb-1">How to fix:</p>
+                       <p className="text-sm">Step 1: Navigate to your site settings. Step 2: Implement the specific code changes required to resolve this AdSense violation...</p>
+                     </div>
+                     <div className="absolute inset-0 flex items-center justify-center bg-background/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-xs font-bold bg-background shadow-sm px-3 py-1 rounded-full border border-border/50">
+                          Unlock ₹19 plan to see exact fix steps
+                        </span>
+                     </div>
+                  </div>
                 </div>
               </div>
             ))}
