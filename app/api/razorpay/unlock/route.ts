@@ -67,6 +67,20 @@ export async function POST(request: NextRequest) {
         unlockedAt: new Date().toISOString()
       })
 
+      await adminDb.collection('payments').add({
+        userId: profile.uid,
+        email: profile.email,
+        name: profile.fullName || 'User',
+        plan: '₹19 Unlock',
+        amount: 1900,
+        currency: 'INR',
+        status: 'paid',
+        razorpayPaymentId: paymentId,
+        razorpayOrderId: orderId,
+        scanId: scanId,
+        createdAt: new Date().toISOString()
+      })
+
       // Send email
       if (profile.email && finalAiReport) {
         await sendFullReportEmail(

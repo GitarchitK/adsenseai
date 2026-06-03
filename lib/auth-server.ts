@@ -195,16 +195,15 @@ export async function adminDeleteUser(userId: string): Promise<void> {
 export async function adminGetPayments(limit = 50): Promise<Record<string, unknown>[]> {
   try {
     const snap = await adminDb.collection("payments").orderBy("createdAt", "desc").limit(limit).get()
-    if (!snap.empty) {
-      return snap.docs.map(d => {
-        const data = d.data()
-        if (data.createdAt) data.createdAt = serializeTimestamp(data.createdAt)
-        return { id: d.id, ...data }
-      })
-    }
-    // Fallback: derive payments from users with pro plan
+    const realPayments = snap.docs.map(d => {
+      const data = d.data()
+      if (data.createdAt) data.createdAt = serializeTimestamp(data.createdAt)
+      return { id: d.id, ...data }
+    })
+
+    // Fallback: derive payments from users with old pro plan
     const users = await adminGetUsers(100)
-    return users
+    const derivedPayments = users
       .filter(u => u.plan === 'pro' || u.razorpaySubscriptionId)
       .map(u => ({
         id: u.uid,
@@ -218,5 +217,14 @@ export async function adminGetPayments(limit = 50): Promise<Record<string, unkno
         razorpaySubscriptionId: u.razorpaySubscriptionId,
         createdAt: u.updatedAt ?? u.createdAt,
       }))
+
+    // Combine and sort descending by date
+    const allPayments = [...realPayments, ...derivedPayments].sort((a, b) => {
+      const dateA = new Date(a.createdAt as string).getTime()
+      const dateB = new Date(b.createdAt as string).getTime()
+      return dateB - dateA
+    })
+
+    return allPayments.slice(0, limit)
   } catch (err) { console.error("[DB] adminGetPayments:", (err as Error).message); return [] }
 }
