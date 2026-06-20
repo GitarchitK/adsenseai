@@ -84,6 +84,15 @@ export default function ResultsPage() {
     }
   }
 
+  // Update title dynamically
+  useEffect(() => {
+    if (data) {
+      const ai = data.ai_report || {}
+      const overallScore = ai.overallScore ?? data.scores?.final_score ?? 0
+      document.title = `AdSense Readiness Report for ${data.domain} — Score: ${overallScore}/100`;
+    }
+  }, [data]);
+
   if (loading) return <div className="p-8 text-center">Loading results...</div>
   if (error || !data) return <div className="p-8 text-center text-red-500">{error}</div>
 
@@ -126,11 +135,6 @@ export default function ResultsPage() {
       },
     ],
   }
-
-  // Update title dynamically
-  useEffect(() => {
-    document.title = `AdSense Readiness Report for ${data.domain} — Score: ${overallScore}/100`;
-  }, [data.domain, overallScore]);
 
   return (
     <div className="min-h-screen bg-background pb-20">
