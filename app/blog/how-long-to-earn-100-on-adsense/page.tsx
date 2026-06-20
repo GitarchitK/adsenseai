@@ -136,6 +136,12 @@ export default function EarnFirst100() {
             For a brand new blogger writing in a standard niche, expect it to take about <strong>6 to 9 months</strong> to receive your first $100 check from Google. The hardest part is getting from $0 to $10. Once Google ranks your site and traffic starts compounding, you will go from making $100 every 6 months to $100 every single day!
           </p>
         </div>
+      
+          <div className="mt-12 p-6 bg-primary/5 rounded-2xl border border-primary/20">
+            <h3 className="text-xl font-bold mb-2 text-foreground">Ready to get approved?</h3>
+            <p className="text-muted-foreground">Use our AI-powered tool to <Link href="/" className="text-primary hover:underline font-bold">AdSense readiness score</Link> and get a step-by-step roadmap to monetization.</p>
+          </div>
+  
       </article>
       <SiteFooter />
     </div>

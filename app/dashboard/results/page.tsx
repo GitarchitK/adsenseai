@@ -100,8 +100,41 @@ export default function ResultsPage() {
   
   const scoreColor = overallScore >= 70 ? 'text-emerald-500' : overallScore >= 50 ? 'text-amber-500' : 'text-red-500'
 
+  const resultsSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        name: `AdSense Readiness Report: ${data.domain}`,
+        description: `AdSense readiness score ${overallScore}/100 for ${data.domain}. Niche: ${ai.nicheAnalysis?.mainNiche}. Approval chance: ${ai.estimatedApprovalChance?.percentage}%.`,
+        url: `https://www.adsensechecker.in/dashboard/results`,
+        breadcrumb: {
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.adsensechecker.in" },
+            { "@type": "ListItem", position: 2, name: `Report for ${data.domain}` },
+          ],
+        },
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: ai.topIssues?.map((issue: any) => ({
+          "@type": "Question",
+          name: `How to fix: ${issue.issue} on ${data.domain}?`,
+          acceptedAnswer: { "@type": "Answer", text: issue.detail }
+        })) || []
+      },
+    ],
+  }
+
+  // Update title dynamically
+  useEffect(() => {
+    document.title = `AdSense Readiness Report for ${data.domain} — Score: ${overallScore}/100`;
+  }, [data.domain, overallScore]);
+
   return (
     <div className="min-h-screen bg-background pb-20">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(resultsSchema) }} />
       <div className="container mx-auto px-4 md:px-6 py-8 max-w-4xl space-y-8">
         
         <div className="flex items-center justify-between">

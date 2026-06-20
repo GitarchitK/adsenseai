@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle2, ArrowRight, Clock, Zap, Clock4, Shield, TrendingUp } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Does Domain Age Matter for AdSense Approval? The Truth (2026)',
+  title: 'Does Domain Age Matter for AdSense Approval? The Truth (2026) (2026 Complete Guide)',
   description: 'New domain owners fear rejection due to age. Learn the truth about domain age requirements and proven strategies for newer sites to get AdSense approved.',
   keywords: ['domain age adsense', 'does domain age matter adsense', 'new domain adsense approval', 'domain age google adsense', 'adsense new domain'],
   alternates: { canonical: 'https://www.adsensechecker.in/blog/domain-age-adsense' },

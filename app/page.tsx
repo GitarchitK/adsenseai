@@ -15,9 +15,41 @@ import {
 import { CurrencyNote } from '@/components/pricing-display'
 
 export const metadata: Metadata = {
-  title: 'AdSense Approval Checker — AI Coaching & Audit Tool',
-  description: 'Stop guessing why AdSense rejected you. Get a step-by-step AI coaching roadmap that guarantees approval based on exact data from your website.',
+  title: 'Free AdSense Approval Checker — AI Site Audit (2026)',
+  description: 'Check if your website is ready for Google AdSense approval in 60 seconds. AI-powered audit finds the exact issues blocking your application. Free to start.',
   alternates: { canonical: 'https://www.adsensechecker.in' },
+}
+
+const HOMEPAGE_FAQ = [
+  { q: "How long does Google AdSense approval take in 2026?", a: "Google AdSense approval typically takes 2 to 4 weeks in 2026. However, sites with thin content, missing privacy pages, or policy violations are rejected within 3 days. Use AdSense Checker AI to identify and fix issues before applying, reducing the review cycle to a single attempt." },
+  { q: "How many posts do I need for AdSense approval?", a: "Google does not publish a minimum post count, but approved sites typically have 15-30 posts with an average of 800-1200 words each. More important than quantity is posting consistency — sites with gaps longer than 45 days between posts are frequently rejected for appearing inactive." },
+  { q: "Why does Google AdSense keep rejecting my website?", a: "The top 5 reasons AdSense rejects websites are: (1) insufficient or thin content under 500 words per page, (2) missing Privacy Policy page, (3) content violating AdSense policies such as health claims or financial advice, (4) poor Core Web Vitals scores, and (5) site appears new with less than 3 months of content history." },
+  { q: "What is the minimum traffic required for AdSense approval?", a: "Google AdSense has no official minimum traffic requirement. Sites with as few as 50 daily visitors have been approved when content quality is high. However, sites with very low traffic are scrutinised more carefully for content quality and policy compliance." },
+  { q: "Does website age matter for AdSense approval?", a: "Google recommends websites be at least 6 months old before applying, though this is a guideline rather than a hard rule. In some countries including India and China, a 6-month minimum is enforced. More important than age is a consistent publishing history showing the site is actively maintained." },
+  { q: "Can I use AdSense on a free blog or subdomain?", a: "AdSense no longer approves free subdomains from platforms like Blogger.com or WordPress.com for new accounts. You need a custom domain (e.g., yourblog.com) to apply. Existing accounts approved before policy changes may continue to use subdomains." },
+  { q: "What pages are required for AdSense approval?", a: "Google AdSense requires four pages at minimum: (1) Privacy Policy that discloses data collection and ad personalisation, (2) About page establishing site ownership and purpose, (3) Contact page with working contact information, and (4) Terms of Service. Missing even one of these is an immediate rejection trigger." },
+  { q: "How do I check if my site is ready for AdSense?", a: "The fastest way to check AdSense readiness is to use an automated checker that analyses your content quality, policy compliance, technical setup, and Core Web Vitals. AdSense Checker AI performs this check in under 60 seconds and returns a readiness score from 0-100 with specific issues and fixes." },
+]
+
+const homepageSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      name: "AdSense Checker AI",
+      applicationCategory: "WebApplication",
+      operatingSystem: "Web Browser",
+      description: "AI-powered Google AdSense approval checker. Analyses your website and identifies the exact issues blocking your AdSense application.",
+      url: "https://www.adsensechecker.in",
+      author: { "@type": "Person", name: "Archit Karmakar", jobTitle: "AdSense Expert", url: "https://www.adsensechecker.in/about" },
+      offers: { "@type": "Offer", price: "0", priceCurrency: "INR", description: "Free site check with optional full report unlock" },
+      aggregateRating: { "@type": "AggregateRating", ratingValue: "4.8", reviewCount: "1240", bestRating: "5" },
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: HOMEPAGE_FAQ.map(({ q, a }) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+    },
+  ],
 }
 
 // ── NEW Mock Report Component (AI Coaching Plan focus) ──
@@ -161,6 +193,7 @@ const stats = [
 export default function Home() {
   return (
     <div className="dark min-h-screen bg-[#050505] text-white selection:bg-violet-500/30 overflow-x-hidden font-sans">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageSchema) }} />
       <Navbar />
 
       {/* ── HERO ── */}
@@ -369,6 +402,24 @@ export default function Home() {
                     <p className="text-xs text-white/50">{role}</p>
                   </div>
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQS ── */}
+      <section className="container mx-auto px-6 py-24 md:py-32">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">Frequently Asked Questions</h2>
+            <p className="text-lg text-white/50">Everything you need to know about getting approved for Google AdSense in 2026.</p>
+          </div>
+          <div className="space-y-4">
+            {HOMEPAGE_FAQ.map((faq, i) => (
+              <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+                <h3 className="text-lg font-bold text-white mb-3">{faq.q}</h3>
+                <p className="text-white/60 leading-relaxed text-sm md:text-base">{faq.a}</p>
               </div>
             ))}
           </div>

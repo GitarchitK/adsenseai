@@ -6,7 +6,7 @@ import { AlertCircle, CheckCircle2, ArrowRight } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes',
+  title: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes (2026 Complete Guide)',
   description: 'AdSense keeps rejecting your website? Here are the 8 most common reasons Google rejects AdSense applications — and exactly how to fix each one. Use our free AdSense approval checker to diagnose your site.',
   keywords: ['adsense keeps rejecting my site', 'why adsense rejected my application', 'adsense rejection reasons', 'adsense approval checker', 'fix adsense rejection'],
   alternates: { canonical: 'https://www.adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site' },
@@ -161,6 +161,12 @@ export default function WhyAdsenseKeepsRejectingMySite() {
           </section>
 
         </div>
+      
+          <div className="mt-12 p-6 bg-primary/5 rounded-2xl border border-primary/20">
+            <h3 className="text-xl font-bold mb-2 text-foreground">Ready to get approved?</h3>
+            <p className="text-muted-foreground">Use our AI-powered tool to <Link href="/" className="text-primary hover:underline font-bold">see if your blog qualifies for AdSense</Link> and get a step-by-step roadmap to monetization.</p>
+          </div>
+  
       </article>
       <SiteFooter />
     </div>

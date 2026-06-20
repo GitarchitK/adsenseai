@@ -155,6 +155,12 @@ export default function AdBanner() {
             Adding AdSense to Next.js is straightforward if you leverage the built-in `&lt;Script&gt;` component. Avoid using standard HTML script tags to prevent hydration mismatches and performance bottlenecks.
           </p>
         </div>
+      
+          <div className="mt-12 p-6 bg-primary/5 rounded-2xl border border-primary/20">
+            <h3 className="text-xl font-bold mb-2 text-foreground">Ready to get approved?</h3>
+            <p className="text-muted-foreground">Use our AI-powered tool to <Link href="/" className="text-primary hover:underline font-bold">check your AdSense eligibility</Link> and get a step-by-step roadmap to monetization.</p>
+          </div>
+  
       </article>
       <SiteFooter />
     </div>

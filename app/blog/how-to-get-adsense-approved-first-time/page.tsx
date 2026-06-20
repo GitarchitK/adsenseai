@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle2, ArrowRight, Clock, Zap, Shield, Search, BookOpen, TrendingUp } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'How to Get AdSense Approved on Your First Try — Complete 2026 Guide',
+  title: 'How to Get AdSense Approved on Your First Try — Complete 2026 Guide (2026 Complete Guide)',
   description: 'Stop wasting months on AdSense rejections. This comprehensive guide walks you through every requirement Google looks for — content quality, policy compliance, required pages, and more.',
   keywords: ['how to get adsense approved', 'adsense approval first time', 'get adsense approved fast', 'adsense approval tips', 'adsense approval guide 2026'],
   alternates: { canonical: 'https://www.adsensechecker.in/blog/how-to-get-adsense-approved-first-time' },

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle2, ArrowRight, Clock, Star, Zap } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Mythos AI Review: I Used It for 3 Months — Honest Take (2026)',
+  title: 'Mythos AI Review: I Used It for 3 Months — Honest Take (2026) (2026 Complete Guide)',
   description: 'After using Mythos AI for content creation, SEO, and website building for 3 months, here\'s what actually works, what doesn\'t, and whether it\'s worth your money.',
   keywords: ['mythos ai review', 'mythos ai', 'mythos ai content creation', 'mythos ai adsense', 'ai writing tool review'],
   alternates: { canonical: 'https://www.adsensechecker.in/blog/mythos-ai-review' },

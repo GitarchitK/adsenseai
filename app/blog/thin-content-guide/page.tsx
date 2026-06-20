@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle2, ArrowRight, Clock, Zap, BookOpen, TrendingUp, AlertCircle } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'What is Thin Content? Complete Guide to High-Value Articles for AdSense',
+  title: 'What is Thin Content? Complete Guide to High-Value Articles for AdSense (2026 Complete Guide)',
   description: 'Thin content is the #1 reason for AdSense rejections. Learn exactly what Google considers thin content and how to create substantive, high-value articles that get approved.',
   keywords: ['thin content', 'thin content adsense', 'low value content adsense', 'what is thin content', 'fix thin content'],
   alternates: { canonical: 'https://www.adsensechecker.in/blog/thin-content-guide' },

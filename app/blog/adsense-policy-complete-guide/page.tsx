@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle2, ArrowRight, Clock, Zap, Shield, AlertTriangle, BookOpen } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Complete AdSense Policy Guide for Publishers — 2026',
+  title: 'Complete AdSense Policy Guide for Publishers — 2026 (2026 Complete Guide)',
   description: 'Understanding Google\'s policies is crucial for maintaining your AdSense account. Learn exactly what content triggers rejections and how to stay compliant long-term.',
   keywords: ['adsense policy guide', 'adsense program policies', 'adsense policy violations', 'google adsense policies', 'adsense compliance'],
   alternates: { canonical: 'https://www.adsensechecker.in/blog/adsense-policy-complete-guide' },

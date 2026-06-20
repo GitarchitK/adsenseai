@@ -128,6 +128,12 @@ export default function AdsenseAccountDisabled() {
             If your appeal is denied, that AdSense account is permanently closed. Furthermore, you cannot create a new AdSense account under your name or address. Your options are to pivot to other ad networks like Ezoic or Mediavine, use affiliate marketing, or register a new business entity with a completely separate identity and bank account.
           </p>
         </div>
+      
+          <div className="mt-12 p-6 bg-primary/5 rounded-2xl border border-primary/20">
+            <h3 className="text-xl font-bold mb-2 text-foreground">Ready to get approved?</h3>
+            <p className="text-muted-foreground">Use our AI-powered tool to <Link href="/" className="text-primary hover:underline font-bold">test your website for AdSense</Link> and get a step-by-step roadmap to monetization.</p>
+          </div>
+  
       </article>
       <SiteFooter />
     </div>

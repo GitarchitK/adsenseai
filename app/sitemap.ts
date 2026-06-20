@@ -60,7 +60,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${BASE}/blog/${slug}`,
       lastModified: new Date(date),
       changeFrequency: 'monthly' as const,
-      priority,
+      priority: 0.7, // As requested in the SEO Upgrade
     })),
   ]
 }

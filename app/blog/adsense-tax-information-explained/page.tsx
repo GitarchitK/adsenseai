@@ -136,6 +136,12 @@ export default function AdsenseTaxInfo() {
             Never ignore the AdSense tax warnings. Taking 5 minutes to submit your W-8BEN with your local tax ID ensures you get to keep all of the hard-earned money your blog generates. Once approved, the form is valid for 3 calendar years!
           </p>
         </div>
+      
+          <div className="mt-12 p-6 bg-primary/5 rounded-2xl border border-primary/20">
+            <h3 className="text-xl font-bold mb-2 text-foreground">Ready to get approved?</h3>
+            <p className="text-muted-foreground">Use our AI-powered tool to <Link href="/" className="text-primary hover:underline font-bold">free AdSense site audit</Link> and get a step-by-step roadmap to monetization.</p>
+          </div>
+  
       </article>
       <SiteFooter />
     </div>

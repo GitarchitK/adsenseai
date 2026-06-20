@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { CheckCircle2, ArrowRight, Clock, Zap, TrendingUp, DollarSign, Globe, Shield } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Website Monetization Strategies That Actually Work in 2026',
+  title: 'Website Monetization Strategies That Actually Work in 2026 (2026 Complete Guide)',
   description: 'Beyond AdSense: Explore affiliate marketing, sponsored content, digital products, and hybrid strategies to maximize your site\'s revenue potential.',
   keywords: ['website monetization strategies', 'how to monetize a website', 'website monetization', 'blog monetization', 'adsense alternatives'],
   alternates: { canonical: 'https://www.adsensechecker.in/blog/website-monetization-strategies' },

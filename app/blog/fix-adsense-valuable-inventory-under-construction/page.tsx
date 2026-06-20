@@ -152,6 +152,12 @@ export default function FixValuableInventory() {
             The "Valuable Inventory: Under Construction" error is completely fixable. Take a weekend to audit your site, remove dead links, fill out your categories, and present a professional, finished product. Once your site looks complete to a human, it will look complete to Google AdSense.
           </p>
         </div>
+      
+          <div className="mt-12 p-6 bg-primary/5 rounded-2xl border border-primary/20">
+            <h3 className="text-xl font-bold mb-2 text-foreground">Ready to get approved?</h3>
+            <p className="text-muted-foreground">Use our AI-powered tool to <Link href="/" className="text-primary hover:underline font-bold">check your site's AdSense readiness</Link> and get a step-by-step roadmap to monetization.</p>
+          </div>
+  
       </article>
       <SiteFooter />
     </div>
