@@ -19,6 +19,17 @@ export const PLANS = {
     privacy_generator: false,
     article_analyzer: false,
     thumbnail_credits: 0,      // no thumbnails on free
+  },
+  pro: {
+    name: 'Pro',
+    scans_per_month: 999999,
+    article_crawl_limit: 150,
+    ai_report: true,
+    fix_suggestions: true,
+    content_rewrite: true,
+    privacy_generator: true,
+    article_analyzer: true,
+    thumbnail_credits: 999999,
   }
 } as const
 
