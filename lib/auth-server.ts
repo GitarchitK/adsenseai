@@ -3,6 +3,13 @@ import type { UserProfile, ScanRecord } from "./firebase-types"
 import { FieldValue } from "firebase-admin/firestore"
 import { PLANS } from './plans'
 
+export const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '').split(',').map(e => e.trim()).filter(Boolean)
+
+export function isAdmin(email: string | null | undefined): boolean {
+  if (!email) return false
+  return ADMIN_EMAILS.includes(email)
+}
+
 export async function verifyToken(authHeader: string | null) {
   if (!authHeader?.startsWith("Bearer ")) return null
   if (!isAdminInitialized()) {
@@ -29,7 +36,7 @@ export async function getAuthenticatedProfile(authHeader: string | null): Promis
       const now = new Date().toISOString()
       const profile: UserProfile = {
         uid: decoded.uid, email: decoded.email ?? "", fullName: decoded.name ?? null,
-        plan: "free", razorpayCustomerId: null, razorpaySubscriptionId: null,
+        plan: isAdmin(decoded.email) ? "pro" : "free", razorpayCustomerId: null, razorpaySubscriptionId: null,
         proExpiresAt: null,
         scansThisMonth: 0, scansMonthKey: now.slice(0, 7), totalScans: 0,
         thumbnailCreditsThisMonth: 0, thumbnailMonthKey: now.slice(0, 7),
@@ -38,7 +45,11 @@ export async function getAuthenticatedProfile(authHeader: string | null): Promis
       await adminDb.collection("users").doc(decoded.uid).set(profile)
       return profile
     }
-    return snap.data() as UserProfile
+    const data = snap.data() as UserProfile
+    if (isAdmin(data.email)) {
+      data.plan = "pro"
+    }
+    return data
   } catch (err) {
     console.error("[auth-server] getAuthenticatedProfile error:", (err as Error).message)
     return null

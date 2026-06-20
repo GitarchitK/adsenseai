@@ -1,11 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthenticatedProfile, adminGetUsers, adminSetPlan, adminDeleteUser, adminGetPayments } from '@/lib/auth-server'
-
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '').split(',').map(e => e.trim()).filter(Boolean)
-
-function isAdmin(email: string) {
-  return ADMIN_EMAILS.includes(email)
-}
+import { getAuthenticatedProfile, adminGetUsers, adminSetPlan, adminDeleteUser, adminGetPayments, isAdmin, ADMIN_EMAILS } from '@/lib/auth-server'
 
 export async function GET(request: NextRequest) {
   const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
