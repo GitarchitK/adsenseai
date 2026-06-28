@@ -6,14 +6,14 @@ import { CheckCircle2, XCircle, ArrowRight } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Google AdSense Approval Requirements 2025 — Complete Checklist (2026 Complete Guide)',
-  description: 'Complete list of Google AdSense approval requirements for 2025. Check every requirement your website must meet before applying — content, policy, pages, SEO, and more.',
-  keywords: ['adsense approval requirements', 'adsense requirements 2025', 'google adsense requirements', 'adsense approval checklist', 'adsense approval checker'],
+  title: 'Google AdSense Approval Requirements for Website (2026 Guide)',
+  description: 'What are the Google AdSense website requirements? Complete checklist of Google AdSense approval requirements for your website and AdSense account requirements.',
+  keywords: ['google adsense approval requirements for website', 'google adsense requirements', 'adsense account requirements', 'google adsense website requirements'],
   alternates: { canonical: 'https://www.adsensechecker.in/blog/adsense-approval-requirements' },
   openGraph: {
     type: 'article',
-    title: 'Google AdSense Approval Requirements 2025 — Complete Checklist',
-    description: 'Complete list of Google AdSense approval requirements for 2025.',
+    title: 'Google AdSense Approval Requirements for Website (2026 Guide)',
+    description: 'Complete list of Google AdSense approval requirements for your website.',
     url: 'https://www.adsensechecker.in/blog/adsense-approval-requirements',
     siteName: 'AdSense Approval Checker AI',
   },
@@ -22,8 +22,8 @@ export const metadata: Metadata = {
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
-  headline: 'Google AdSense Approval Requirements 2025 — Complete Checklist',
-  description: 'Complete list of Google AdSense approval requirements for 2025.',
+  headline: 'Google AdSense Approval Requirements for Website (2026 Guide)',
+  description: 'Complete list of Google AdSense approval requirements for your website.',
   url: 'https://www.adsensechecker.in/blog/adsense-approval-requirements',
   datePublished: '2025-01-01',
   dateModified: '2025-04-23',
@@ -110,7 +110,7 @@ export default function AdsenseApprovalRequirements() {
             AdSense Guide
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-foreground mb-4 leading-tight">
-            Google AdSense Approval Requirements 2025: The Complete Checklist
+            Google AdSense Approval Requirements for Website (2026 Guide)
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
             Before you apply for Google AdSense, your website must meet a specific set of requirements. This complete checklist covers every AdSense approval requirement — use it alongside our free AdSense approval checker to know exactly where you stand.

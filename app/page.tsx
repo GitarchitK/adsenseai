@@ -15,8 +15,9 @@ import {
 import { CurrencyNote } from '@/components/pricing-display'
 
 export const metadata: Metadata = {
-  title: 'Free AdSense Approval Checker — AI Site Audit (2026)',
-  description: 'Check if your website is ready for Google AdSense approval in 60 seconds. AI-powered audit finds the exact issues blocking your application. Free to start.',
+  title: 'Free AdSense Approval Checker & Site Audit (AdSense Check)',
+  description: 'Use our free Google AdSense approval checker and eligibility checker to run a complete AdSense audit. Find exact issues blocking your application in 60 seconds.',
+  keywords: ['adsense check', 'google adsense approval checker', 'adsense audit', 'adsense eligibility checker', 'adsense checker ai'],
   alternates: { canonical: 'https://www.adsensechecker.in' },
 }
 
@@ -219,6 +220,9 @@ export default function Home() {
                 </div>
               </div>
 
+              <div className="inline-flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest mb-4">
+                The Ultimate AdSense Check
+              </div>
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black leading-[1.05] tracking-tight mb-6">
                 Stop Guessing.<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-200 to-violet-400">

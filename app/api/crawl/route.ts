@@ -6,7 +6,7 @@ import { generateAIReport } from '@/services/ai-report'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getAuthenticatedProfile, incrementScanCount, saveScan } from '@/lib/auth-server'
 import { canRunScan } from '@/lib/plans'
-import { generateMasterReport } from '@/services/ai-master-report'
+import { generateAiMasterReport, generateSeoBlogHook } from '@/services/ai-master-report'
 import { buildDeepCrawlResult } from '@/services/crawler'
 
 export const maxDuration = 120
@@ -71,43 +71,30 @@ export async function POST(request: NextRequest) {
     const deepCrawlData = buildDeepCrawlResult(crawlResult)
 
     // ── AI report ───────────────────────────────────────────────────────────
+    let seoHook = null
     let aiReport = null
     let previewReport = null
 
     if (process.env.OPENAI_API_KEY) {
       try {
-        aiReport = await generateMasterReport(deepCrawlData)
+        aiReport = await generateAiMasterReport(deepCrawlData)
+        seoHook = await generateSeoBlogHook(deepCrawlData, aiReport)
         
         // Build preview for client
         previewReport = {
-          overallScore: aiReport.overallScore,
-          readinessLevel: aiReport.readinessLevel,
-          estimatedApprovalChance: aiReport.estimatedApprovalChance,
-          nicheAnalysis: {
-            mainNiche: aiReport.nicheAnalysis.mainNiche,
-            subNiche: aiReport.nicheAnalysis.subNiche,
-            nicheComment: aiReport.nicheAnalysis.nicheComment
-          },
-          whenToApply: { recommendation: aiReport.whenToApply.recommendation, reason: aiReport.whenToApply.reason },
-          topIssues: [] as any[]
+          readinessScore: aiReport.readinessScore,
+          approvalChance: aiReport.approvalChance,
+          approvalChancePercent: aiReport.approvalChancePercent,
+          detectedNiche: aiReport.detectedNiche,
+          strengths: aiReport.strengths,
+          risks: aiReport.risks,
+          top3Issues: aiReport.top3Issues.map(i => ({
+            rank: i.rank,
+            title: i.title,
+            basicDetail: i.basicDetail,
+            priorityLabel: i.priorityLabel
+          }))
         }
-        
-        // Gather top 3 issues (titles only)
-        const allIssues = [
-          ...(aiReport.contentAnalysis?.problems || []),
-          ...(aiReport.policyCompliance?.violations || []),
-          ...(aiReport.technicalHealth?.issues || []),
-          ...(aiReport.trustSignals?.issues || [])
-        ].sort((a, b) => {
-          const w = { 'critical': 4, 'high': 3, 'medium': 2, 'low': 1 }
-          return w[b.severity as keyof typeof w] - w[a.severity as keyof typeof w]
-        })
-        
-        previewReport.topIssues = allIssues.slice(0, 3).map(i => ({
-          issue: i.issue,
-          severity: i.severity,
-          detail: i.detail
-        }))
         
       } catch (err) {
         console.error('Master AI Report generation failed:', err)
@@ -122,11 +109,12 @@ export async function POST(request: NextRequest) {
       websiteUrl:   normalizedUrl,
       domain:       getDomain(normalizedUrl),
       status:       'completed',
-      finalScore:   aiReport?.overallScore ?? scores.final_score,
-      statusLabel:  aiReport?.readinessLevel ?? scores.status_label,
+      finalScore:   aiReport?.readinessScore ?? scores.final_score,
+      statusLabel:  aiReport?.approvalChance ?? scores.status_label,
       scores:       scores as unknown as Record<string, unknown>,
       crawlData:    deepCrawlData as unknown as Record<string, unknown>,
-      aiReport:     aiReport as unknown as Record<string, unknown> | null,  // full report saved always
+      aiReport:     aiReport as any | null,  // full report saved always
+      seoHook:      seoHook as any | null,
       isAiUnlocked: isPro,
     })
 
@@ -139,6 +127,7 @@ export async function POST(request: NextRequest) {
       domain: getDomain(normalizedUrl),
       scores,
       ai_report: isPro ? aiReport : previewReport,
+      seo_hook: seoHook,
       scan_id: scanId,
       plan: userPlan,
       isAiUnlocked: isPro,

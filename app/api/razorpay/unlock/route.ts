@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedProfile } from '@/lib/auth-server'
 import { getRazorpay, CURRENCY, verifyPaymentSignature } from '@/lib/razorpay'
 import { adminDb } from '@/lib/firebase-admin'
-import { generateMasterReport } from '@/services/ai-master-report'
+import { generateAiMasterReport, generateSeoBlogHook } from '@/services/ai-master-report'
 import { sendFullReportEmail } from '@/services/email'
 
 export async function POST(request: NextRequest) {
@@ -54,15 +54,18 @@ export async function POST(request: NextRequest) {
       const scanData = scanDoc.data()
       if (scanData?.userId !== profile.uid) return NextResponse.json({ error: 'Unauthorized.' }, { status: 403 })
 
-      // Step 4: On successful payment: 1. Run generateMasterReport() with the saved crawl data
+      // Step 4: On successful payment: 1. Run generateAiMasterReport() with the saved crawl data
       let finalAiReport = scanData.aiReport
+      let finalSeoHook = scanData.seoHook
       if (scanData.crawlData) {
         console.log('[unlock] Generating fresh master report upon payment...');
-        finalAiReport = await generateMasterReport(scanData.crawlData)
+        finalAiReport = await generateAiMasterReport(scanData.crawlData)
+        finalSeoHook = await generateSeoBlogHook(scanData.crawlData, finalAiReport)
       }
 
       await scanRef.update({
         aiReport: finalAiReport,
+        seoHook: finalSeoHook || null,
         isAiUnlocked: true,
         unlockedAt: new Date().toISOString()
       })

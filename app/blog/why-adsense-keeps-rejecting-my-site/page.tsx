@@ -6,14 +6,14 @@ import { AlertCircle, CheckCircle2, ArrowRight } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes (2026 Complete Guide)',
-  description: 'AdSense keeps rejecting your website? Here are the 8 most common reasons Google rejects AdSense applications — and exactly how to fix each one. Use our free AdSense approval checker to diagnose your site.',
-  keywords: ['adsense keeps rejecting my site', 'why adsense rejected my application', 'adsense rejection reasons', 'adsense approval checker', 'fix adsense rejection'],
+  title: 'Common Reasons for Google AdSense Rejection & How to Fix Them',
+  description: 'Why is AdSense taking so long? Learn the Google AdSense common rejection reasons and the official Google AdSense rejection reasons to get your site approved fast.',
+  keywords: ['reasons of google adsense rejection', 'google adsense common rejection reasons', 'why is adsense taking so long', 'google adsense rejection reasons official'],
   alternates: { canonical: 'https://www.adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site' },
   openGraph: {
     type: 'article',
-    title: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes',
-    description: 'The 8 most common reasons Google rejects AdSense applications and how to fix them.',
+    title: 'Common Reasons for Google AdSense Rejection & How to Fix Them',
+    description: 'The official reasons Google rejects AdSense applications and how to fix them.',
     url: 'https://www.adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site',
     siteName: 'AdSense Approval Checker AI',
   },
@@ -22,8 +22,8 @@ export const metadata: Metadata = {
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
-  headline: 'Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes',
-  description: 'The 8 most common reasons Google rejects AdSense applications and how to fix them.',
+  headline: 'Common Reasons for Google AdSense Rejection & How to Fix Them',
+  description: 'The official reasons Google rejects AdSense applications and how to fix them.',
   url: 'https://www.adsensechecker.in/blog/why-adsense-keeps-rejecting-my-site',
   datePublished: '2025-01-01',
   dateModified: '2025-04-23',
@@ -105,7 +105,7 @@ export default function WhyAdsenseKeepsRejectingMySite() {
             AdSense Guide
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-foreground mb-4 leading-tight">
-            Why Does AdSense Keep Rejecting My Site? 8 Real Reasons + Fixes
+            Official Google AdSense Rejection Reasons & How to Fix Them
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
             Getting rejected by Google AdSense is frustrating — especially when the rejection email gives you almost no useful information. Here are the 8 most common reasons AdSense rejects websites, and exactly how to fix each one.
@@ -158,6 +158,13 @@ export default function WhyAdsenseKeepsRejectingMySite() {
                 </Button>
               </Link>
             </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-black text-foreground mb-4 mt-8">FAQ: Why is AdSense taking so long?</h2>
+            <p className="text-muted-foreground leading-relaxed mb-4">
+              If your AdSense application is taking longer than 2 weeks, it usually means your site is in a "borderline" state. Google's automated systems couldn't immediately approve or reject it, so it's waiting for a manual review by a human. During this time, continue publishing high-quality content and ensure you are getting some organic traffic.
+            </p>
           </section>
 
         </div>

@@ -3,12 +3,27 @@ import { SiteFooter } from '@/components/site-footer'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Bot, CheckCircle2, AlertOctagon } from 'lucide-react'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Does Google AdSense Allow AI Content? Avoid Rejection (2026)',
+  description: 'Can you get AdSense approval with AI-generated content? Learn why AdSense AI generated content rejection happens and how to avoid it.',
+  keywords: ['adsense ai generated content rejection', 'does google adsense allow ai content', 'adsense approval ai content', 'chatgpt adsense approval'],
+  alternates: { canonical: 'https://www.adsensechecker.in/blog/does-google-adsense-allow-ai-content' },
+  openGraph: {
+    type: 'article',
+    title: 'Does Google AdSense Allow AI Content? Avoid Rejection',
+    description: 'Learn why AdSense AI generated content rejection happens and how to avoid it.',
+    url: 'https://www.adsensechecker.in/blog/does-google-adsense-allow-ai-content',
+    siteName: 'AdSense Approval Checker AI',
+  },
+}
 
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
-  headline: 'Does Google AdSense Allow AI Content? 2026 Guidelines Explained',
-  description: 'Can you get AdSense approval with AI-generated content from ChatGPT or Jasper? We explain Google\'s official stance and policy guidelines for 2026.',
+  headline: 'Does Google AdSense Allow AI Content? Avoid Rejection',
+  description: 'Learn why AdSense AI generated content rejection happens and how to avoid it.',
   image: 'https://www.adsensechecker.in/og-image.png',
   author: {
     '@type': 'Person',
@@ -33,7 +48,7 @@ const breadcrumbSchema = {
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.adsensechecker.in' },
     { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.adsensechecker.in/blog' },
-    { '@type': 'ListItem', position: 3, name: 'Does AdSense Allow AI Content?', item: 'https://www.adsensechecker.in/blog/does-google-adsense-allow-ai-content' }
+    { '@type': 'ListItem', position: 3, name: 'Avoid AI Content Rejection', item: 'https://www.adsensechecker.in/blog/does-google-adsense-allow-ai-content' }
   ]
 }
 
@@ -50,7 +65,7 @@ export default function AdsenseAiContent() {
             Policies & Guidelines
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-foreground mb-4 leading-tight">
-            Does Google AdSense Allow AI Content? 2026 Guidelines Explained
+            Does Google AdSense Allow AI Content? Avoid Rejection (2026)
           </h1>
           <div className="flex items-center gap-3 text-sm text-muted-foreground mb-6">
             <span className="font-semibold text-foreground">By Archit Karmakar</span>
@@ -138,10 +153,10 @@ export default function AdsenseAiContent() {
           </p>
         </div>
       
-          <div className="mt-12 p-6 bg-primary/5 rounded-2xl border border-primary/20">
-            <h3 className="text-xl font-bold mb-2 text-foreground">Ready to get approved?</h3>
-            <p className="text-muted-foreground">Use our AI-powered tool to <Link href="/" className="text-primary hover:underline font-bold">test your website for AdSense</Link> and get a step-by-step roadmap to monetization.</p>
-          </div>
+        <div className="mt-12 p-6 bg-primary/5 rounded-2xl border border-primary/20">
+          <h3 className="text-xl font-bold mb-2 text-foreground">Ready to get approved?</h3>
+          <p className="text-muted-foreground">Use our AI-powered tool to <Link href="/" className="text-primary hover:underline font-bold">test your website for AdSense</Link> and get a step-by-step roadmap to monetization.</p>
+        </div>
   
       </article>
       <SiteFooter />

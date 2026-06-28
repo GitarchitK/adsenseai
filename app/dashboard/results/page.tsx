@@ -88,8 +88,19 @@ export default function ResultsPage() {
   useEffect(() => {
     if (data) {
       const ai = data.ai_report || {}
-      const overallScore = ai.overallScore ?? data.scores?.final_score ?? 0
-      document.title = `AdSense Readiness Report for ${data.domain} — Score: ${overallScore}/100`;
+      const seo = data.seo_hook || {}
+      const overallScore = ai.readinessScore ?? data.scores?.final_score ?? 0
+      document.title = seo.metaTitle || `AdSense Readiness Report for ${data.domain} — Score: ${overallScore}/100`;
+      
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if (!metaDesc && seo.metaDescription) {
+        metaDesc = document.createElement('meta');
+        metaDesc.setAttribute('name', 'description');
+        document.head.appendChild(metaDesc);
+      }
+      if (metaDesc && seo.metaDescription) {
+        metaDesc.setAttribute('content', seo.metaDescription);
+      }
     }
   }, [data]);
 
@@ -104,8 +115,9 @@ export default function ResultsPage() {
   }
 
   const ai = data.ai_report || {}
-  const overallScore = ai.overallScore ?? data.scores?.final_score ?? 0
-  const readiness = ai.readinessLevel ?? data.statusLabel ?? 'Unknown'
+  const seo = data.seo_hook || {}
+  const overallScore = ai.readinessScore ?? data.scores?.final_score ?? 0
+  const readiness = ai.approvalChance ?? data.statusLabel ?? 'Unknown'
   
   const scoreColor = overallScore >= 70 ? 'text-emerald-500' : overallScore >= 50 ? 'text-amber-500' : 'text-red-500'
 
@@ -114,8 +126,8 @@ export default function ResultsPage() {
     "@graph": [
       {
         "@type": "WebPage",
-        name: `AdSense Readiness Report: ${data.domain}`,
-        description: `AdSense readiness score ${overallScore}/100 for ${data.domain}. Niche: ${ai.nicheAnalysis?.mainNiche}. Approval chance: ${ai.estimatedApprovalChance?.percentage}%.`,
+        name: seo.metaTitle || `AdSense Readiness Report: ${data.domain}`,
+        description: seo.metaDescription || `AdSense readiness score ${overallScore}/100 for ${data.domain}. Niche: ${ai.detectedNiche}. Approval chance: ${ai.approvalChancePercent}%.`,
         url: `https://www.adsensechecker.in/dashboard/results`,
         breadcrumb: {
           "@type": "BreadcrumbList",
@@ -124,21 +136,24 @@ export default function ResultsPage() {
             { "@type": "ListItem", position: 2, name: `Report for ${data.domain}` },
           ],
         },
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: ai.topIssues?.map((issue: any) => ({
-          "@type": "Question",
-          name: `How to fix: ${issue.issue} on ${data.domain}?`,
-          acceptedAnswer: { "@type": "Answer", text: issue.detail }
-        })) || []
-      },
+      }
     ],
   }
+  
+  const faqSchemaString = seo.faqSchema ? seo.faqSchema : JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: ai.top3Issues?.map((issue: any) => ({
+      "@type": "Question",
+      name: `How to fix: ${issue.title} on ${data.domain}?`,
+      acceptedAnswer: { "@type": "Answer", text: issue.basicDetail }
+    })) || []
+  })
 
   return (
     <div className="min-h-screen bg-background pb-20">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(resultsSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqSchemaString }} />
       <div className="container mx-auto px-4 md:px-6 py-8 max-w-4xl space-y-8">
         
         <div className="flex items-center justify-between">
@@ -167,13 +182,12 @@ export default function ResultsPage() {
             
             <div className="space-y-4 bg-muted/30 p-5 rounded-2xl border border-border/50">
               <div>
-                <p className="text-xs font-bold text-muted-foreground uppercase">Niche Analysis</p>
-                <p className="text-sm font-medium">{ai.nicheAnalysis?.mainNiche} → {ai.nicheAnalysis?.subNiche}</p>
-                <p className="text-xs text-muted-foreground mt-1">{ai.nicheAnalysis?.nicheComment}</p>
+                <p className="text-xs font-bold text-muted-foreground uppercase">Detected Niche</p>
+                <p className="text-sm font-medium">{ai.detectedNiche || 'Analyzing...'}</p>
               </div>
               <div>
                 <p className="text-xs font-bold text-muted-foreground uppercase">Approval Chance</p>
-                <p className="text-lg font-black text-primary">{ai.estimatedApprovalChance?.percentage}%</p>
+                <p className="text-lg font-black text-primary">{ai.approvalChancePercent ?? 0}%</p>
               </div>
             </div>
           </div>
@@ -181,31 +195,37 @@ export default function ResultsPage() {
 
         <div className="grid md:grid-cols-2 gap-6">
           <Card className="p-6 rounded-2xl border-emerald-500/20 bg-emerald-500/5">
-            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase mb-2 flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Main Strength</p>
-            <p className="text-sm font-medium">{ai.estimatedApprovalChance?.mainStrength}</p>
+            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase mb-4 flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Top Strengths</p>
+            <ul className="space-y-3">
+              {ai.strengths?.map((s: any, i: number) => (
+                <li key={i} className="text-sm font-medium"><span className="text-emerald-500 font-bold">{s.title}:</span> {s.detail}</li>
+              )) || <p className="text-sm">Calculating...</p>}
+            </ul>
           </Card>
           <Card className="p-6 rounded-2xl border-red-500/20 bg-red-500/5">
-            <p className="text-xs font-bold text-red-600 dark:text-red-400 uppercase mb-2 flex items-center gap-2"><AlertTriangle className="h-4 w-4" /> Main Risk</p>
-            <p className="text-sm font-medium">{ai.estimatedApprovalChance?.mainRisk}</p>
+            <p className="text-xs font-bold text-red-600 dark:text-red-400 uppercase mb-4 flex items-center gap-2"><AlertTriangle className="h-4 w-4" /> Main Risks</p>
+            <ul className="space-y-3">
+              {ai.risks?.map((r: any, i: number) => (
+                <li key={i} className="text-sm font-medium"><span className="text-red-500 font-bold">{r.title}:</span> {r.detail}</li>
+              )) || <p className="text-sm">Calculating...</p>}
+            </ul>
           </Card>
         </div>
-
-        <Card className="p-6 rounded-3xl border-primary/20 bg-primary/5">
-          <p className="text-xs font-bold text-primary uppercase mb-2 flex items-center gap-2"><Clock className="h-4 w-4" /> When to Apply</p>
-          <p className="text-sm font-semibold">{ai.whenToApply?.reason}</p>
-        </Card>
 
         <div>
           <h2 className="text-xl font-black mb-4">Top Issues Found</h2>
           <div className="space-y-4">
-            {ai.topIssues?.map((issue: any, i: number) => (
+            {ai.top3Issues?.map((issue: any, i: number) => (
               <div key={i} className="p-5 rounded-2xl border border-border/60 bg-card flex flex-col sm:flex-row gap-4">
                 <div className="flex-shrink-0 mt-1">
-                  {issue.severity === 'critical' ? <AlertTriangle className="h-6 w-6 text-red-500" /> : <AlertTriangle className="h-6 w-6 text-amber-500" />}
+                  {issue.priorityLabel === 'Critical' ? <AlertTriangle className="h-6 w-6 text-red-500" /> : <AlertTriangle className="h-6 w-6 text-amber-500" />}
                 </div>
                 <div className="flex-1">
-                  <p className="text-base font-bold text-foreground mb-1">{issue.issue}</p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{issue.detail}</p>
+                  <div className="flex justify-between items-start mb-1">
+                    <p className="text-base font-bold text-foreground">{issue.title}</p>
+                    <span className="text-xs font-bold px-2 py-1 rounded-md bg-muted">{issue.priorityLabel}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{issue.basicDetail}</p>
                   
                   <div className="mt-4 p-4 rounded-xl bg-muted/30 border border-border/30 relative overflow-hidden group cursor-pointer" onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}>
                      <div className="filter blur-[4px] opacity-70 pointer-events-none select-none">

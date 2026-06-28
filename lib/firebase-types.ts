@@ -32,7 +32,9 @@ export interface ScanRecord {
   // Full crawl data — saved for later so user can unlock AI report without re-crawling
   crawlData: Record<string, unknown> | null
   // AI report — null until unlocked (pay-per-report or pro)
-  aiReport: Record<string, unknown> | null
+  aiReport: AiReportV2 | null
+  // SEO Hook for the platform's SEO
+  seoHook?: Record<string, unknown> | null
   isAiUnlocked: boolean   // true if user paid ₹19 or is Pro
   createdAt: string
 }
@@ -127,88 +129,173 @@ export interface DeepCrawlResult {
   policyViolationKeywords: string[];
 }
 
-export interface MasterReport {
-  overallScore: number;
-  readinessLevel: 'not_ready' | 'almost_ready' | 'ready';
+export interface AiReportV2 {
+  // ── Identity ───────────────────────────────────────────────
+  detectedNiche: string;
+  nicheRiskLevel: "low" | "medium" | "high";
+  nicheRiskReason: string;
 
-  whenToApply: {
-    recommendation: 'apply_now' | 'wait_X_weeks' | 'major_work_needed';
-    weeksToWait: number | null;
-    reason: string;
-  };
+  // ── Scores ────────────────────────────────────────────────
+  readinessScore: number; // 0-100
+  approvalChance: "Very High" | "High" | "Moderate" | "Low" | "Very Low";
+  approvalChancePercent: number; // e.g. 72
 
-  nicheAnalysis: {
-    mainNiche: string;
-    subNiche: string;
-    nicheViability: 'excellent' | 'good' | 'risky' | 'blocked';
-    nicheComment: string;
-    consistencyIssues: string | null;
-  };
+  // ── Strengths & Risks (teaser — shown free) ───────────────
+  strengths: Array<{ title: string; detail: string }>;
+  risks: Array<{ title: string; detail: string }>;
 
-  contentAnalysis: {
-    score: number;
-    verdict: string;
-    strengths: string[];
-    problems: ReportIssue[];
-  };
+  // ── Top 3 Issues (teaser titles shown free, fix steps locked) ─
+  top3Issues: Array<{
+    rank: number;
+    title: string; // shown free
+    basicDetail: string; // shown free (1 sentence)
+    impactScore: number; // 1-10
+    effortScore: number; // 1-10 (lower = easier)
+    priorityLabel: "Critical" | "High" | "Medium";
+    howToFix: string[]; // LOCKED behind ₹19 — step-by-step
+    estimatedTimeToFix: string; // e.g. "2 hours"
+    seoImpact: string; // LOCKED — how fixing this also helps SEO ranking
+  }>;
 
-  policyCompliance: {
-    score: number;
-    verdict: string;
-    violations: ReportIssue[];
-    missingPages: MissingPage[];
-  };
+  // ── Full Issue List (LOCKED) ───────────────────────────────
+  allIssues: Array<{
+    category:
+      | "Content"
+      | "Technical"
+      | "Policy"
+      | "CoreWebVitals"
+      | "Schema"
+      | "EEAT"
+      | "UX";
+    title: string;
+    detail: string;
+    impactScore: number;
+    effortScore: number;
+    priorityLabel: "Critical" | "High" | "Medium" | "Low";
+    howToFix: string[];
+    estimatedTimeToFix: string;
+    seoImpact: string;
+  }>;
 
+  // ── Technical Health (LOCKED) ─────────────────────────────
   technicalHealth: {
-    score: number;
-    verdict: string;
-    issues: ReportIssue[];
+    coreWebVitals: {
+      lcp: { status: "pass" | "needs-work" | "fail"; detail: string };
+      cls: { status: "pass" | "needs-work" | "fail"; detail: string };
+      fid: { status: "pass" | "needs-work" | "fail"; detail: string };
+      overallVerdict: string;
+      howToImprove: string[];
+    };
+    schemaMarkup: {
+      present: string[];
+      missing: string[];
+      recommendation: string;
+      codeSnippet: string; // actual JSON-LD snippet for their niche
+    };
+    httpsAndSecurity: { status: "pass" | "fail"; detail: string };
+    mobileFriendliness: { status: "pass" | "fail"; detail: string };
+    sitemapAndRobots: { status: "pass" | "fail"; detail: string };
+    pageSpeed: {
+      mobile: string;
+      desktop: string;
+      topRecommendation: string;
+    };
   };
 
-  trustSignals: {
-    score: number;
-    verdict: string;
-    issues: ReportIssue[];
+  // ── Content Analysis (LOCKED) ─────────────────────────────
+  contentAnalysis: {
+    averageWordCount: number;
+    minimumRequired: number; // what AdSense actually needs for this niche
+    thinContentPages: number;
+    eeatSignals: {
+      authorByline: boolean;
+      publishDates: boolean;
+      socialProof: boolean;
+      verdict: string;
+      howToImprove: string;
+    };
+    nicheConsistency: "consistent" | "mixed" | "scattered";
+    nicheConsistencyDetail: string;
+    headingStructureScore: number; // 0-100
+    headingFeedback: string;
   };
 
-  actionPlan: {
-    phase1_critical: { label: string; tasks: ActionTask[] };
-    phase2_important: { label: string; tasks: ActionTask[] };
-    phase3_optional: { label: string; tasks: ActionTask[] };
+  // ── Competitor Gap (LOCKED) ────────────────────────────────
+  competitorGap: {
+    topCompetitorDomain: string;
+    thingsTheyDoThatYouDont: string[];
+    yourAdvantages: string[];
+    quickWinsToCloseGap: string[];
   };
 
-  applicationReadinessChecklist: ChecklistItem[];
-
-  estimatedApprovalChance: {
-    percentage: number;
-    mainRisk: string;
-    mainStrength: string;
+  // ── Policy Compliance (LOCKED) ────────────────────────────
+  policyCompliance: {
+    mandatoryPagesStatus: {
+      privacy: { present: boolean; fix?: string };
+      about: { present: boolean; fix?: string };
+      terms: { present: boolean; fix?: string };
+      contact: { present: boolean; fix?: string };
+    };
+    restrictedContentFlags: string[];
+    existingAdNetworkConflicts: string[];
+    overallPolicyVerdict: "Clean" | "Minor Issues" | "Major Issues";
   };
-}
 
-export interface ReportIssue {
-  issue: string;
-  severity: 'critical' | 'high' | 'medium' | 'low';
-  detail: string;
-  howToFix: string;
-  timeToFix: string;
-}
+  // ── SEO Health (LOCKED — also feeds YOUR site's ranking) ──
+  seoHealth: {
+    metaTagsScore: number; // 0-100
+    internalLinkingScore: number;
+    keywordFocusVerdict: string;
+    missingQuickWins: string[]; // things Google loves that they're missing
+    estimatedTimeToRank: string; // after fixing everything
+  };
 
-export interface ActionTask {
-  task: string;
-  detail: string;
-  estimatedTime: string;
-  impact: 'high' | 'medium';
-}
+  // ── Master Action Plan — 3 Phases (LOCKED) ────────────────
+  masterActionPlan: {
+    phase1: {
+      title: string;
+      estimatedTime: string;
+      tasks: Array<{
+        task: string;
+        why: string;
+        exactSteps: string[];
+        toolsNeeded: string[];
+      }>;
+    };
+    phase2: {
+      title: string;
+      estimatedTime: string;
+      tasks: Array<{
+        task: string;
+        why: string;
+        exactSteps: string[];
+        toolsNeeded: string[];
+      }>;
+    };
+    phase3: {
+      title: string;
+      estimatedTime: string;
+      tasks: Array<{
+        task: string;
+        why: string;
+        exactSteps: string[];
+        toolsNeeded: string[];
+      }>;
+    };
+  };
 
-export interface ChecklistItem {
-  item: string;
-  status: 'done' | 'not_done' | 'partial';
-  priority: 'critical' | 'high' | 'medium';
-}
+  // ── Pre-Application Checklist (LOCKED) ────────────────────
+  preApplicationChecklist: Array<{
+    item: string;
+    status: "done" | "not-done" | "unknown";
+    isBlocker: boolean; // if not done, will cause rejection?
+  }>;
 
-export interface MissingPage {
-  page: 'Privacy Policy' | 'About' | 'Contact' | 'Terms' | 'Disclaimer';
-  importance: 'critical' | 'high' | 'medium';
-  howToCreate: string;
+  // ── SEO Blog Hook (used internally for YOUR SEO content) ──
+  seoInsights: {
+    primaryKeywordOpportunity: string; // e.g. "adsense approval for cooking blogs"
+    longTailKeywords: string[];
+    featuredSnippetOpportunity: string; // a question this site could rank for
+    schemaTypeRecommended: string;
+  };
 }
