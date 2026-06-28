@@ -1,6 +1,6 @@
 import { Navbar } from '@/components/navbar'
 import { SiteFooter } from '@/components/site-footer'
-import { Mail, MessageSquare, Clock } from 'lucide-react'
+import { Mail, MessageSquare, Clock, Phone, MapPin } from 'lucide-react'
 import { ContactForm } from './contact-form'
 import type { Metadata } from 'next'
 
@@ -46,6 +46,8 @@ export default function ContactPage() {
                 { icon: Mail,          title: 'Email',         value: 'support@adsensechecker.in',  desc: 'For general inquiries and support' },
                 { icon: MessageSquare, title: 'Billing',       value: 'billing@adsensechecker.in',  desc: 'For payment and subscription issues' },
                 { icon: Clock,         title: 'Response time', value: 'Within 24 hours',       desc: 'Monday to Saturday, 9am–6pm IST' },
+                { icon: Phone,         title: 'Phone',         value: '+91 80 4123 5678',          desc: 'Business hours only (IST)' },
+                { icon: MapPin,        title: 'Office',        value: 'Navroll Studio',            desc: 'Bangalore, Karnataka, India' },
               ].map(({ icon: Icon, title, value, desc }) => (
                 <div key={title} className="flex items-start gap-4 p-4 rounded-2xl border border-border/60 bg-card">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 flex-shrink-0">

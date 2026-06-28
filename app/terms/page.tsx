@@ -47,27 +47,31 @@ export default function TermsPage() {
               content: 'AdSense Checker AI is completely free to use.',
             },
             {
-              title: '6. Disclaimer of Warranties',
+              title: '6. Links to Other Websites',
+              content: 'Our Service may contain links to third-party web sites or services that are not owned or controlled by AdSense Checker AI. We have no control over, and assume no responsibility for, the content, privacy policies, or practices of any third party web sites or services. You further acknowledge and agree that we shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with the use of or reliance on any such content, goods or services available on or through any such web sites or services.',
+            },
+            {
+              title: '7. Disclaimer of Warranties',
               content: 'AdSense Checker AI provides analysis based on publicly available information and AI models. We do not guarantee AdSense approval. Google\'s approval decisions are made solely by Google and are subject to their policies, which may change at any time.',
             },
             {
-              title: '7. Limitation of Liability',
+              title: '8. Limitation of Liability',
               content: 'To the maximum extent permitted by law, AdSense Checker AI shall not be liable for any indirect, incidental, or consequential damages arising from your use of the Service, including but not limited to AdSense rejection or loss of revenue.',
             },
             {
-              title: '8. Intellectual Property',
+              title: '9. Intellectual Property',
               content: 'The AdSense Checker AI platform, including its AI models, scoring algorithms, and interface, is our intellectual property. You retain ownership of your website content.',
             },
             {
-              title: '9. Termination',
+              title: '10. Termination',
               content: 'We reserve the right to suspend or terminate accounts that violate these Terms. You may delete your account at any time from the Settings page.',
             },
             {
-              title: '10. Governing Law',
+              title: '11. Governing Law',
               content: 'These Terms are governed by the laws of India. Any disputes shall be subject to the exclusive jurisdiction of courts in India.',
             },
             {
-              title: '11. Contact',
+              title: '12. Contact',
               content: 'For questions about these Terms, contact us at: legal@adsensechecker.in',
             },
           ].map(({ title, content }) => (

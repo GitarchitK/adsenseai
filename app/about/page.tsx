@@ -48,13 +48,24 @@ export default function AboutPage() {
             </p>
             <div className="pt-6 border-t border-border/60">
               <p className="text-xs font-bold text-foreground uppercase tracking-widest mb-4">The Team</p>
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                  TD
+              <div className="flex items-center gap-8">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                    AK
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground">Archit Karmakar</p>
+                    <p className="text-xs text-muted-foreground">AdSense Expert & Editor</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-bold text-foreground">Tiyasha Dewan</p>
-                  <p className="text-xs text-muted-foreground">Founder & Lead Strategy</p>
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                    TD
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground">Tiyasha Dewan</p>
+                    <p className="text-xs text-muted-foreground">Lead Strategy</p>
+                  </div>
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mt-6 leading-relaxed">

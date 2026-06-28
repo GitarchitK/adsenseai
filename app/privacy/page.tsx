@@ -82,23 +82,49 @@ Third-party vendors, including Google, use cookies to serve ads based on a user'
 Contact us at support@adsensechecker.in to exercise these rights.`,
             },
             {
-              title: '8. Children\'s Privacy',
+              title: '8. Log Files and Web Beacons',
+              content: `Like many other websites, AdSense Checker AI makes use of log files. The information inside the log files includes internet protocol (IP) addresses, type of browser, Internet Service Provider (ISP), date/time stamp, referring/exit pages, and number of clicks to analyze trends, administer the site, track user's movement around the site, and gather demographic information. IP addresses and other such information are not linked to any information that is personally identifiable.
+              
+We may also use web beacons (clear GIFs, pixel tags) to track the online usage patterns of our users anonymously, such as which emails are opened.`,
+            },
+            {
+              title: '9. CCPA Privacy Rights (Do Not Sell My Personal Information)',
+              content: `Under the CCPA, among other rights, California consumers have the right to:
+• Request that a business that collects a consumer's personal data disclose the categories and specific pieces of personal data that a business has collected about consumers.
+• Request that a business delete any personal data about the consumer that a business has collected.
+• Request that a business that sells a consumer's personal data, not sell the consumer's personal data.
+
+If you make a request, we have one month to respond to you. If you would like to exercise any of these rights, please contact us.`,
+            },
+            {
+              title: '10. GDPR Data Protection Rights',
+              content: `We would like to make sure you are fully aware of all of your data protection rights. Every user is entitled to the following:
+• The right to access – You have the right to request copies of your personal data.
+• The right to rectification – You have the right to request that we correct any information you believe is inaccurate.
+• The right to erasure – You have the right to request that we erase your personal data, under certain conditions.
+• The right to restrict processing – You have the right to request that we restrict the processing of your personal data, under certain conditions.
+• The right to object to processing – You have the right to object to our processing of your personal data, under certain conditions.
+• The right to data portability – You have the right to request that we transfer the data that we have collected to another organization, or directly to you, under certain conditions.`,
+            },
+            {
+              title: '11. Children\'s Privacy',
               content: `AdSense Checker AI is not directed at children under 13 years of age. We do not knowingly collect personal information from children under 13. If you believe we have collected information from a child under 13, please contact us immediately at privacy@adsensechecker.in.`,
             },
             {
-              title: '9. Security',
+              title: '12. Security',
               content: `We use industry-standard security measures including HTTPS encryption, Firebase security rules, and Razorpay's PCI-DSS compliant payment processing. However, no system is 100% secure.`,
             },
             {
-              title: '10. Changes to This Policy',
+              title: '13. Changes to This Policy',
               content: `We may update this Privacy Policy from time to time. We will notify you of significant changes via email or a notice on our website. The "Last updated" date at the top of this page indicates when this policy was last revised.`,
             },
             {
-              title: '11. Contact Us',
+              title: '14. Contact Us',
               content: `For privacy-related questions or to exercise your rights, contact us at:
 Email: privacy@adsensechecker.in
 Website: www.adsensechecker.in/contact
-Company: Navroll Studio`,
+Company: Navroll Studio
+Address: Bangalore, Karnataka, India`,
             },
           ].map(({ title, content }) => (
             <div key={title}>

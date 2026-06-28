@@ -42,18 +42,23 @@ const blogPosts: Array<{ slug: string; date: string; priority: number }> = [
   { slug: 'monetize-website-without-adsense',       date: '2026-05-17', priority: 0.75 },
   { slug: 'how-many-articles-for-adsense-approval', date: '2026-05-17', priority: 0.75 },
   { slug: 'adsense-approval-time',                  date: '2026-05-17', priority: 0.75 },
+  // New Additions (2026-06-28)
+  { slug: 'adsense-requirements-for-wordpress',     date: '2026-06-28', priority: 0.85 },
+  { slug: 'adsense-getting-ready-status',           date: '2026-06-28', priority: 0.80 },
+  { slug: 'mandatory-pages-for-adsense-approval',   date: '2026-06-28', priority: 0.80 },
+  { slug: 'minimum-traffic-for-adsense-approval',   date: '2026-06-28', priority: 0.80 },
 ]
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     // Core pages
-    { url: BASE,                  lastModified: new Date('2026-05-17'), changeFrequency: 'weekly',  priority: 1.0 },
+    { url: BASE,                  lastModified: new Date('2026-06-28'), changeFrequency: 'weekly',  priority: 1.0 },
     { url: `${BASE}/pricing`,     lastModified: new Date('2026-05-17'), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${BASE}/blog`,        lastModified: new Date('2026-05-17'), changeFrequency: 'weekly',  priority: 0.9 },
-    { url: `${BASE}/about`,       lastModified: new Date('2026-05-17'), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${BASE}/contact`,     lastModified: new Date('2026-05-17'), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${BASE}/privacy`,     lastModified: new Date('2026-05-17'), changeFrequency: 'yearly',  priority: 0.4 },
-    { url: `${BASE}/terms`,       lastModified: new Date('2026-05-17'), changeFrequency: 'yearly',  priority: 0.4 },
+    { url: `${BASE}/blog`,        lastModified: new Date('2026-06-28'), changeFrequency: 'weekly',  priority: 0.9 },
+    { url: `${BASE}/about`,       lastModified: new Date('2026-06-28'), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE}/contact`,     lastModified: new Date('2026-06-28'), changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${BASE}/privacy`,     lastModified: new Date('2026-06-28'), changeFrequency: 'yearly',  priority: 0.4 },
+    { url: `${BASE}/terms`,       lastModified: new Date('2026-06-28'), changeFrequency: 'yearly',  priority: 0.4 },
     { url: `${BASE}/disclaimer`,  lastModified: new Date('2026-05-17'), changeFrequency: 'yearly',  priority: 0.4 },
     // Blog posts
     ...blogPosts.map(({ slug, date, priority }) => ({
