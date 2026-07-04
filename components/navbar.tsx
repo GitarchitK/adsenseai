@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Moon, Sun, LayoutDashboard, LogOut, User } from 'lucide-react'
+import { Moon, Sun, LayoutDashboard, LogOut, User, Menu, X } from 'lucide-react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { signOut } from '@/lib/auth'
@@ -17,6 +17,7 @@ export function Navbar() {
   const [mounted, setMounted] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { profile } = useProfile()
 
   useEffect(() => {
@@ -134,8 +135,60 @@ export function Navbar() {
             {mounted && (theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />)}
             <span className="sr-only">Toggle theme</span>
           </Button>
+
+          {/* Mobile menu toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden h-9 w-9 rounded-xl ml-1"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
         </div>
       </div>
+
+      {/* Mobile Menu Panel */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden border-t border-border/60 bg-background/95 backdrop-blur-xl px-6 py-4 space-y-4 shadow-lg absolute w-full left-0 top-full">
+          <Link 
+            href="/#features" 
+            className="block text-sm font-medium text-foreground hover:text-violet-500 transition-colors"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Features
+          </Link>
+          <Link 
+            href="/blog" 
+            className="block text-sm font-medium text-foreground hover:text-violet-500 transition-colors"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Blog
+          </Link>
+          
+          {mounted && isLoggedIn && profile?.activePlanId && (
+            <Link 
+              href="/dashboard/plan" 
+              className="block text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              My Plan
+            </Link>
+          )}
+
+          {mounted && isLoggedIn && (
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false)
+                handleSignOut()
+              }}
+              className="block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left w-full"
+            >
+              Sign Out
+            </button>
+          )}
+        </div>
+      )}
     </nav>
   )
 }
