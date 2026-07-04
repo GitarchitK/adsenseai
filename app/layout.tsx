@@ -85,6 +85,7 @@ export const metadata: Metadata = {
     google: 'your-google-search-console-verification-code',
     other: {
       'msvalidate.01': '29C7545485F5ABB5BD2957F43DD88E7B',
+      'google-adsense-account': 'ca-pub-8903097794149189',
     },
   },
 }
