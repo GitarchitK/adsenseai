@@ -23,7 +23,7 @@ export function PlanProgress({ currentDay, totalDays, currentScore, scoreDelta }
           </p>
         </div>
         <div className="text-right">
-          <div className="text-2xl font-black text-gray-900">{currentScore}/100</div>
+          <div className="text-2xl font-black text-gray-900">{typeof currentScore === 'object' && currentScore !== null && 'score' in currentScore ? (currentScore as any).score : currentScore}/100</div>
           {scoreDelta > 0 && (
             <div className="text-sm font-semibold text-green-600">+{scoreDelta} since start</div>
           )}

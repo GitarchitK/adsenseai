@@ -116,7 +116,8 @@ export default function ResultsPage() {
 
   const ai = data.ai_report || {}
   const seo = data.seo_hook || {}
-  const overallScore = ai.readinessScore ?? data.scores?.final_score ?? 0
+  const rawReadiness = typeof ai.readinessScore === 'object' && ai.readinessScore !== null && 'score' in ai.readinessScore ? (ai.readinessScore as any).score : ai.readinessScore;
+  const overallScore = rawReadiness ?? data.scores?.final_score ?? 0
   const readiness = ai.approvalChance ?? data.statusLabel ?? 'Unknown'
   
   const scoreColor = overallScore >= 70 ? 'text-emerald-500' : overallScore >= 50 ? 'text-amber-500' : 'text-red-500'

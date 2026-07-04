@@ -154,7 +154,9 @@ export default function FullReportPage() {
                 />
               </div>
             </div>
-            <div className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Readiness: {ai.readinessScore}/100</div>
+            <div className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
+              Readiness: {typeof ai.readinessScore === 'object' && ai.readinessScore !== null && 'score' in ai.readinessScore ? (ai.readinessScore as any).score : ai.readinessScore}/100
+            </div>
           </div>
         </div>
 

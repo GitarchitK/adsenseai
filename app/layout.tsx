@@ -325,7 +325,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {/* AdSense */}
         <Script
           id="adsense-script"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6517018802484773"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8903097794149189"
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />

@@ -25,15 +25,16 @@ interface ScanRow {
   createdAt: string
 }
 
-function ScoreBadge({ score }: { score: number }) {
-  const cls = score >= 80
+function ScoreBadge({ score }: { score: number | any }) {
+  const numericScore = typeof score === 'object' && score !== null && 'score' in score ? score.score : score;
+  const cls = numericScore >= 80
     ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-800/50'
-    : score >= 60
+    : numericScore >= 60
     ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 ring-amber-200 dark:ring-amber-800/50'
     : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 ring-red-200 dark:ring-red-800/50'
   return (
     <div className={`flex h-10 w-10 items-center justify-center rounded-full ring-1 text-sm font-black flex-shrink-0 ${cls}`}>
-      {score}
+      {numericScore}
     </div>
   )
 }

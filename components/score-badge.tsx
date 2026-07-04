@@ -1,12 +1,13 @@
 import { cn } from '@/lib/utils'
 
 interface ScoreBadgeProps {
-  score: number
+  score: number | any
   size?: 'sm' | 'md' | 'lg'
   showLabel?: boolean
 }
 
-export function ScoreBadge({ score, size = 'md', showLabel = true }: ScoreBadgeProps) {
+export function ScoreBadge({ score: rawScore, size = 'md', showLabel = true }: ScoreBadgeProps) {
+  const score = typeof rawScore === 'object' && rawScore !== null && 'score' in rawScore ? (rawScore as any).score : rawScore;
   const getColor = (s: number) => {
     if (s >= 90) return 'text-green-600 dark:text-green-400'
     if (s >= 75) return 'text-blue-600 dark:text-blue-400'
