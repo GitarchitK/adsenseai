@@ -75,29 +75,41 @@ export async function POST(request: NextRequest) {
     let aiReport = null
     let previewReport = null
 
+    // ── AI report — wrapped in 90s timeout so it can't kill the crawl ─────
+    const withTimeout = <T>(promise: Promise<T>, ms: number, label: string): Promise<T | null> =>
+      Promise.race([
+        promise.catch(e => { console.error(`[AI] ${label} error:`, e?.message ?? e); return null }),
+        new Promise<null>(resolve => setTimeout(() => { console.warn(`[AI] ${label} timed out after ${ms}ms`); resolve(null) }, ms)),
+      ])
+
     if (process.env.OPENAI_API_KEY) {
       try {
-        aiReport = await generateAiMasterReport(deepCrawlData)
-        seoHook = await generateSeoBlogHook(deepCrawlData, aiReport)
-        
-        // Build preview for client
-        previewReport = {
-          readinessScore: aiReport.readinessScore,
-          approvalChance: aiReport.approvalChance,
-          approvalChancePercent: aiReport.approvalChancePercent,
-          detectedNiche: aiReport.detectedNiche,
-          strengths: aiReport.strengths,
-          risks: aiReport.risks,
-          top3Issues: aiReport.top3Issues.map(i => ({
-            rank: i.rank,
-            title: i.title,
-            basicDetail: i.basicDetail,
-            priorityLabel: i.priorityLabel
-          }))
+        console.log('[crawl] Starting AI master report…')
+        aiReport = await withTimeout(generateAiMasterReport(deepCrawlData), 85000, 'generateAiMasterReport')
+        console.log('[crawl] AI master report done:', aiReport ? 'OK' : 'FAILED/TIMEOUT')
+
+        if (aiReport) {
+          seoHook = await withTimeout(generateSeoBlogHook(deepCrawlData, aiReport), 20000, 'generateSeoBlogHook')
+
+          // Build preview for client
+          previewReport = {
+            readinessScore: aiReport.readinessScore,
+            approvalChance: aiReport.approvalChance,
+            approvalChancePercent: aiReport.approvalChancePercent,
+            detectedNiche: aiReport.detectedNiche,
+            strengths: aiReport.strengths,
+            risks: aiReport.risks,
+            top3Issues: aiReport.top3Issues.map(i => ({
+              rank: i.rank,
+              title: i.title,
+              basicDetail: i.basicDetail,
+              priorityLabel: i.priorityLabel
+            }))
+          }
         }
-        
       } catch (err) {
-        console.error('Master AI Report generation failed:', err)
+        console.error('[crawl] AI report generation failed unexpectedly:', err)
+        // Don't re-throw — scan still succeeds without AI report
       }
     }
 
