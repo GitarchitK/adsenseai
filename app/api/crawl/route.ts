@@ -9,7 +9,9 @@ import { canRunScan } from '@/lib/plans'
 import { generateAiMasterReport, generateSeoBlogHook } from '@/services/ai-master-report'
 import { buildDeepCrawlResult } from '@/services/crawler'
 
-export const maxDuration = 120
+// NOTE: maxDuration removed — Vercel Hobby tier hard-limits to 10s.
+// Crawl is kept fast: small page count, no inline AI call.
+// AI report is triggered separately via /api/analyze/master after save.
 
 export async function POST(request: NextRequest) {
   try {
@@ -58,8 +60,9 @@ export async function POST(request: NextRequest) {
     catch { return NextResponse.json({ success: false, error: 'Invalid URL.' }, { status: 400 }) }
 
     // ── Crawl ───────────────────────────────────────────────────────────────
-    const maxPages = isPro ? 150 : 60
-    const crawler = new WebsiteCrawler(normalizedUrl, { maxPages, timeout: 60000, fullSitemap: true })
+    // Kept small to stay within Vercel Hobby 10s limit
+    const maxPages = isPro ? 40 : 20
+    const crawler = new WebsiteCrawler(normalizedUrl, { maxPages, timeout: 7000, fullSitemap: false })
     const crawlResult = await crawler.crawl()
 
     if (!crawlResult.success) {
@@ -70,48 +73,11 @@ export async function POST(request: NextRequest) {
     const scores = computeScores(crawlResult)
     const deepCrawlData = buildDeepCrawlResult(crawlResult)
 
-    // ── AI report ───────────────────────────────────────────────────────────
-    let seoHook = null
+    // ── AI report skipped at crawl time (Vercel 10s limit) ─────────────────
+    // The results page will call /api/analyze/master to generate the AI report.
     let aiReport = null
+    let seoHook = null
     let previewReport = null
-
-    // ── AI report — wrapped in 90s timeout so it can't kill the crawl ─────
-    const withTimeout = <T>(promise: Promise<T>, ms: number, label: string): Promise<T | null> =>
-      Promise.race([
-        promise.catch(e => { console.error(`[AI] ${label} error:`, e?.message ?? e); return null }),
-        new Promise<null>(resolve => setTimeout(() => { console.warn(`[AI] ${label} timed out after ${ms}ms`); resolve(null) }, ms)),
-      ])
-
-    if (process.env.OPENAI_API_KEY) {
-      try {
-        console.log('[crawl] Starting AI master report…')
-        aiReport = await withTimeout(generateAiMasterReport(deepCrawlData), 85000, 'generateAiMasterReport')
-        console.log('[crawl] AI master report done:', aiReport ? 'OK' : 'FAILED/TIMEOUT')
-
-        if (aiReport) {
-          seoHook = await withTimeout(generateSeoBlogHook(deepCrawlData, aiReport), 20000, 'generateSeoBlogHook')
-
-          // Build preview for client
-          previewReport = {
-            readinessScore: aiReport.readinessScore,
-            approvalChance: aiReport.approvalChance,
-            approvalChancePercent: aiReport.approvalChancePercent,
-            detectedNiche: aiReport.detectedNiche,
-            strengths: aiReport.strengths,
-            risks: aiReport.risks,
-            top3Issues: aiReport.top3Issues.map(i => ({
-              rank: i.rank,
-              title: i.title,
-              basicDetail: i.basicDetail,
-              priorityLabel: i.priorityLabel
-            }))
-          }
-        }
-      } catch (err) {
-        console.error('[crawl] AI report generation failed unexpectedly:', err)
-        // Don't re-throw — scan still succeeds without AI report
-      }
-    }
 
     // ── Persist ─────────────────────────────────────────────────────────────
     await incrementScanCount(profile.uid)

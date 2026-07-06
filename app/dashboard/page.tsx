@@ -216,6 +216,19 @@ export default function DashboardPage() {
         return
       }
       sessionStorage.setItem('lastCrawlData', JSON.stringify(data))
+
+      // Fire AI report generation in background (non-blocking)
+      // The scan detail page will show it when it loads from Firestore
+      if (data.scan_id) {
+        getToken().then(t => {
+          fetch('/api/analyze/master', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
+            body: JSON.stringify({ scanId: data.scan_id }),
+          }).catch(() => { /* silently ignore — AI report is bonus, not critical */ })
+        }).catch(() => {})
+      }
+
       router.push('/dashboard/results')
     } catch {
       setUrlError('Network error. Please try again.')
