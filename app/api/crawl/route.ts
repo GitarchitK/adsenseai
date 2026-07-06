@@ -9,6 +9,7 @@ import { canRunScan } from '@/lib/plans'
 import { generateAiMasterReport, generateSeoBlogHook } from '@/services/ai-master-report'
 import { buildDeepCrawlResult } from '@/services/crawler'
 
+export const maxDuration = 120
 
 export async function POST(request: NextRequest) {
   try {
@@ -57,9 +58,8 @@ export async function POST(request: NextRequest) {
     catch { return NextResponse.json({ success: false, error: 'Invalid URL.' }, { status: 400 }) }
 
     // ── Crawl ───────────────────────────────────────────────────────────────
-    // For Vercel Hobby limits (60s), we must keep the crawl under 20s so AI has 40s.
-    const maxPages = isPro ? 80 : 30
-    const crawler = new WebsiteCrawler(normalizedUrl, { maxPages, timeout: 20000, fullSitemap: true })
+    const maxPages = isPro ? 150 : 60
+    const crawler = new WebsiteCrawler(normalizedUrl, { maxPages, timeout: 60000, fullSitemap: true })
     const crawlResult = await crawler.crawl()
 
     if (!crawlResult.success) {
@@ -72,15 +72,12 @@ export async function POST(request: NextRequest) {
 
     // ── AI report ───────────────────────────────────────────────────────────
     let seoHook = null
-    let articleReport = null
-    let aiReport: any = null
+    let aiReport = null
     let previewReport = null
 
     if (process.env.OPENAI_API_KEY) {
       try {
-        const aiReportRes = await generateAiMasterReport(deepCrawlData)
-        
-        aiReport = aiReportRes
+        aiReport = await generateAiMasterReport(deepCrawlData)
         seoHook = await generateSeoBlogHook(deepCrawlData, aiReport)
         
         // Build preview for client
@@ -117,7 +114,6 @@ export async function POST(request: NextRequest) {
       scores:       scores as unknown as Record<string, unknown>,
       crawlData:    deepCrawlData as unknown as Record<string, unknown>,
       aiReport:     aiReport as any | null,  // full report saved always
-      articleReport:articleReport as any | null,
       seoHook:      seoHook as any | null,
       isAiUnlocked: isPro,
     })
@@ -131,7 +127,6 @@ export async function POST(request: NextRequest) {
       domain: getDomain(normalizedUrl),
       scores,
       ai_report: isPro ? aiReport : previewReport,
-      article_report: isPro ? articleReport : null,
       seo_hook: seoHook,
       scan_id: scanId,
       plan: userPlan,

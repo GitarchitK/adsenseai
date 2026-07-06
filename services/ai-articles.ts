@@ -14,7 +14,7 @@ import { callOpenAI } from './openai'
 import type { CrawledPage } from '@/types'
 import type { ArticleAnalysis, ArticleReportSummary } from '@/types'
 
-const MAX_ARTICLES = 15
+const MAX_ARTICLES = 50
 
 // ── Thin content detection (deterministic, no API needed) ─────────────────────
 
@@ -103,11 +103,12 @@ const PAGE_ANALYSIS_PROMPT = `You are a Google AdSense content quality specialis
 - depth_score (0-100): How comprehensive and in-depth the content is. Does it fully cover the topic? Does it add value?
 - spam_score (0-100): Keyword stuffing, clickbait, excessive repetition. Higher = more spammy.
 - adsense_risk: "critical" (will cause rejection), "warning" (needs improvement), or "good" (acceptable).
-- risk_reasons: array of specific reasons this page could cause AdSense rejection. Empty array if good. DO NOT use generic phrases like "Content contains generic advice" or "Some sections may be repetitive". You MUST cite specific examples or themes from the text. If you can't be specific, don't flag it.
+- risk_reasons: array of specific reasons this page could cause AdSense rejection. Empty array if good. CRITICAL: NEVER use generic phrases like "Content contains generic advice" or "repetitive". You MUST reference exact topics, headings, or quote specific phrases from the text to justify your risk_reasons.
 - strengths: array of 1-3 things this page does well. Empty array if nothing notable.
-- recommended_fix: one specific, actionable sentence on the most important improvement needed. "None needed" if good. Avoid generic advice.
+- recommended_fix: one specific, actionable sentence on the most important improvement needed. "None needed" if good.
 
-Be objective. Evaluate the actual text provided. Only penalize originality or depth if the content is truly shallow. DO NOT output generic boilerplate feedback.`
+Be strict. AdSense reviewers are strict. A page with 200 words of generic content should score 20-30 on originality.
+Also, ensure your risk_reasons are unique to THIS specific article. Do not recycle generic advice.`
 
 interface PageAIResult {
   readability_score: number
@@ -207,7 +208,7 @@ async function analyzePageWithAI(page: CrawledPage): Promise<PageAIResult> {
 export async function analyzeAllArticles(pages: CrawledPage[]): Promise<ArticleAnalysis[]> {
   const selectedPages = selectPagesForArticleAnalysis(pages)
   const results: ArticleAnalysis[] = []
-  const BATCH_SIZE = 5
+  const BATCH_SIZE = 4
 
   for (let i = 0; i < selectedPages.length; i += BATCH_SIZE) {
     const batch = selectedPages.slice(i, i + BATCH_SIZE)

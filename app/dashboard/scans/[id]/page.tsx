@@ -6,18 +6,15 @@ import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ArrowLeft, CheckCircle2, AlertTriangle, ShieldCheck, FileText, Target, Activity, CheckSquare, Search, TrendingUp, Users, SearchCode } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, AlertTriangle, ShieldCheck, FileText, Target, Activity, CheckSquare, Search, TrendingUp, Users } from 'lucide-react'
 import { useProfile } from '@/hooks/use-profile'
 import { AiReportV2 } from '@/lib/firebase-types'
-import { ArticleCard } from '@/components/article-card'
 
 export default function FullReportPage() {
   const { id } = useParams<{ id: string }>()
   const { token } = useProfile()
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [loadingArticles, setLoadingArticles] = useState(false)
-  const [articlesError, setArticlesError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!token || !id) return
@@ -47,24 +44,6 @@ export default function FullReportPage() {
       })
       .catch(() => setLoading(false))
   }, [token, id])
-
-  useEffect(() => {
-    // If the scan is unlocked but missing the article report, fetch it!
-    if (data && data.isAiUnlocked && !data.articleReport && !loadingArticles && !articlesError) {
-      setLoadingArticles(true)
-      fetch(`/api/scans/${id}/articles`, { method: 'POST', headers: { Authorization: `Bearer ${token}` } })
-        .then(r => r.json())
-        .then(res => {
-          if (res.success && res.report) {
-            setData((prev: any) => ({ ...prev, articleReport: res.report }))
-          } else {
-            setArticlesError(res.error || 'Failed to analyze articles.')
-          }
-        })
-        .catch(() => setArticlesError('Network error while analyzing articles.'))
-        .finally(() => setLoadingArticles(false))
-    }
-  }, [data, token, id, loadingArticles, articlesError])
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-[50vh]">
@@ -236,41 +215,9 @@ export default function FullReportPage() {
             <TabsTrigger value="checklist" className="rounded-xl py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <CheckSquare className="h-4 w-4 mr-2" /> Checklist
             </TabsTrigger>
-            <TabsTrigger value="articles" className="rounded-xl py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              <SearchCode className="h-4 w-4 mr-2" /> Articles
-            </TabsTrigger>
           </TabsList>
 
           <div className="mt-6">
-
-            {/* ARTICLES */}
-            <TabsContent value="articles">
-              <Card className="p-6 md:p-8 rounded-3xl">
-                <div className="mb-8">
-                  <h3 className="text-xl font-black mb-2">Deep Article Analysis</h3>
-                  <p className="text-muted-foreground">Detailed breakdown of every article on your site for AdSense risks.</p>
-                </div>
-                {data.articleReport ? (
-                  <div className="space-y-4">
-                    {data.articleReport.articles.map((article: any, i: number) => (
-                      <ArticleCard key={i} article={article} />
-                    ))}
-                    {data.articleReport.articles.length === 0 && (
-                      <p className="text-sm text-muted-foreground">No articles were found during the scan.</p>
-                    )}
-                  </div>
-                ) : loadingArticles ? (
-                  <div className="text-center py-12 space-y-4">
-                    <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin mx-auto" />
-                    <p className="text-sm text-muted-foreground animate-pulse">Running deep analysis on articles... this may take up to 30 seconds.</p>
-                  </div>
-                ) : articlesError ? (
-                  <p className="text-sm text-red-500">{articlesError}</p>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Article analysis is not available for this scan.</p>
-                )}
-              </Card>
-            </TabsContent>
             
             {/* ALL ISSUES */}
             <TabsContent value="issues">

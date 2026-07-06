@@ -9,6 +9,7 @@ import {
   extractTitle, extractMetaDescription, extractHeadings, extractLinks,
 } from '@/lib/crawler-utils'
 
+export const maxDuration = 120
 
 export async function POST(request: NextRequest) {
   try {

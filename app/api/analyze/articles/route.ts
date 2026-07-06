@@ -6,6 +6,7 @@ import { getAuthenticatedProfile } from '@/lib/auth-server'
 import { hasFeature } from '@/lib/plans'
 import { checkRateLimit } from '@/lib/rate-limit'
 
+export const maxDuration = 120
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
     catch { return NextResponse.json({ error: 'Invalid URL.' }, { status: 400 }) }
 
     // Crawl a wider pool so the analyzer can select the latest 50 article pages
-    const crawler = new WebsiteCrawler(normalizedUrl, { maxPages: 80, timeout: 20000 })
+    const crawler = new WebsiteCrawler(normalizedUrl, { maxPages: 80, timeout: 60000 })
     const crawl = await crawler.crawl()
 
     if (!crawl.success || crawl.pages.length === 0) {

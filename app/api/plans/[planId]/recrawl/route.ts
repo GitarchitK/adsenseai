@@ -8,6 +8,7 @@ import { adaptRoadmap } from '@/services/ai-roadmap-adapt'
 import { getDomain } from '@/lib/crawler-utils'
 import type { UserPlan } from '@/lib/firebase-types'
 
+export const maxDuration = 120
 
 export async function POST(
   request: NextRequest,

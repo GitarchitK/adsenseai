@@ -3,7 +3,6 @@ import { getAuthenticatedProfile } from '@/lib/auth-server'
 import { adminDb } from '@/lib/firebase-admin'
 import { generateAiMasterReport, generateSeoBlogHook } from '@/services/ai-master-report'
 
-
 export async function POST(request: NextRequest) {
   try {
     const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
@@ -24,10 +23,9 @@ export async function POST(request: NextRequest) {
     }
 
     const aiReport = await generateAiMasterReport(scanData.crawlData)
-    
     const seoHook = await generateSeoBlogHook(scanData.crawlData, aiReport)
     
-    // Save full report to scans/{scanId}
+    // Save full report to scans/{scanId}.aiReport
     await scanRef.update({ aiReport, seoHook, updatedAt: new Date().toISOString() })
     
     return NextResponse.json({ success: true, aiReport, seoHook })
