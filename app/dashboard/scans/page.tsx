@@ -29,12 +29,13 @@ function ScoreCircle({ score }: { score: number }) {
   )
 }
 
-function StatusBadge({ label }: { label: string }) {
-  const style =
-    label === 'High Chance' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' :
-    label === 'Moderate'    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' :
-                              'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
-  return <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${style}`}>{label}</span>
+function StatusBadge({ label }: { label: string | any }) {
+  const unwrappedLabel = typeof label === 'object' && label !== null && 'label' in label ? label.label : label;
+  const style = 
+    unwrappedLabel === 'High Chance' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' :
+    unwrappedLabel === 'Moderate'    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' :
+                                       'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+  return <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${style}`}>{unwrappedLabel}</span>
 }
 
 export default function ScansPage() {

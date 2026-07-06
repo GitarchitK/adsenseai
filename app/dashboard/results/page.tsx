@@ -118,7 +118,8 @@ export default function ResultsPage() {
   const seo = data.seo_hook || {}
   const rawReadiness = typeof ai.readinessScore === 'object' && ai.readinessScore !== null && 'score' in ai.readinessScore ? (ai.readinessScore as any).score : ai.readinessScore;
   const overallScore = rawReadiness ?? data.scores?.final_score ?? 0
-  const readiness = ai.approvalChance ?? data.statusLabel ?? 'Unknown'
+  const rawApprovalChance = ai.approvalChance ?? data.statusLabel ?? 'Unknown'
+  const readiness = typeof rawApprovalChance === 'object' && rawApprovalChance !== null && 'label' in rawApprovalChance ? (rawApprovalChance as any).label : rawApprovalChance
   
   const scoreColor = overallScore >= 70 ? 'text-emerald-500' : overallScore >= 50 ? 'text-amber-500' : 'text-red-500'
 

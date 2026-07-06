@@ -39,13 +39,14 @@ function ScoreBadge({ score }: { score: number | any }) {
   )
 }
 
-function StatusBadge({ label }: { label: string }) {
-  const cls = label === 'High Chance'
+function StatusBadge({ label }: { label: string | any }) {
+  const unwrappedLabel = typeof label === 'object' && label !== null && 'label' in label ? label.label : label;
+  const cls = unwrappedLabel === 'High Chance'
     ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
-    : label === 'Moderate'
+    : unwrappedLabel === 'Moderate'
     ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
     : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
-  return <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${cls}`}>{label}</span>
+  return <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${cls}`}>{unwrappedLabel}</span>
 }
 
 // ── Crawl Visualizer Component ──
