@@ -116,6 +116,15 @@ export async function POST(request: NextRequest) {
     // ── Persist ─────────────────────────────────────────────────────────────
     await incrementScanCount(profile.uid)
 
+    // Trim crawlData to avoid Firestore 1 MB document limit
+    const crawlDataToSave = {
+      ...deepCrawlData,
+      samplePostTitles: (deepCrawlData.samplePostTitles ?? []).slice(0, 10),
+    } as unknown as Record<string, unknown>
+
+    const crawlDataSize = JSON.stringify(crawlDataToSave).length
+    console.log(`[crawl] crawlData size: ${Math.round(crawlDataSize / 1024)}KB`)
+
     const scanId = await saveScan(profile.uid, {
       userId:       profile.uid,
       websiteUrl:   normalizedUrl,
@@ -124,14 +133,27 @@ export async function POST(request: NextRequest) {
       finalScore:   aiReport?.readinessScore ?? scores.final_score,
       statusLabel:  aiReport?.approvalChance ?? scores.status_label,
       scores:       scores as unknown as Record<string, unknown>,
-      crawlData:    deepCrawlData as unknown as Record<string, unknown>,
-      aiReport:     aiReport as any | null,  // full report saved always
+      crawlData:    crawlDataToSave,
+      aiReport:     aiReport as any | null,
       seoHook:      seoHook as any | null,
       isAiUnlocked: isPro,
     })
 
     if (!scanId) {
-      return NextResponse.json({ success: false, error: 'Failed to save scan.' }, { status: 500 })
+      console.error('[crawl] saveScan returned null — Firestore save failed. crawlData size was:', Math.round(crawlDataSize / 1024), 'KB')
+      // Still return partial success so the user sees their scan results
+      return NextResponse.json({
+        success: true,
+        domain: getDomain(normalizedUrl),
+        scores,
+        ai_report: isPro ? aiReport : previewReport,
+        seo_hook: seoHook,
+        scan_id: null,
+        plan: userPlan,
+        isAiUnlocked: isPro,
+        crawl_data: deepCrawlData,
+        warning: 'Scan results could not be saved. Please try again.',
+      })
     }
 
     return NextResponse.json({
