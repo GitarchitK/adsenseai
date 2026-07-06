@@ -9,7 +9,7 @@ import { canRunScan } from '@/lib/plans'
 import { generateAiMasterReport, generateSeoBlogHook } from '@/services/ai-master-report'
 import { buildDeepCrawlResult } from '@/services/crawler'
 
-export const maxDuration = 120
+export const maxDuration = 60
 
 export async function POST(request: NextRequest) {
   try {
@@ -58,8 +58,9 @@ export async function POST(request: NextRequest) {
     catch { return NextResponse.json({ success: false, error: 'Invalid URL.' }, { status: 400 }) }
 
     // ── Crawl ───────────────────────────────────────────────────────────────
-    const maxPages = isPro ? 150 : 60
-    const crawler = new WebsiteCrawler(normalizedUrl, { maxPages, timeout: 60000, fullSitemap: true })
+    // For Vercel Hobby limits (60s), we must keep the crawl under 20s so AI has 40s.
+    const maxPages = isPro ? 80 : 30
+    const crawler = new WebsiteCrawler(normalizedUrl, { maxPages, timeout: 20000, fullSitemap: true })
     const crawlResult = await crawler.crawl()
 
     if (!crawlResult.success) {

@@ -5,7 +5,7 @@ import { WebsiteCrawler } from '@/services/crawler'
 import { analyzeAllArticles, buildArticleReportSummary } from '@/services/ai-articles'
 import { hasFeature } from '@/lib/plans'
 
-export const maxDuration = 120
+export const maxDuration = 60
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
 
     // Crawl for articles, but fast (max 60 pages)
-    const crawler = new WebsiteCrawler(scan.websiteUrl, { maxPages: 60, timeout: 30000 })
+    const crawler = new WebsiteCrawler(scan.websiteUrl, { maxPages: 60, timeout: 20000 })
     const crawl = await crawler.crawl()
 
     if (!crawl.success || crawl.pages.length === 0) {
