@@ -257,10 +257,10 @@ export async function generateAiMasterReport(
   crawlData: DeepCrawlResult
 ): Promise<AiReportV2> {
   const response = await openai.chat.completions.create({
-    model: "gpt-4o",
-    temperature: 0.3, // low temp = consistent, structured output
-    max_tokens: 6000, // increased from default — full report needs room
-    response_format: { type: "json_object" }, // enforces valid JSON
+    model: "gpt-4o-mini",   // faster than gpt-4o — fits in Vercel 10s limit
+    temperature: 0.3,
+    max_tokens: 4000,        // trimmed for speed; still enough for full report
+    response_format: { type: "json_object" },
     messages: [
       {
         role: "system",
