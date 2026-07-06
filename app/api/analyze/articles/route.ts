@@ -6,7 +6,6 @@ import { getAuthenticatedProfile } from '@/lib/auth-server'
 import { hasFeature } from '@/lib/plans'
 import { checkRateLimit } from '@/lib/rate-limit'
 
-export const maxDuration = 60
 
 export async function POST(request: NextRequest) {
   try {

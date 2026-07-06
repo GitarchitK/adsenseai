@@ -3,7 +3,6 @@ import { getAuthenticatedProfile } from '@/lib/auth-server'
 import { adminDb } from '@/lib/firebase-admin'
 import { generateAiMasterReport, generateSeoBlogHook } from '@/services/ai-master-report'
 
-export const maxDuration = 60
 
 export async function POST(request: NextRequest) {
   try {

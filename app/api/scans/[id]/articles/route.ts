@@ -5,7 +5,6 @@ import { WebsiteCrawler } from '@/services/crawler'
 import { analyzeAllArticles, buildArticleReportSummary } from '@/services/ai-articles'
 import { hasFeature } from '@/lib/plans'
 
-export const maxDuration = 60
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {

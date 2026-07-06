@@ -4,7 +4,6 @@ import { getAuthenticatedProfile } from '@/lib/auth-server'
 import { hasFeature } from '@/lib/plans'
 
 export const runtime = 'nodejs'
-export const maxDuration = 60
 
 /**
  * POST /api/adsense-expert

@@ -4,7 +4,6 @@ import { hasFeature } from '@/lib/plans'
 import { checkRateLimit } from '@/lib/rate-limit'
 import OpenAI from 'openai'
 
-export const maxDuration = 60
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
