@@ -1,4 +1,7 @@
 import { URL } from 'url';
+import * as cheerio from 'cheerio';
+import { Readability } from '@mozilla/readability';
+import { JSDOM } from 'jsdom';
 
 export interface SitemapEntry {
   url: string;
@@ -42,79 +45,64 @@ export function isSameDomain(url: string, baseDomain: string): boolean {
 }
 
 /**
- * Cleans HTML text content by removing scripts, styles, and excessive whitespace
+ * Uses Mozilla Readability to extract pure article content from HTML,
+ * falling back to Cheerio stripping if Readability fails.
  */
-export function cleanTextContent(text: string): string {
-  return (
-    text
-      // Remove extra whitespace and newlines
-      .replace(/\s+/g, ' ')
-      // Clean up remaining text
-      .trim()
-      .slice(0, 10000) // Limit to 10k characters for efficiency
-  );
-}
-
-/**
- * Extracts headings from HTML text (simple regex-based extraction)
- */
-export function extractHeadings(htmlContent: string): { h1: string[]; h2: string[] } {
-  const h1Matches = htmlContent.match(/<h1[^>]*>(.*?)<\/h1>/gi) || [];
-  const h2Matches = htmlContent.match(/<h2[^>]*>(.*?)<\/h2>/gi) || [];
-
-  const extractText = (matches: string[]): string[] => {
-    return matches
-      .map((match) => {
-        const textMatch = match.match(/>([^<]+)<\//);
-        return textMatch ? cleanTextContent(textMatch[1]) : '';
-      })
-      .filter((text) => text.length > 0);
-  };
-
-  return {
-    h1: extractText(h1Matches).slice(0, 5),
-    h2: extractText(h2Matches).slice(0, 10),
-  };
-}
-
-/**
- * Removes HTML tags and cleans up content
- */
-export function stripHtmlTags(html: string): string {
-  // Attempt to extract main content area if it exists to avoid counting headers/footers
-  let contentToProcess = html;
-  
-  const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
-  const articleMatch = html.match(/<article[^>]*>([\s\S]*?)<\/article>/i);
-  
-  if (mainMatch && mainMatch[1]) {
-    contentToProcess = mainMatch[1];
-  } else if (articleMatch && articleMatch[1]) {
-    contentToProcess = articleMatch[1];
+export function cleanTextContent(html: string): string {
+  try {
+    const dom = new JSDOM(html, { url: 'http://localhost' });
+    const reader = new Readability(dom.window.document);
+    const article = reader.parse();
+    
+    if (article && article.textContent) {
+      return article.textContent
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 10000); // Limit to 10k chars for API cost efficiency
+    }
+  } catch (e) {
+    // Silently fallback
   }
 
-  return (
-    contentToProcess
-      // Remove script and style tags
-      .replace(/<script[^>]*>.*?<\/script>/gi, '')
-      .replace(/<style[^>]*>.*?<\/style>/gi, '')
-      // Remove common boilerplate blocks (menus, footers, headers, forms)
-      .replace(/<nav[^>]*>.*?<\/nav>/gi, '')
-      .replace(/<footer[^>]*>.*?<\/footer>/gi, '')
-      .replace(/<aside[^>]*>.*?<\/aside>/gi, '')
-      .replace(/<header[^>]*>.*?<\/header>/gi, '')
-      .replace(/<form[^>]*>.*?<\/form>/gi, '')
-      .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '')
-      // Remove all remaining HTML tags
-      .replace(/<[^>]+>/g, '')
-      // Decode HTML entities
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#039;/g, "'")
-  );
+  // Fallback: Use Cheerio to remove boilerplate
+  const $ = cheerio.load(html);
+  $('script, style, nav, footer, aside, header, form, iframe, noscript').remove();
+  
+  return $.text()
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 10000);
+}
+
+/**
+ * Legacy compatibility wrapper for cleanTextContent
+ */
+export function stripHtmlTags(html: string): string {
+  return cleanTextContent(html);
+}
+
+/**
+ * Extracts h1 and h2 headings using Cheerio
+ */
+export function extractHeadings(htmlContent: string): { h1: string[]; h2: string[] } {
+  const $ = cheerio.load(htmlContent);
+  const h1: string[] = [];
+  const h2: string[] = [];
+  
+  $('h1').each((_, el) => {
+    const text = $(el).text().trim().replace(/\s+/g, ' ');
+    if (text) h1.push(text);
+  });
+  
+  $('h2').each((_, el) => {
+    const text = $(el).text().trim().replace(/\s+/g, ' ');
+    if (text) h2.push(text);
+  });
+
+  return {
+    h1: h1.slice(0, 5),
+    h2: h2.slice(0, 10),
+  };
 }
 
 /**
@@ -128,19 +116,18 @@ export function countWords(text: string): number {
 }
 
 /**
- * Extracts links from HTML content
+ * Extracts links from HTML content using Cheerio
  */
 export function extractLinks(html: string, baseUrl: string): { internal: string[]; external: string[] } {
-  const linkMatches = html.match(/href=["']([^"']+)["']/gi) || [];
+  const $ = cheerio.load(html);
   const baseDomain = getDomain(baseUrl);
   const internalLinks = new Set<string>();
   const externalLinks = new Set<string>();
 
-  linkMatches.forEach((match) => {
-    const href = match.replace(/href=["']|["']/g, '');
-
-    // Skip anchors and javascript
-    if (href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:')) {
+  $('a[href]').each((_, el) => {
+    const href = $(el).attr('href');
+    
+    if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) {
       return;
     }
 
@@ -167,30 +154,29 @@ export function extractLinks(html: string, baseUrl: string): { internal: string[
  * Extracts URLs and metadata from sitemap XML content
  */
 export function extractSitemapEntries(xml: string, baseUrl: string): SitemapEntry[] {
-  const urlBlocks = xml.match(/<url\b[\s\S]*?<\/url>/gi) || [];
+  const $ = cheerio.load(xml, { xmlMode: true });
   const baseDomain = getDomain(baseUrl);
   const entries = new Map<string, SitemapEntry>();
 
-  urlBlocks.forEach((block) => {
-    const locMatch = block.match(/<loc>([\s\S]*?)<\/loc>/i);
-    if (!locMatch?.[1]) return;
+  $('url').each((_, el) => {
+    const loc = $(el).find('loc').text().trim();
+    const lastmod = $(el).find('lastmod').text().trim();
+    if (!loc) return;
 
-    const url = locMatch[1].trim();
     try {
-      if (isSameDomain(url, baseDomain)) {
-        const lastmodMatch = block.match(/<lastmod>([\s\S]*?)<\/lastmod>/i);
-        const lastmod = lastmodMatch?.[1]?.trim();
-        const existing = entries.get(url);
+      if (isSameDomain(loc, baseDomain)) {
+        const existing = entries.get(loc);
 
         if (!existing) {
-          entries.set(url, { url, lastmod });
+          entries.set(loc, { url: loc, lastmod: lastmod || undefined });
           return;
         }
 
         const existingTime = existing.lastmod ? Date.parse(existing.lastmod) : Number.NaN;
         const nextTime = lastmod ? Date.parse(lastmod) : Number.NaN;
+        
         if (!existing.lastmod || (!Number.isNaN(nextTime) && (Number.isNaN(existingTime) || nextTime > existingTime))) {
-          entries.set(url, { url, lastmod });
+          entries.set(loc, { url: loc, lastmod: lastmod || undefined });
         }
       }
     } catch {
@@ -218,26 +204,28 @@ export function detectRequiredPages(
     has_privacy: lowerUrls.some((url) => url.includes('privacy')),
     has_about: lowerUrls.some((url) => url.includes('about')),
     has_contact: lowerUrls.some((url) => url.includes('contact')),
-    has_terms: lowerUrls.some((url) => url.includes('terms') || url.includes('tos')),
+    has_terms: lowerUrls.some((url) => url.includes('terms') || url.includes('tos') || url.includes('condition')),
     has_disclaimer: lowerUrls.some((url) => url.includes('disclaimer')),
   };
 }
 
 /**
- * Extracts meta description from HTML
+ * Extracts meta description from HTML using Cheerio
  */
 export function extractMetaDescription(html: string): string | undefined {
-  const match = html.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i);
-  return match ? match[1] : undefined;
+  const $ = cheerio.load(html);
+  return $('meta[name="description"]').attr('content')?.trim();
 }
 
 /**
- * Extracts page title from HTML
+ * Extracts page title from HTML using Cheerio
  */
 export function extractTitle(html: string, url: string): string {
-  const titleMatch = html.match(/<title[^>]*>(.*?)<\/title>/i);
-  if (titleMatch) {
-    return cleanTextContent(titleMatch[1]);
+  const $ = cheerio.load(html);
+  let title = $('title').first().text().trim();
+  
+  if (title) {
+    return title.replace(/\s+/g, ' ').trim();
   }
 
   // Fallback to URL path
@@ -248,4 +236,27 @@ export function extractTitle(html: string, url: string): string {
   } catch {
     return 'Untitled';
   }
+}
+
+/**
+ * Checks if the HTML contains a viewport meta tag (proxy for mobile responsiveness)
+ */
+export function hasViewportMeta(html: string): boolean {
+  const $ = cheerio.load(html);
+  return $('meta[name="viewport"]').length > 0;
+}
+
+/**
+ * Checks if AdSense script is installed anywhere in the HTML
+ */
+export function isAdsenseInstalled(html: string): boolean {
+  const $ = cheerio.load(html);
+  let found = false;
+  $('script').each((_, el) => {
+    const src = $(el).attr('src') || '';
+    if (src.includes('pagead2.googlesyndication.com/pagead/js/adsbygoogle.js')) {
+      found = true;
+    }
+  });
+  return found;
 }

@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required payment fields.' }, { status: 400 })
     }
 
-    const isValid = verifyPaymentSignature(orderId, paymentId, signature)
+    const isValid = verifyPaymentSignature({ orderId, paymentId, signature })
     if (!isValid) return NextResponse.json({ error: 'Invalid payment signature.' }, { status: 400 })
 
     try {

@@ -99,6 +99,9 @@ export interface SiteStructure {
   has_sitemap?: boolean;          // sitemap.xml found
   schema_pages?: number;          // pages with schema markup
   images_missing_alt?: number;    // total images missing alt text across site
+  has_ads_txt?: boolean;          // ads.txt found
+  ads_txt_valid?: boolean;        // ads.txt is validly formatted
+  has_adsense_code?: boolean;     // adsbygoogle.js script found on the site
 }
 
 export interface CrawlResponse {

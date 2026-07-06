@@ -113,7 +113,10 @@ export class WebsiteCrawler {
         ...this.pagesToVisit,
         ...sitemapEntries.map(e => e.url)
       ]));
-      const siteStructure = detectRequiredPages(allUrls, this.domain);
+      const baseStructure = detectRequiredPages(allUrls, this.domain);
+      const siteStructure: import('@/types').SiteStructure = {
+        ...baseStructure,
+      };
 
       // Add estimated domain age if we have sitemap entries
       if (sitemapEntries.length > 0) {
@@ -140,6 +143,20 @@ export class WebsiteCrawler {
       siteStructure.images_missing_alt = this.crawledPages.reduce(
         (sum, p) => sum + (p.images_missing_alt ?? 0), 0
       )
+
+      // AdSense Installation Check
+      siteStructure.has_adsense_code = this.crawledPages.some(p => p.has_adsense_code)
+
+      // Ads.txt check
+      siteStructure.has_ads_txt = false
+      siteStructure.ads_txt_valid = false
+      try {
+        const adsTxt = await this.fetchPage(`${new URL(this.url).origin}/ads.txt`)
+        if (adsTxt && adsTxt.toLowerCase().includes('google.com')) {
+          siteStructure.has_ads_txt = true
+          siteStructure.ads_txt_valid = adsTxt.includes('pub-')
+        }
+      } catch { /* ignore */ }
 
       // Robots.txt blocking check — default false
       siteStructure.robots_blocks_crawl = false
@@ -566,6 +583,8 @@ export function buildDeepCrawlResult(crawl: CrawlResponse): DeepCrawlResult {
     footerHasContactLink: footerCont,
 
     hasExistingAdsenseCode: hasAdsense,
+    hasAdsTxt: !!crawl.site_structure.has_ads_txt,
+    adsTxtValid: !!crawl.site_structure.ads_txt_valid,
     policyViolationKeywords: policyKws,
   };
 }

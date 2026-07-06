@@ -72,7 +72,7 @@ export async function POST(
       statusLabel: aiReport.status_label,
       scores: scores as unknown as Record<string, unknown>,
       crawlData: crawlResult as unknown as Record<string, unknown>,
-      aiReport: aiReport as unknown as Record<string, unknown>,
+      aiReport: aiReport as any,
       isAiUnlocked: true, // Plans always unlock AI report
     })
 

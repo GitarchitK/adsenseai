@@ -141,12 +141,14 @@ Analyse this website for Google AdSense approval readiness. Be brutally honest a
 - Contact page: ${crawl.hasContactPage}
 - Policy risk keywords detected: ${crawl.policyViolationKeywords.length > 0 ? crawl.policyViolationKeywords.join(", ") : "none"}
 - Existing AdSense Code: ${crawl.hasExistingAdsenseCode}
+- Ads.txt Presence: ${crawl.hasAdsTxt}
+- Ads.txt Valid (contains pub- ID): ${crawl.adsTxtValid}
 
 
 Now generate the complete AiReportV2 JSON. Remember:
 1. Every howToFix must be a numbered list of EXACT steps, not vague advice
 2. Generate a real JSON-LD schema snippet for their niche in technicalHealth.schemaMarkup.codeSnippet
-3. The competitorGap must reference real patterns from top AdSense-approved sites in the "${crawl.niche}" niche
+3. The competitorGap must reference real patterns from top AdSense-approved sites in the "${crawl.mainNiche}" niche
 4. masterActionPlan tasks must be specific enough that a non-technical blogger can execute alone
 5. seoInsights.primaryKeywordOpportunity should be a long-tail keyword they can actually rank for
 `.trim();

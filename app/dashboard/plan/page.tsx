@@ -106,8 +106,8 @@ export default function PlanPage() {
   }
 
   const { currentDay, totalDays, roadmap, completedDays } = plan
-  const initialScore = plan.crawlHistory[0]?.scores?.final_score ?? 0
-  const currentScore = plan.crawlHistory[plan.crawlHistory.length - 1]?.scores?.final_score ?? initialScore
+  const initialScore = (plan.crawlHistory[0] as any)?.scores?.final_score ?? 0
+  const currentScore = (plan.crawlHistory[plan.crawlHistory.length - 1] as any)?.scores?.final_score ?? initialScore
   const scoreDelta = currentScore - initialScore
 
   const todayTask = roadmap.find(d => d.day === currentDay)

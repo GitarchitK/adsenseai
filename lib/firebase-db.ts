@@ -33,6 +33,7 @@ export async function ensureUserProfile(
     totalScans: 0,
     thumbnailCreditsThisMonth: 0,
     thumbnailMonthKey: now.slice(0, 7),
+    proExpiresAt: null,
     createdAt: now,
     updatedAt: now,
   }

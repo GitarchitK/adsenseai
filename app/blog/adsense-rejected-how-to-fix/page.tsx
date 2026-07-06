@@ -104,7 +104,7 @@ export default function AdsenseRejectedHowToFix() {
           <section>
             <h2 className="text-2xl font-black text-foreground mb-4">Frequently Asked Questions</h2>
             <div className="space-y-4">
-              {schemas[2].mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
+              {schemas[2].mainEntity?.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
                 <div key={faq.name} className="p-4 rounded-xl border border-border/60 bg-muted/20">
                   <p className="font-bold text-foreground text-sm mb-1">{faq.name}</p>
                   <p className="text-xs text-muted-foreground leading-relaxed">{faq.acceptedAnswer.text}</p>

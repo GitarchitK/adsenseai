@@ -203,7 +203,14 @@ export function computeScores(crawl: CrawlResponse): ScoreBreakdown {
   const termsBonus = has_terms ? 15 : 0
   const disclaimerBonus = has_disclaimer ? 10 : 0
   const httpsBonus = crawl.site_structure.is_https ? 5 : 0
-  const policy_score = Math.round(clamp(40 + privacyBonus + termsBonus + disclaimerBonus + httpsBonus, 0, 100))
+  
+  const adsTxtPenalty = crawl.site_structure.has_ads_txt === false ? 10 : 0
+  
+  // Severe policy violations check
+  const hasPolicyViolations = pages.some(p => p.policy_violation_keywords && p.policy_violation_keywords.length > 0)
+  const policyViolationPenalty = hasPolicyViolations ? 80 : 0
+
+  let policy_score = Math.round(clamp(40 + privacyBonus + termsBonus + disclaimerBonus + httpsBonus - adsTxtPenalty - policyViolationPenalty, 0, 100))
 
   // ── seo_score — real SEO signals ─────────────────────────────────────────
   const structureBonus = [has_about, has_contact].filter(Boolean).length * 8
@@ -251,6 +258,10 @@ export function computeScores(crawl: CrawlResponse): ScoreBreakdown {
     if (domainAge < 0.25)     final_score = Math.round(final_score * 0.75)
     else if (domainAge < 0.5) final_score = Math.round(final_score * 0.85)
     else if (domainAge < 1.0) final_score = Math.round(final_score * 0.92)
+  }
+
+  if (hasPolicyViolations) {
+    final_score = Math.min(final_score, 30)
   }
 
   final_score = clamp(final_score, 0, 100)

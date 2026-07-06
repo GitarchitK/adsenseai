@@ -11,7 +11,9 @@ import { signOut } from '@/lib/auth'
 import { useProfile } from '@/hooks/use-profile'
 import { useState } from 'react'
 
-const navItems = [
+import { LucideIcon } from 'lucide-react'
+
+const navItems: { name: string, href: string, icon: LucideIcon, badge?: string }[] = [
   { name: 'Dashboard',        href: '/dashboard',                   icon: LayoutDashboard },
   { name: 'My Scans',         href: '/dashboard/scans',             icon: History         },
   { name: 'Article Studio',   href: '/dashboard/article-studio',    icon: FilePenLine     },

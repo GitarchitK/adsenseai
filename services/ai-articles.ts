@@ -282,7 +282,7 @@ export function buildArticleReportSummary(articles: ArticleAnalysis[]): ArticleR
     verdict_reason = `Content quality is acceptable. ${good} of ${total} pages meet AdSense standards.`
   }
 
-  const month_plan: MonthPlanStep[] = []
+  const month_plan = []
   if (overall_content_verdict === 'fail' || overall_content_verdict === 'needs_work') {
     month_plan.push({
       week: 'Week 1: Critical Fixes',

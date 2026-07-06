@@ -7,7 +7,7 @@ import { ArrowLeft, Lock, Zap, CheckCircle2, AlertTriangle, ShieldCheck, FileTex
 import Link from 'next/link'
 import { useProfile } from '@/hooks/use-profile'
 import { useRazorpay } from '@/hooks/use-razorpay'
-import { MasterReport } from '@/lib/firebase-types'
+import type { ScanRecord, AiReportV2 } from '@/lib/firebase-types'
 
 export default function ResultsPage() {
   const { isPro, getToken } = useProfile()

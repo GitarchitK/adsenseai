@@ -80,7 +80,7 @@ function ProBadge() {
 // ── Main Studio Component ──────────────────────────────────────────────────────
 
 export default function ArticleStudioPage() {
-  const { profile, loading: profileLoading } = useProfile()
+  const { profile, isLoading: profileLoading } = useProfile()
   const [showUpgrade, setShowUpgrade] = useState(false)
 
   const [topic, setTopic] = useState('')

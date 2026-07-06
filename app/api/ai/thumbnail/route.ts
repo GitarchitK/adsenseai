@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       style: 'vivid',
     })
 
-    const imageData = response.data[0]
+    const imageData = response?.data?.[0]
     if (!imageData?.url) {
       return NextResponse.json({ error: 'Image generation failed.' }, { status: 500 })
     }

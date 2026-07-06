@@ -126,6 +126,8 @@ export interface DeepCrawlResult {
 
   // AdSense specific
   hasExistingAdsenseCode: boolean;
+  hasAdsTxt: boolean;
+  adsTxtValid: boolean;
   policyViolationKeywords: string[];
 }
 

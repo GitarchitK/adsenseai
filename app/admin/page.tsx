@@ -19,6 +19,7 @@ interface AdminUser {
   plan: 'free' | 'pro'
   totalScans: number
   scansThisMonth: number
+  razorpaySubscriptionId?: string | null
   createdAt: string
 }
 

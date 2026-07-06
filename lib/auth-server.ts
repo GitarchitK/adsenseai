@@ -230,7 +230,7 @@ export async function adminGetPayments(limit = 50): Promise<Record<string, unkno
       }))
 
     // Combine and sort descending by date
-    const allPayments = [...realPayments, ...derivedPayments].sort((a, b) => {
+    const allPayments = [...realPayments, ...derivedPayments].sort((a: any, b: any) => {
       const dateA = new Date(a.createdAt as string).getTime()
       const dateB = new Date(b.createdAt as string).getTime()
       return dateB - dateA
