@@ -8,7 +8,6 @@ import { getAuthenticatedProfile, incrementScanCount, saveScan } from '@/lib/aut
 import { canRunScan } from '@/lib/plans'
 import { generateAiMasterReport, generateSeoBlogHook } from '@/services/ai-master-report'
 import { buildDeepCrawlResult } from '@/services/crawler'
-import { analyzeAllArticles, buildArticleReportSummary } from '@/services/ai-articles'
 
 export const maxDuration = 120
 
@@ -79,13 +78,9 @@ export async function POST(request: NextRequest) {
 
     if (process.env.OPENAI_API_KEY) {
       try {
-        const [aiReportRes, rawArticles] = await Promise.all([
-          generateAiMasterReport(deepCrawlData),
-          analyzeAllArticles(crawlResult.pages)
-        ])
+        const aiReportRes = await generateAiMasterReport(deepCrawlData)
         
         aiReport = aiReportRes
-        articleReport = buildArticleReportSummary(rawArticles)
         seoHook = await generateSeoBlogHook(deepCrawlData, aiReport)
         
         // Build preview for client

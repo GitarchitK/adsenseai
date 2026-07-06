@@ -16,6 +16,8 @@ export default function FullReportPage() {
   const { token } = useProfile()
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [loadingArticles, setLoadingArticles] = useState(false)
+  const [articlesError, setArticlesError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!token || !id) return
@@ -45,6 +47,24 @@ export default function FullReportPage() {
       })
       .catch(() => setLoading(false))
   }, [token, id])
+
+  useEffect(() => {
+    // If the scan is unlocked but missing the article report, fetch it!
+    if (data && data.isAiUnlocked && !data.articleReport && !loadingArticles && !articlesError) {
+      setLoadingArticles(true)
+      fetch(`/api/scans/${id}/articles`, { method: 'POST', headers: { Authorization: `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(res => {
+          if (res.success && res.report) {
+            setData((prev: any) => ({ ...prev, articleReport: res.report }))
+          } else {
+            setArticlesError(res.error || 'Failed to analyze articles.')
+          }
+        })
+        .catch(() => setArticlesError('Network error while analyzing articles.'))
+        .finally(() => setLoadingArticles(false))
+    }
+  }, [data, token, id, loadingArticles, articlesError])
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-[50vh]">
@@ -239,8 +259,15 @@ export default function FullReportPage() {
                       <p className="text-sm text-muted-foreground">No articles were found during the scan.</p>
                     )}
                   </div>
+                ) : loadingArticles ? (
+                  <div className="text-center py-12 space-y-4">
+                    <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin mx-auto" />
+                    <p className="text-sm text-muted-foreground animate-pulse">Running deep analysis on articles... this may take up to 30 seconds.</p>
+                  </div>
+                ) : articlesError ? (
+                  <p className="text-sm text-red-500">{articlesError}</p>
                 ) : (
-                  <p className="text-sm text-muted-foreground">Article analysis is not available for this scan. Run a new scan to see article analysis.</p>
+                  <p className="text-sm text-muted-foreground">Article analysis is not available for this scan.</p>
                 )}
               </Card>
             </TabsContent>

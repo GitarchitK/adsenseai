@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedProfile } from '@/lib/auth-server'
 import { adminDb } from '@/lib/firebase-admin'
 import { generateAiMasterReport, generateSeoBlogHook } from '@/services/ai-master-report'
-import { analyzeAllArticles, buildArticleReportSummary } from '@/services/ai-articles'
 
 export const maxDuration = 120
 
@@ -25,18 +24,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No crawl data available for this scan.' }, { status: 400 })
     }
 
-    const [aiReport, rawArticles] = await Promise.all([
-      generateAiMasterReport(scanData.crawlData),
-      analyzeAllArticles(scanData.crawlData.pages)
-    ])
+    const aiReport = await generateAiMasterReport(scanData.crawlData)
     
     const seoHook = await generateSeoBlogHook(scanData.crawlData, aiReport)
-    const articleReport = buildArticleReportSummary(rawArticles)
     
     // Save full report to scans/{scanId}
-    await scanRef.update({ aiReport, seoHook, articleReport, updatedAt: new Date().toISOString() })
+    await scanRef.update({ aiReport, seoHook, updatedAt: new Date().toISOString() })
     
-    return NextResponse.json({ success: true, aiReport, seoHook, articleReport })
+    return NextResponse.json({ success: true, aiReport, seoHook })
   } catch (error) {
     console.error('[analyze/master] Failed to run master analysis:', error)
     return NextResponse.json({ error: 'Failed to run master analysis' }, { status: 500 })
