@@ -14,7 +14,7 @@ import { callOpenAI } from './openai'
 import type { CrawledPage } from '@/types'
 import type { ArticleAnalysis, ArticleReportSummary } from '@/types'
 
-const MAX_ARTICLES = 50
+const MAX_ARTICLES = 15
 
 // ── Thin content detection (deterministic, no API needed) ─────────────────────
 
@@ -207,7 +207,7 @@ async function analyzePageWithAI(page: CrawledPage): Promise<PageAIResult> {
 export async function analyzeAllArticles(pages: CrawledPage[]): Promise<ArticleAnalysis[]> {
   const selectedPages = selectPagesForArticleAnalysis(pages)
   const results: ArticleAnalysis[] = []
-  const BATCH_SIZE = 4
+  const BATCH_SIZE = 5
 
   for (let i = 0; i < selectedPages.length; i += BATCH_SIZE) {
     const batch = selectedPages.slice(i, i + BATCH_SIZE)
