@@ -6,9 +6,10 @@ import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ArrowLeft, CheckCircle2, AlertTriangle, ShieldCheck, FileText, Target, Activity, CheckSquare, Search, TrendingUp, Users } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, AlertTriangle, ShieldCheck, FileText, Target, Activity, CheckSquare, Search, TrendingUp, Users, SearchCode } from 'lucide-react'
 import { useProfile } from '@/hooks/use-profile'
 import { AiReportV2 } from '@/lib/firebase-types'
+import { ArticleCard } from '@/components/article-card'
 
 export default function FullReportPage() {
   const { id } = useParams<{ id: string }>()
@@ -215,9 +216,34 @@ export default function FullReportPage() {
             <TabsTrigger value="checklist" className="rounded-xl py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
               <CheckSquare className="h-4 w-4 mr-2" /> Checklist
             </TabsTrigger>
+            <TabsTrigger value="articles" className="rounded-xl py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              <SearchCode className="h-4 w-4 mr-2" /> Articles
+            </TabsTrigger>
           </TabsList>
 
           <div className="mt-6">
+
+            {/* ARTICLES */}
+            <TabsContent value="articles">
+              <Card className="p-6 md:p-8 rounded-3xl">
+                <div className="mb-8">
+                  <h3 className="text-xl font-black mb-2">Deep Article Analysis</h3>
+                  <p className="text-muted-foreground">Detailed breakdown of every article on your site for AdSense risks.</p>
+                </div>
+                {data.articleReport ? (
+                  <div className="space-y-4">
+                    {data.articleReport.articles.map((article: any, i: number) => (
+                      <ArticleCard key={i} article={article} />
+                    ))}
+                    {data.articleReport.articles.length === 0 && (
+                      <p className="text-sm text-muted-foreground">No articles were found during the scan.</p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Article analysis is not available for this scan. Run a new scan to see article analysis.</p>
+                )}
+              </Card>
+            </TabsContent>
             
             {/* ALL ISSUES */}
             <TabsContent value="issues">

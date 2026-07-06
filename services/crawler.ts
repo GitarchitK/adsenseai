@@ -416,8 +416,10 @@ export class WebsiteCrawler {
     // ── New: AdSense Code & Policy checks ─────────────────────────────────
     const hasAdsenseCode = html.includes('ca-pub-') || html.includes('pagead2.googlesyndication.com');
     const policyKeywords = ['gambling', 'casino', 'porn', 'xxx', 'escort', 'weapon', 'firearm', 'drugs', 'pharma', 'steroids', 'buy followers', 'hack', 'crack', 'warez'];
-    const lowerText = plainText.toLowerCase();
-    const policyViolations = policyKeywords.filter(k => lowerText.includes(k));
+    const policyViolations = policyKeywords.filter(k => {
+      const regex = new RegExp(`\\b${k}\\b`, 'i');
+      return regex.test(plainText);
+    });
 
     const footerMatch = html.match(/<footer[^>]*>([\s\S]*?)<\/footer>/i);
     let footerPrivacy = false;

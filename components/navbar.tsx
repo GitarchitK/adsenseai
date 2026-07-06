@@ -41,9 +41,9 @@ export function Navbar() {
   }
 
   return (
-    <nav className={`sticky top-0 z-50 transition-all duration-300 ${
+    <nav className={`fixed w-full top-0 z-50 transition-all duration-300 ${
       scrolled
-        ? 'bg-background/80 backdrop-blur-xl border-b border-border/60 shadow-sm'
+        ? 'bg-background/70 backdrop-blur-2xl border-b border-border/50 shadow-sm'
         : 'bg-transparent border-b border-transparent'
     }`}>
       <div className="container mx-auto flex h-16 items-center justify-between px-6">
@@ -52,9 +52,9 @@ export function Navbar() {
           <div className="flex items-center justify-center w-8 h-8 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-200">
             <img src="/icon.svg" alt="AdSense Checker AI" className="w-full h-full object-cover" />
           </div>
-          <span className="font-semibold text-foreground text-[15px]">
-            <span className="md:hidden">AdSense <span className="text-violet-400">Checker</span></span>
-            <span className="hidden md:inline">AdSense Approval <span className="text-violet-400">Checker AI</span></span>
+          <span className="font-bold text-foreground tracking-tight text-[15px]">
+            <span className="md:hidden">AdSense <span className="text-primary">Intelligence</span></span>
+            <span className="hidden md:inline">AdSense <span className="text-primary">Intelligence</span></span>
           </span>
         </Link>
 
@@ -82,7 +82,7 @@ export function Navbar() {
                   </Link>
                   {profile?.activePlanId && (
                     <Link href="/dashboard/plan">
-                      <Button variant="ghost" size="sm" className="gap-2 text-sm font-medium hidden md:inline-flex text-indigo-600">
+                      <Button variant="ghost" size="sm" className="gap-2 text-sm font-medium hidden md:inline-flex text-primary">
                         My Plan
                       </Button>
                     </Link>

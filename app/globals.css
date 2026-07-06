@@ -10,8 +10,8 @@
   --card-foreground: oklch(0.08 0.015 265);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.08 0.015 265);
-  --primary: oklch(0.48 0.24 270);
-  --primary-foreground: oklch(1 0 0);
+  --primary: oklch(0.55 0.20 260);
+  --primary-foreground: oklch(0.98 0.01 260);
   --secondary: oklch(0.96 0.006 265);
   --secondary-foreground: oklch(0.25 0.02 265);
   --muted: oklch(0.96 0.004 265);
@@ -46,7 +46,7 @@
   --card-foreground: oklch(0.97 0.004 265);
   --popover: oklch(0.11 0.012 265);
   --popover-foreground: oklch(0.97 0.004 265);
-  --primary: oklch(0.66 0.20 270);
+  --primary: oklch(0.66 0.20 260);
   --primary-foreground: oklch(0.08 0.012 265);
   --secondary: oklch(0.17 0.012 265);
   --secondary-foreground: oklch(0.97 0.004 265);
@@ -162,8 +162,32 @@
 .dark .lift:hover { box-shadow: 0 12px 40px oklch(0 0 0 / 0.35); }
 
 /* ── Glow on primary elements ── */
-.glow { box-shadow: 0 0 50px oklch(0.48 0.24 270 / 0.22); }
-.dark .glow { box-shadow: 0 0 50px oklch(0.66 0.20 270 / 0.28); }
+.glow { box-shadow: 0 0 50px oklch(var(--primary) / 0.22); }
+.dark .glow { box-shadow: 0 0 50px oklch(var(--primary) / 0.28); }
+
+/* ── Glassmorphism Utilities ── */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.dark .glass {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.glass-panel {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+}
+.dark .glass-panel {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
 
 /* ── Dot grid background ── */
 .dot-grid {

@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard, Settings, LogOut, History,
-  Crown, Menu, X, FilePenLine,
+  Crown, Menu, X, FilePenLine, SearchCode
 } from 'lucide-react'
 import { signOut } from '@/lib/auth'
 import { useProfile } from '@/hooks/use-profile'
@@ -16,6 +16,7 @@ import { LucideIcon } from 'lucide-react'
 const navItems: { name: string, href: string, icon: LucideIcon, badge?: string }[] = [
   { name: 'Dashboard',        href: '/dashboard',                   icon: LayoutDashboard },
   { name: 'My Scans',         href: '/dashboard/scans',             icon: History         },
+  { name: 'Article Analyzer', href: '/dashboard/articles',          icon: SearchCode      },
   { name: 'Article Studio',   href: '/dashboard/article-studio',    icon: FilePenLine     },
   { name: 'Settings',         href: '/dashboard/settings',          icon: Settings        },
 ]
@@ -49,7 +50,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
             <img src="/icon.svg" alt="AdSense Checker AI" className="w-full h-full object-cover" />
           </div>
           <span className="font-bold text-sidebar-foreground text-[14px] leading-tight">
-            AdSense <span className="text-primary">Checker AI</span>
+            AdSense <span className="text-primary">Intelligence</span>
           </span>
         </div>
         {/* Close button — mobile only */}

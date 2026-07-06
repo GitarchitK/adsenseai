@@ -8,6 +8,7 @@ import { getAuthenticatedProfile, incrementScanCount, saveScan } from '@/lib/aut
 import { canRunScan } from '@/lib/plans'
 import { generateAiMasterReport, generateSeoBlogHook } from '@/services/ai-master-report'
 import { buildDeepCrawlResult } from '@/services/crawler'
+import { analyzeAllArticles, buildArticleReportSummary } from '@/services/ai-articles'
 
 export const maxDuration = 120
 
@@ -72,12 +73,19 @@ export async function POST(request: NextRequest) {
 
     // ── AI report ───────────────────────────────────────────────────────────
     let seoHook = null
-    let aiReport = null
+    let articleReport = null
+    let aiReport: any = null
     let previewReport = null
 
     if (process.env.OPENAI_API_KEY) {
       try {
-        aiReport = await generateAiMasterReport(deepCrawlData)
+        const [aiReportRes, rawArticles] = await Promise.all([
+          generateAiMasterReport(deepCrawlData),
+          analyzeAllArticles(crawlResult.pages)
+        ])
+        
+        aiReport = aiReportRes
+        articleReport = buildArticleReportSummary(rawArticles)
         seoHook = await generateSeoBlogHook(deepCrawlData, aiReport)
         
         // Build preview for client
@@ -114,6 +122,7 @@ export async function POST(request: NextRequest) {
       scores:       scores as unknown as Record<string, unknown>,
       crawlData:    deepCrawlData as unknown as Record<string, unknown>,
       aiReport:     aiReport as any | null,  // full report saved always
+      articleReport:articleReport as any | null,
       seoHook:      seoHook as any | null,
       isAiUnlocked: isPro,
     })
@@ -127,6 +136,7 @@ export async function POST(request: NextRequest) {
       domain: getDomain(normalizedUrl),
       scores,
       ai_report: isPro ? aiReport : previewReport,
+      article_report: isPro ? articleReport : null,
       seo_hook: seoHook,
       scan_id: scanId,
       plan: userPlan,

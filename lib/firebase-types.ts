@@ -33,6 +33,8 @@ export interface ScanRecord {
   crawlData: Record<string, unknown> | null
   // AI report — null until unlocked (pay-per-report or pro)
   aiReport: AiReportV2 | null
+  // Article Analysis Report
+  articleReport?: import('@/types').ArticleReportSummary | null
   // SEO Hook for the platform's SEO
   seoHook?: Record<string, unknown> | null
   isAiUnlocked: boolean   // true if user paid ₹19 or is Pro
