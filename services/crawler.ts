@@ -485,8 +485,8 @@ import { DeepCrawlResult } from '@/lib/firebase-types';
 export function buildDeepCrawlResult(crawl: CrawlResponse): DeepCrawlResult {
   const pages = crawl.pages;
   const postSignals = [
-    /\\d{4}\/\\d{2}\/\\d{2}/,
-    /\\d{4}\/\\d{2}\//,
+    /\d{4}\/\d{2}\/\d{2}/,
+    /\d{4}\/\d{2}\//,
     /\/blog\//,
     /\/news\//,
     /\/article\//,
@@ -500,9 +500,11 @@ export function buildDeepCrawlResult(crawl: CrawlResponse): DeepCrawlResult {
       if (path === '/' || ['/category/', '/tag/', '/author/', '/page/', '/search', '/wp-admin', '/login', '/signup', '/privacy', '/about', '/contact', '/terms', '/disclaimer', '/policy'].some(e => path.includes(e))) return false;
       if (postSignals.some(r => r.test(path))) return true;
       const segs = path.split('/').filter(Boolean);
-      return segs.length >= 2 && (segs[segs.length - 1] ?? '').includes('-');
+      const lastSeg = segs[segs.length - 1] || '';
+      return lastSeg.includes('-') || segs.length >= 2;
     } catch { return false; }
   };
+
 
   const posts = pages.filter(p => isPost(p.url));
   const postDates = posts
