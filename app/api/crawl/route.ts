@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
     const crawlDataToSave = {
       ...deepCrawlData,
       samplePostTitles: (deepCrawlData.samplePostTitles ?? []).slice(0, 10),
+      _rawPages: crawlResult.pages,
     } as unknown as Record<string, unknown>
 
     const scanId = await saveScan(profile.uid, {

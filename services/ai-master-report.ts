@@ -96,7 +96,7 @@ Rules:
 
 // ─── User Prompt Builder ──────────────────────────────────────────────────────
 
-function buildUserPrompt(crawl: DeepCrawlResult): string {
+function buildUserPrompt(crawl: DeepCrawlResult, allUrls: string[]): string {
   const avgWordCount = crawl.avgWordCount || 0;
   const postCount = crawl.postCount || 0;
 
@@ -124,6 +124,8 @@ Total Pages Crawled: ${crawl.pageCount}
 Site Structure / Navigation Map: XML Sitemap: ${crawl.hasSitemap ? 'Present' : 'Absent'}, Robots.txt: ${crawl.hasRobots ? 'Present' : 'Absent'}
 Presence of Key Pages (true/false + URL if found):
 ${mandatoryPages.map(p => `  - ${p}`).join("\n")}
+All Crawled URLs (URLs List):
+${allUrls.map(u => `  - ${u}`).join("\n") || "  - None"}
 Sample Extracted Articles (titles): ${crawl.samplePostTitles.slice(0, 10).join(" | ") || "None found"}
 Article Metadata: Avg internal links: ${crawl.avgInternalLinks || 0}, Schema markup types: ${crawl.schemaTypes.join(", ") || "None"}
 Total Word Count Across Site: ${avgWordCount * postCount}
@@ -143,6 +145,9 @@ Please analyze this website.
 export async function generateAiMasterReport(
   crawlData: DeepCrawlResult
 ): Promise<AiReportV2> {
+  const rawPages = (crawlData as any)._rawPages || [];
+  const allUrls = rawPages.map((p: any) => p.url).filter(Boolean);
+
   const response = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     temperature: 0.3,
@@ -155,7 +160,7 @@ export async function generateAiMasterReport(
       },
       {
         role: "user",
-        content: buildUserPrompt(crawlData),
+        content: buildUserPrompt(crawlData, allUrls),
       },
     ],
   });
