@@ -132,172 +132,24 @@ export interface DeepCrawlResult {
 }
 
 export interface AiReportV2 {
-  // ── Identity ───────────────────────────────────────────────
-  detectedNiche: string;
-  nicheRiskLevel: "low" | "medium" | "high";
-  nicheRiskReason: string;
-
-  // ── Scores ────────────────────────────────────────────────
-  readinessScore: number; // 0-100
-  approvalChance: "Very High" | "High" | "Moderate" | "Low" | "Very Low";
-  approvalChancePercent: number; // e.g. 72
-
-  // ── Strengths & Risks (teaser — shown free) ───────────────
-  strengths: Array<{ title: string; detail: string }>;
-  risks: Array<{ title: string; detail: string }>;
-
-  // ── Top 3 Issues (teaser titles shown free, fix steps locked) ─
-  top3Issues: Array<{
-    rank: number;
-    title: string; // shown free
-    basicDetail: string; // shown free (1 sentence)
-    impactScore: number; // 1-10
-    effortScore: number; // 1-10 (lower = easier)
-    priorityLabel: "Critical" | "High" | "Medium";
-    howToFix: string[]; // LOCKED behind ₹19 — step-by-step
-    estimatedTimeToFix: string; // e.g. "2 hours"
-    seoImpact: string; // LOCKED — how fixing this also helps SEO ranking
+  overall_approval_chance: "Low" | "Medium" | "High";
+  confidence_note: string;
+  summary: string;
+  strengths: string[];
+  critical_issues: Array<{
+    issue: string;
+    why_it_matters: string;
+    severity: "High" | "Medium" | "Low";
+    fix: string;
   }>;
-
-  // ── Full Issue List (LOCKED) ───────────────────────────────
-  allIssues: Array<{
-    category:
-      | "Content"
-      | "Technical"
-      | "Policy"
-      | "CoreWebVitals"
-      | "Schema"
-      | "EEAT"
-      | "UX";
-    title: string;
-    detail: string;
-    impactScore: number;
-    effortScore: number;
-    priorityLabel: "Critical" | "High" | "Medium" | "Low";
-    howToFix: string[];
-    estimatedTimeToFix: string;
-    seoImpact: string;
-  }>;
-
-  // ── Technical Health (LOCKED) ─────────────────────────────
-  technicalHealth: {
-    coreWebVitals: {
-      lcp: { status: "pass" | "needs-work" | "fail"; detail: string };
-      cls: { status: "pass" | "needs-work" | "fail"; detail: string };
-      fid: { status: "pass" | "needs-work" | "fail"; detail: string };
-      overallVerdict: string;
-      howToImprove: string[];
-    };
-    schemaMarkup: {
-      present: string[];
-      missing: string[];
-      recommendation: string;
-      codeSnippet: string; // actual JSON-LD snippet for their niche
-    };
-    httpsAndSecurity: { status: "pass" | "fail"; detail: string };
-    mobileFriendliness: { status: "pass" | "fail"; detail: string };
-    sitemapAndRobots: { status: "pass" | "fail"; detail: string };
-    pageSpeed: {
-      mobile: string;
-      desktop: string;
-      topRecommendation: string;
-    };
+  content_analysis: {
+    articles_reviewed: number;
+    avg_word_count: number;
+    quality_assessment: string;
+    thin_or_weak_pages: string[];
   };
-
-  // ── Content Analysis (LOCKED) ─────────────────────────────
-  contentAnalysis: {
-    averageWordCount: number;
-    minimumRequired: number; // what AdSense actually needs for this niche
-    thinContentPages: number;
-    eeatSignals: {
-      authorByline: boolean;
-      publishDates: boolean;
-      socialProof: boolean;
-      verdict: string;
-      howToImprove: string;
-    };
-    nicheConsistency: "consistent" | "mixed" | "scattered";
-    nicheConsistencyDetail: string;
-    headingStructureScore: number; // 0-100
-    headingFeedback: string;
-  };
-
-  // ── Competitor Gap (LOCKED) ────────────────────────────────
-  competitorGap: {
-    topCompetitorDomain: string;
-    thingsTheyDoThatYouDont: string[];
-    yourAdvantages: string[];
-    quickWinsToCloseGap: string[];
-  };
-
-  // ── Policy Compliance (LOCKED) ────────────────────────────
-  policyCompliance: {
-    mandatoryPagesStatus: {
-      privacy: { present: boolean; fix?: string };
-      about: { present: boolean; fix?: string };
-      terms: { present: boolean; fix?: string };
-      contact: { present: boolean; fix?: string };
-    };
-    restrictedContentFlags: string[];
-    existingAdNetworkConflicts: string[];
-    overallPolicyVerdict: "Clean" | "Minor Issues" | "Major Issues";
-  };
-
-  // ── SEO Health (LOCKED — also feeds YOUR site's ranking) ──
-  seoHealth: {
-    metaTagsScore: number; // 0-100
-    internalLinkingScore: number;
-    keywordFocusVerdict: string;
-    missingQuickWins: string[]; // things Google loves that they're missing
-    estimatedTimeToRank: string; // after fixing everything
-  };
-
-  // ── Master Action Plan — 3 Phases (LOCKED) ────────────────
-  masterActionPlan: {
-    phase1: {
-      title: string;
-      estimatedTime: string;
-      tasks: Array<{
-        task: string;
-        why: string;
-        exactSteps: string[];
-        toolsNeeded: string[];
-      }>;
-    };
-    phase2: {
-      title: string;
-      estimatedTime: string;
-      tasks: Array<{
-        task: string;
-        why: string;
-        exactSteps: string[];
-        toolsNeeded: string[];
-      }>;
-    };
-    phase3: {
-      title: string;
-      estimatedTime: string;
-      tasks: Array<{
-        task: string;
-        why: string;
-        exactSteps: string[];
-        toolsNeeded: string[];
-      }>;
-    };
-  };
-
-  // ── Pre-Application Checklist (LOCKED) ────────────────────
-  preApplicationChecklist: Array<{
-    item: string;
-    status: "done" | "not-done" | "unknown";
-    isBlocker: boolean; // if not done, will cause rejection?
-  }>;
-
-  // ── SEO Blog Hook (used internally for YOUR SEO content) ──
-  seoInsights: {
-    primaryKeywordOpportunity: string; // e.g. "adsense approval for cooking blogs"
-    longTailKeywords: string[];
-    featuredSnippetOpportunity: string; // a question this site could rank for
-    schemaTypeRecommended: string;
-  };
+  action_plan: string[];
+  estimated_timeline: string;
+  disclaimer: string;
 }
+

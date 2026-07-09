@@ -1,29 +1,30 @@
 import type { Plan } from './firebase-types'
 
 // ── Pricing (in paise — 100 paise = ₹1) ──────────────────────────────────────
+// All core tools are now FREE. Revenue comes from platform AdSense + future API tier.
 export const PRICES = {
-  report_unlock:   1900,   // ₹19 — one-time per scan AI report unlock
-  thumbnail:        500,   // ₹5 — per thumbnail generation (DALL-E 3 is expensive)
-  coaching_day:     500,   // ₹5 — per day of coaching subscription
+  report_unlock:   0,      // FREE — AI report included for all users
+  thumbnail:       0,      // FREE — thumbnails included for all users
+  coaching_day:  500,      // ₹5/day — coaching plans still paid
 } as const
 
 // ── Plan definitions ──────────────────────────────────────────────────────────
 export const PLANS = {
   free: {
     name: 'Free',
-    scans_per_month: 999999,   // Unlimited scans
-    article_crawl_limit: 0,    // no article analyzer
-    ai_report: false,          // must pay ₹19/scan to unlock
-    fix_suggestions: false,
-    content_rewrite: false,
-    privacy_generator: false,
-    article_analyzer: false,
-    thumbnail_credits: 0,      // no thumbnails on free
+    scans_per_month: 999999,
+    article_crawl_limit: 150,
+    ai_report: true,           // FREE — was locked
+    fix_suggestions: true,     // FREE
+    content_rewrite: true,     // FREE
+    privacy_generator: true,   // FREE
+    article_analyzer: true,    // FREE — was Pro only
+    thumbnail_credits: 999999, // FREE
   },
   pro: {
     name: 'Pro',
     scans_per_month: 999999,
-    article_crawl_limit: 150,
+    article_crawl_limit: 999999,
     ai_report: true,
     fix_suggestions: true,
     content_rewrite: true,
@@ -48,7 +49,8 @@ export function canRunScan(plan: Plan | undefined, scansThisMonth: number): bool
 }
 
 export function hasFeature(plan: Plan | undefined, feature: keyof PlanFeatures): boolean {
-  return !!PLANS[plan ?? 'free'][feature]
+  // All features are free — always return true
+  return true
 }
 
 export function getScanLimit(plan: Plan | undefined): number {

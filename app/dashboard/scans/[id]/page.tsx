@@ -1,20 +1,24 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useEffect, useState, use } from 'react'
 import Link from 'next/link'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ArrowLeft, CheckCircle2, AlertTriangle, ShieldCheck, FileText, Target, Activity, CheckSquare, Search, TrendingUp, Users } from 'lucide-react'
+import {
+  ArrowLeft, CheckCircle2, AlertTriangle, ShieldCheck,
+  FileText, Target, Activity, CheckSquare, Search,
+  TrendingUp, Clock, AlertCircle, Info, ClipboardList, ShieldAlert
+} from 'lucide-react'
 import { useProfile } from '@/hooks/use-profile'
 import { AiReportV2 } from '@/lib/firebase-types'
 
-export default function FullReportPage() {
-  const { id } = useParams<{ id: string }>()
+export default function FullReportPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params)
+  const { id } = resolvedParams
   const { token } = useProfile()
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [checkedTasks, setCheckedTasks] = useState<Record<number, boolean>>({})
 
   useEffect(() => {
     if (!token || !id) return
@@ -58,366 +62,269 @@ export default function FullReportPage() {
     return <div className="p-8 text-center text-red-500">Report not found or not unlocked.</div>
   }
 
-  // Handle legacy v1 scans
-  if (data.aiReport && !data.aiReport.masterActionPlan) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-4">
-        <div className="bg-muted/30 p-8 rounded-3xl max-w-lg border border-border/50 shadow-sm">
-          <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-black mb-3">Legacy Report Format</h2>
-          <p className="text-muted-foreground mb-6">This report was generated with an older version of our AI engine (v1) and cannot be displayed in the new v2 interface. Please run a new scan to get the upgraded Pro Report.</p>
-          <Link href="/dashboard">
-            <Button className="w-full sm:w-auto">Return to Dashboard</Button>
-          </Link>
-        </div>
-      </div>
-    )
-  }
-
   const ai: AiReportV2 = data.aiReport
 
-  const getPriorityIcon = (priority: string) => {
-    if (priority === 'Critical') return <AlertTriangle className="h-5 w-5 text-red-500" />
-    if (priority === 'High') return <AlertTriangle className="h-5 w-5 text-orange-500" />
-    if (priority === 'Medium') return <AlertTriangle className="h-5 w-5 text-amber-500" />
-    return <CheckCircle2 className="h-5 w-5 text-blue-500" />
+  // Compatibility handling if old report keys are present (very basic fallback)
+  const overallChance = ai.overall_approval_chance || (ai as any).approvalChance || "Low"
+  const summary = ai.summary || (ai as any).nicheRiskReason || ""
+  const strengths = ai.strengths && Array.isArray(ai.strengths) 
+    ? ai.strengths.map((s: any) => typeof s === 'string' ? s : s.title + ': ' + s.detail)
+    : []
+  
+  const criticalIssues = ai.critical_issues || (ai as any).top3Issues?.map((i: any) => ({
+    issue: i.title,
+    why_it_matters: i.basicDetail,
+    severity: i.priorityLabel || "Medium",
+    fix: i.howToFix?.join(' ') || ""
+  })) || []
+
+  const contentAnalysis = ai.content_analysis || {
+    articles_reviewed: data.crawlData?.postCount || 0,
+    avg_word_count: data.crawlData?.avgWordCount || 0,
+    quality_assessment: "Content quality needs manual audit.",
+    thin_or_weak_pages: []
   }
 
-  const IssueCard = ({ issue }: { issue: any }) => (
-    <div className="p-5 rounded-2xl border border-border/50 bg-card mb-4 shadow-sm">
-      <div className="flex gap-3 items-start">
-        <div className="mt-0.5">{getPriorityIcon(issue.priorityLabel)}</div>
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-             <h4 className="font-bold text-foreground">{issue.title}</h4>
-             <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-md bg-muted">{issue.category}</span>
-          </div>
-          <p className="text-sm text-muted-foreground mb-3">{issue.detail}</p>
-          <div className="bg-muted/40 p-4 rounded-xl border border-border/50 text-sm">
-            <span className="font-bold block mb-2 text-primary">How to fix:</span>
-            <ul className="list-decimal pl-4 space-y-1 text-muted-foreground mb-3">
-               {issue.howToFix?.map((step: string, i: number) => (
-                  <li key={i}>{step}</li>
-               ))}
-            </ul>
-            <div className="flex gap-4 mt-2 pt-2 border-t border-border/50 text-xs font-medium text-muted-foreground">
-              <span className="flex items-center gap-1">⏱ {issue.estimatedTimeToFix}</span>
-              <span className="flex items-center gap-1 text-emerald-600"><TrendingUp className="w-3 h-3"/> {issue.seoImpact}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+  const actionPlan = ai.action_plan || [
+    "Fix all critical issues listed in the checklist.",
+    "Improve sitemap and robots.txt validation.",
+    "Add missing mandatory pages."
+  ]
 
-  const ActionTaskCard = ({ task }: { task: any }) => (
-    <div className="p-4 rounded-xl border border-border/50 bg-background mb-3 shadow-sm">
-      <h4 className="font-bold text-[15px] mb-2">{task.task}</h4>
-      <p className="text-sm text-muted-foreground mb-3 italic">{task.why}</p>
-      <div className="bg-muted/30 rounded-lg p-3">
-        <p className="text-xs font-bold uppercase mb-2">Steps:</p>
-        <ul className="list-decimal pl-4 space-y-1 text-sm text-muted-foreground">
-          {task.exactSteps?.map((s: string, i: number) => <li key={i}>{s}</li>)}
-        </ul>
-        {task.toolsNeeded?.length > 0 && (
-          <p className="text-xs mt-3 pt-2 border-t border-border/50"><span className="font-bold">Tools:</span> {task.toolsNeeded.join(', ')}</p>
-        )}
-      </div>
-    </div>
-  )
+  const timeline = ai.estimated_timeline || "2-4 weeks"
+  const disclaimer = ai.disclaimer || "This analysis is based solely on crawled data and does not guarantee final Google AdSense approval."
+
+  const getChanceColors = (chance: string) => {
+    if (chance === 'High') return {
+      text: 'text-emerald-400',
+      bg: 'bg-emerald-500/10 border-emerald-500/20',
+      fill: 'bg-emerald-500'
+    }
+    if (chance === 'Medium') return {
+      text: 'text-amber-400',
+      bg: 'bg-amber-500/10 border-amber-500/20',
+      fill: 'bg-amber-500'
+    }
+    return {
+      text: 'text-red-400',
+      bg: 'bg-red-500/10 border-red-500/20',
+      fill: 'bg-red-500'
+    }
+  }
+
+  const getSeverityColors = (sev: string) => {
+    if (sev === 'High') return 'bg-red-500/10 text-red-400 border border-red-500/20'
+    if (sev === 'Medium') return 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+    return 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+  }
+
+  const colors = getChanceColors(overallChance)
+
+  const toggleTask = (index: number) => {
+    setCheckedTasks(prev => ({ ...prev, [index]: !prev[index] }))
+  }
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="container mx-auto px-4 md:px-6 py-8 max-w-5xl space-y-8">
+      <div className="container mx-auto px-4 md:px-6 py-8 max-w-4xl space-y-8">
         
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-primary mb-2 inline-block">
-              <ArrowLeft className="h-4 w-4 inline mr-1" /> Back to Dashboard
+            <Link href="/dashboard" className="text-xs text-muted-foreground hover:text-primary mb-2 inline-flex items-center gap-1">
+              <ArrowLeft className="h-3.5 w-3.5" /> Back to Dashboard
             </Link>
-            <h1 className="text-3xl font-black text-foreground flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
                {data.domain}
-               <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full border border-primary/20 uppercase tracking-widest">Pro Report</span>
+               <span className="px-2 py-0.5 bg-violet-500/15 text-violet-400 text-[10px] rounded-full border border-violet-500/25 uppercase font-bold tracking-widest">
+                 Consultant Audit
+               </span>
             </h1>
-            <p className="text-muted-foreground mt-1">Niche: {ai.detectedNiche} ({ai.nicheRiskLevel} risk)</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Generated on {new Date(data.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+            </p>
           </div>
-          <div className="text-right">
-            <div className="flex items-center justify-end gap-3 mb-1">
-              <div className="text-right">
-                <div className="text-xs font-bold uppercase text-muted-foreground">Approval Chance</div>
-                <div className="text-xl font-black text-primary">{ai.approvalChancePercent}%</div>
-              </div>
-              <div className="h-10 w-24 bg-muted rounded-full overflow-hidden flex items-center p-1 border border-border/50">
-                <div 
-                  className="h-full bg-primary rounded-full transition-all duration-1000" 
-                  style={{ width: `${ai.approvalChancePercent}%` }}
-                />
-              </div>
+          <div className="flex items-center gap-3 bg-card border border-border/40 p-4 rounded-2xl">
+            <div className="text-right">
+              <div className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">Approval Chance</div>
+              <div className={`text-lg font-black ${colors.text}`}>{overallChance}</div>
             </div>
-            <div className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
-              Readiness: {typeof ai.readinessScore === 'object' && ai.readinessScore !== null && 'score' in ai.readinessScore ? (ai.readinessScore as any).score : ai.readinessScore}/100
+            <div className={`h-8 w-8 rounded-full flex items-center justify-center ${colors.bg}`}>
+              <span className={`h-2.5 w-2.5 rounded-full ${colors.fill} animate-pulse`} />
             </div>
           </div>
         </div>
 
-        {/* Master Action Plan (Top Level) */}
-        <Card className="p-6 md:p-8 rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/5 to-background shadow-lg">
-          <h2 className="text-2xl font-black mb-2 flex items-center gap-2"><Target className="h-6 w-6 text-primary" /> Master Action Plan</h2>
-          <p className="text-muted-foreground mb-8">Follow this plan step-by-step to get approved.</p>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            <div>
-              <h3 className="font-bold text-red-600 flex items-center gap-2 mb-4">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs">1</span>
-                Phase 1: Blockers
-              </h3>
-              <p className="text-xs text-muted-foreground mb-4">{ai.masterActionPlan?.phase1?.estimatedTime}</p>
-              {ai.masterActionPlan?.phase1?.tasks?.map((t, i) => <ActionTaskCard key={i} task={t} />)}
-            </div>
-            <div>
-              <h3 className="font-bold text-orange-600 flex items-center gap-2 mb-4">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange-100 text-xs">2</span>
-                Phase 2: Trust
-              </h3>
-              <p className="text-xs text-muted-foreground mb-4">{ai.masterActionPlan?.phase2?.estimatedTime}</p>
-              {ai.masterActionPlan?.phase2?.tasks?.map((t, i) => <ActionTaskCard key={i} task={t} />)}
-            </div>
-            <div>
-              <h3 className="font-bold text-blue-600 flex items-center gap-2 mb-4">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs">3</span>
-                Phase 3: Polish
-              </h3>
-              <p className="text-xs text-muted-foreground mb-4">{ai.masterActionPlan?.phase3?.estimatedTime}</p>
-              {ai.masterActionPlan?.phase3?.tasks?.map((t, i) => <ActionTaskCard key={i} task={t} />)}
-            </div>
+        {/* Confidence Note */}
+        {ai.confidence_note && (
+          <div className="flex items-start gap-2.5 rounded-xl bg-muted/40 border border-border/40 p-4 text-xs text-muted-foreground leading-relaxed">
+            <Info className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+            <p>{ai.confidence_note}</p>
           </div>
+        )}
+
+        {/* Verdict Summary */}
+        <Card className="p-6 md:p-8 rounded-2xl border-border/40 bg-gradient-to-br from-card/30 to-card">
+          <h2 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
+            <Target className="h-4 w-4 text-primary" /> Consultant Verdict
+          </h2>
+          <p className="text-sm text-foreground leading-relaxed">{summary}</p>
         </Card>
 
-        {/* Detailed Sections Tabs */}
-        <Tabs defaultValue="issues" className="w-full">
-          <TabsList className="w-full grid grid-cols-2 md:grid-cols-6 h-auto rounded-2xl bg-muted/50 p-2 gap-2">
-            <TabsTrigger value="issues" className="rounded-xl py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              <AlertTriangle className="h-4 w-4 mr-2" /> Issues
-            </TabsTrigger>
-            <TabsTrigger value="content" className="rounded-xl py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              <FileText className="h-4 w-4 mr-2" /> Content
-            </TabsTrigger>
-            <TabsTrigger value="tech" className="rounded-xl py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              <Activity className="h-4 w-4 mr-2" /> Technical
-            </TabsTrigger>
-            <TabsTrigger value="policy" className="rounded-xl py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              <ShieldCheck className="h-4 w-4 mr-2" /> Policy
-            </TabsTrigger>
-            <TabsTrigger value="seo" className="rounded-xl py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              <Search className="h-4 w-4 mr-2" /> SEO Gap
-            </TabsTrigger>
-            <TabsTrigger value="checklist" className="rounded-xl py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              <CheckSquare className="h-4 w-4 mr-2" /> Checklist
-            </TabsTrigger>
-          </TabsList>
+        {/* Strengths & Critical Issues Grid */}
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Strengths */}
+          <Card className="p-6 rounded-2xl border-border/40 h-full bg-card/50">
+            <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-400" /> Key Strengths
+            </h3>
+            {strengths.length > 0 ? (
+              <ul className="space-y-3">
+                {strengths.map((str, i) => (
+                  <li key={i} className="text-xs text-muted-foreground leading-relaxed flex items-start gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shrink-0 mt-1.5" />
+                    <span>{str}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-muted-foreground">No prominent strengths crawled.</p>
+            )}
+          </Card>
 
-          <div className="mt-6">
-            
-            {/* ALL ISSUES */}
-            <TabsContent value="issues">
-              <Card className="p-6 md:p-8 rounded-3xl">
-                <div className="mb-8">
-                  <h3 className="text-xl font-black mb-2">Comprehensive Issue List</h3>
-                  <p className="text-muted-foreground">Every issue standing between you and approval.</p>
-                </div>
-                {ai.allIssues?.map((iss, i) => <IssueCard key={i} issue={iss} />)}
-                {(!ai.allIssues || ai.allIssues.length === 0) && <p className="text-sm text-muted-foreground">No major issues found!</p>}
-              </Card>
-            </TabsContent>
+          {/* Timeline & Disclaimer */}
+          <Card className="p-6 rounded-2xl border-border/40 h-full bg-card/50 flex flex-col justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+                <Clock className="h-4 w-4 text-violet-400" /> Estimated Timeline
+              </h3>
+              <p className="text-lg font-black text-violet-400">{timeline}</p>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                Suggested duration to fully complete all corrective action items.
+              </p>
+            </div>
+            <div className="mt-6 pt-4 border-t border-border/40">
+              <p className="text-[10px] text-muted-foreground leading-relaxed italic">
+                <strong>Disclaimer:</strong> {disclaimer}
+              </p>
+            </div>
+          </Card>
+        </div>
 
-            {/* CONTENT */}
-            <TabsContent value="content">
-              <Card className="p-6 md:p-8 rounded-3xl">
-                <div className="mb-8">
-                  <h3 className="text-xl font-black mb-2">Content & EEAT Analysis</h3>
-                  <p className="text-muted-foreground">Evaluating your content against Google's Helpful Content System.</p>
-                </div>
-                <div className="grid md:grid-cols-2 gap-6 mb-8">
-                   <div className="bg-muted/30 p-5 rounded-2xl border border-border/50">
-                      <p className="text-xs font-bold uppercase text-muted-foreground mb-1">Average Word Count</p>
-                      <p className="text-2xl font-black">{ai.contentAnalysis?.averageWordCount} <span className="text-sm font-normal text-muted-foreground">words</span></p>
-                      <p className="text-xs mt-2 text-amber-600">AdSense requires minimum {ai.contentAnalysis?.minimumRequired} words for your niche.</p>
-                   </div>
-                   <div className="bg-muted/30 p-5 rounded-2xl border border-border/50">
-                      <p className="text-xs font-bold uppercase text-muted-foreground mb-1">Niche Consistency</p>
-                      <p className="text-2xl font-black capitalize">{ai.contentAnalysis?.nicheConsistency}</p>
-                      <p className="text-xs mt-2 text-muted-foreground">{ai.contentAnalysis?.nicheConsistencyDetail}</p>
-                   </div>
-                </div>
-                <h4 className="font-bold uppercase tracking-widest text-xs text-muted-foreground mb-4">EEAT Signals (Experience, Expertise, Authoritativeness, Trust)</h4>
-                <div className="space-y-3 mb-6 p-5 rounded-2xl bg-card border border-border/50">
-                   <div className="flex items-center gap-3">
-                      {ai.contentAnalysis?.eeatSignals?.authorByline ? <CheckCircle2 className="w-5 h-5 text-emerald-500"/> : <AlertTriangle className="w-5 h-5 text-red-500"/>}
-                      <span className="text-sm font-medium">Author Byline</span>
-                   </div>
-                   <div className="flex items-center gap-3">
-                      {ai.contentAnalysis?.eeatSignals?.publishDates ? <CheckCircle2 className="w-5 h-5 text-emerald-500"/> : <AlertTriangle className="w-5 h-5 text-red-500"/>}
-                      <span className="text-sm font-medium">Publish Dates</span>
-                   </div>
-                   <div className="flex items-center gap-3">
-                      {ai.contentAnalysis?.eeatSignals?.socialProof ? <CheckCircle2 className="w-5 h-5 text-emerald-500"/> : <AlertTriangle className="w-5 h-5 text-red-500"/>}
-                      <span className="text-sm font-medium">Social Proof</span>
-                   </div>
-                   <p className="text-sm mt-4 text-muted-foreground border-t border-border/50 pt-4"><span className="font-bold text-foreground">Verdict: </span>{ai.contentAnalysis?.eeatSignals?.verdict}</p>
-                   <p className="text-sm mt-2 text-muted-foreground"><span className="font-bold text-foreground">How to fix: </span>{ai.contentAnalysis?.eeatSignals?.howToImprove}</p>
-                </div>
-              </Card>
-            </TabsContent>
+        {/* Critical Issues */}
+        <Card className="p-6 md:p-8 rounded-2xl border-border/40 bg-card/50">
+          <div className="mb-6">
+            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+              <ShieldAlert className="h-4.5 w-4.5 text-red-400" /> Critical Compliance Gaps
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">Issues that must be fixed to pass the AdSense reviewer's audit.</p>
+          </div>
 
-            {/* TECHNICAL */}
-            <TabsContent value="tech">
-              <Card className="p-6 md:p-8 rounded-3xl">
-                <div className="mb-8">
-                  <h3 className="text-xl font-black mb-2">Technical Health</h3>
-                  <p className="text-muted-foreground">Technical signals directly impacting indexability and user experience.</p>
+          {criticalIssues.length > 0 ? (
+            <div className="space-y-4">
+              {criticalIssues.map((issue, i) => (
+                <div key={i} className="p-4 rounded-xl border border-border/40 bg-background/50 space-y-3">
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <h4 className="font-bold text-sm text-foreground">{issue.issue}</h4>
+                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${getSeverityColors(issue.severity)}`}>
+                      {issue.severity} Severity
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    <strong>Why it matters:</strong> {issue.why_it_matters}
+                  </p>
+                  <div className="bg-muted/30 p-3 rounded-lg border border-border/20 text-xs">
+                    <strong className="block text-primary mb-1">Recommended Fix:</strong>
+                    <p className="text-muted-foreground leading-relaxed">{issue.fix}</p>
+                  </div>
                 </div>
-                <div className="grid md:grid-cols-2 gap-6 mb-8">
-                   <div className="p-5 border border-border/50 rounded-2xl bg-card">
-                      <h4 className="font-bold uppercase tracking-widest text-xs text-muted-foreground mb-4">Core Web Vitals</h4>
-                      <ul className="space-y-3">
-                        <li className="flex justify-between items-center text-sm"><span className="font-medium">LCP (Loading)</span> <span className={`uppercase text-[10px] font-bold px-2 py-1 rounded ${ai.technicalHealth?.coreWebVitals?.lcp?.status === 'pass' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{ai.technicalHealth?.coreWebVitals?.lcp?.status}</span></li>
-                        <li className="flex justify-between items-center text-sm"><span className="font-medium">CLS (Visual Stability)</span> <span className={`uppercase text-[10px] font-bold px-2 py-1 rounded ${ai.technicalHealth?.coreWebVitals?.cls?.status === 'pass' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{ai.technicalHealth?.coreWebVitals?.cls?.status}</span></li>
-                        <li className="flex justify-between items-center text-sm"><span className="font-medium">FID/INP (Interactivity)</span> <span className={`uppercase text-[10px] font-bold px-2 py-1 rounded ${ai.technicalHealth?.coreWebVitals?.fid?.status === 'pass' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{ai.technicalHealth?.coreWebVitals?.fid?.status}</span></li>
-                      </ul>
-                      <p className="text-xs text-muted-foreground mt-4 italic">{ai.technicalHealth?.coreWebVitals?.overallVerdict}</p>
-                   </div>
-                   <div className="p-5 border border-border/50 rounded-2xl bg-card">
-                      <h4 className="font-bold uppercase tracking-widest text-xs text-muted-foreground mb-4">Infrastructure</h4>
-                      <ul className="space-y-4">
-                        <li className="flex items-center gap-3 text-sm">{ai.technicalHealth?.httpsAndSecurity?.status === 'pass' ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <AlertTriangle className="w-4 h-4 text-red-500" />} {ai.technicalHealth?.httpsAndSecurity?.detail}</li>
-                        <li className="flex items-center gap-3 text-sm">{ai.technicalHealth?.mobileFriendliness?.status === 'pass' ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <AlertTriangle className="w-4 h-4 text-red-500" />} {ai.technicalHealth?.mobileFriendliness?.detail}</li>
-                        <li className="flex items-center gap-3 text-sm">{ai.technicalHealth?.sitemapAndRobots?.status === 'pass' ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <AlertTriangle className="w-4 h-4 text-red-500" />} {ai.technicalHealth?.sitemapAndRobots?.detail}</li>
-                      </ul>
-                   </div>
-                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground text-xs">
+              🎉 No critical compliance issues detected in the crawled data!
+            </div>
+          )}
+        </Card>
 
-                <div className="p-5 border border-border/50 rounded-2xl bg-slate-900 text-slate-50">
-                   <h4 className="font-bold uppercase tracking-widest text-xs text-slate-400 mb-2">Schema Markup Generator (Copy-Paste)</h4>
-                   <p className="text-sm mb-4 text-slate-300">{ai.technicalHealth?.schemaMarkup?.recommendation}</p>
-                   <pre className="p-4 bg-black rounded-xl text-[11px] overflow-x-auto text-green-400">
-                      <code>{ai.technicalHealth?.schemaMarkup?.codeSnippet}</code>
-                   </pre>
-                </div>
-              </Card>
-            </TabsContent>
+        {/* Content Quality & Analysis */}
+        <Card className="p-6 md:p-8 rounded-2xl border-border/40 bg-card/50">
+          <div className="mb-6">
+            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+              <FileText className="h-4.5 w-4.5 text-blue-400" /> Content Quality Audit
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">Detailed overview of content volume and quality metrics.</p>
+          </div>
 
-            {/* POLICY */}
-            <TabsContent value="policy">
-              <Card className="p-6 md:p-8 rounded-3xl">
-                <div className="mb-8">
-                   <h3 className="text-xl font-black mb-2">Policy Compliance</h3>
-                   <p className="text-muted-foreground">Strict checks against Google Publisher Policies.</p>
-                </div>
+          <div className="grid sm:grid-cols-2 gap-4 mb-6">
+            <div className="p-4 rounded-xl bg-muted/20 border border-border/40">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Sampled Articles</p>
+              <p className="text-2xl font-black mt-1 text-foreground">{contentAnalysis.articles_reviewed}</p>
+            </div>
+            <div className="p-4 rounded-xl bg-muted/20 border border-border/40">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Average Word Count</p>
+              <p className="text-2xl font-black mt-1 text-foreground">
+                {contentAnalysis.avg_word_count} <span className="text-xs font-normal text-muted-foreground">words</span>
+              </p>
+            </div>
+          </div>
 
-                <div className="grid md:grid-cols-2 gap-6 mb-8">
-                   <div className="bg-muted/30 p-5 rounded-2xl border border-border/50">
-                     <h4 className="font-bold uppercase tracking-widest text-xs text-muted-foreground mb-4">Mandatory Pages</h4>
-                     <ul className="space-y-3 text-sm">
-                       <li className="flex items-center gap-2">{ai.policyCompliance?.mandatoryPagesStatus?.privacy?.present ? <CheckCircle2 className="w-4 h-4 text-emerald-500"/> : <AlertTriangle className="w-4 h-4 text-red-500"/>} Privacy Policy</li>
-                       <li className="flex items-center gap-2">{ai.policyCompliance?.mandatoryPagesStatus?.about?.present ? <CheckCircle2 className="w-4 h-4 text-emerald-500"/> : <AlertTriangle className="w-4 h-4 text-red-500"/>} About Us</li>
-                       <li className="flex items-center gap-2">{ai.policyCompliance?.mandatoryPagesStatus?.contact?.present ? <CheckCircle2 className="w-4 h-4 text-emerald-500"/> : <AlertTriangle className="w-4 h-4 text-red-500"/>} Contact</li>
-                       <li className="flex items-center gap-2">{ai.policyCompliance?.mandatoryPagesStatus?.terms?.present ? <CheckCircle2 className="w-4 h-4 text-emerald-500"/> : <AlertTriangle className="w-4 h-4 text-amber-500"/>} Terms of Service</li>
-                     </ul>
-                   </div>
-                   <div className="bg-muted/30 p-5 rounded-2xl border border-border/50">
-                     <h4 className="font-bold uppercase tracking-widest text-xs text-muted-foreground mb-4">Risk Flags</h4>
-                     {ai.policyCompliance?.restrictedContentFlags && ai.policyCompliance.restrictedContentFlags.length > 0 ? (
-                        <ul className="list-disc pl-4 space-y-1 text-sm text-red-600 font-medium">
-                           {ai.policyCompliance.restrictedContentFlags.map((flag, i) => <li key={i}>{flag}</li>)}
-                        </ul>
-                     ) : (
-                        <p className="text-sm text-emerald-600 font-medium flex items-center gap-2"><CheckCircle2 className="w-4 h-4"/> No restricted content detected.</p>
-                     )}
-                     
-                     <h4 className="font-bold uppercase tracking-widest text-xs text-muted-foreground mb-2 mt-6">Ad Network Conflicts</h4>
-                     {ai.policyCompliance?.existingAdNetworkConflicts && ai.policyCompliance.existingAdNetworkConflicts.length > 0 ? (
-                        <ul className="list-disc pl-4 space-y-1 text-sm text-amber-600 font-medium">
-                           {ai.policyCompliance.existingAdNetworkConflicts.map((net, i) => <li key={i}>{net}</li>)}
-                        </ul>
-                     ) : (
-                        <p className="text-sm text-emerald-600 font-medium flex items-center gap-2"><CheckCircle2 className="w-4 h-4"/> No conflicting ad networks found.</p>
-                     )}
-                   </div>
-                </div>
-              </Card>
-            </TabsContent>
+          <div className="space-y-4">
+            <div className="text-xs text-muted-foreground leading-relaxed bg-muted/10 p-4 rounded-xl border border-border/20">
+              <strong className="block text-foreground mb-1">Quality Assessment:</strong>
+              {contentAnalysis.quality_assessment}
+            </div>
 
-            {/* SEO & COMPETITOR GAP */}
-            <TabsContent value="seo">
-              <Card className="p-6 md:p-8 rounded-3xl">
-                <div className="mb-8">
-                  <h3 className="text-xl font-black mb-2">SEO & Competitor Gap</h3>
-                  <p className="text-muted-foreground">What approved competitors are doing that you aren't.</p>
-                </div>
-
-                <div className="p-5 border border-border/50 bg-primary/5 rounded-2xl mb-8">
-                   <h4 className="font-bold flex items-center gap-2 mb-2"><Users className="w-5 h-5 text-primary"/> Top Competitor Gap</h4>
-                   <p className="text-sm text-muted-foreground mb-4">Compared to <span className="font-bold text-foreground">{ai.competitorGap?.topCompetitorDomain || 'Top Competitor'}</span></p>
-                   
-                   <div className="grid md:grid-cols-2 gap-6">
-                      <div>
-                         <p className="text-xs font-bold uppercase text-red-500 mb-2">What they have that you don't</p>
-                         <ul className="space-y-1 text-sm">
-                            {ai.competitorGap?.thingsTheyDoThatYouDont?.map((t, i) => <li key={i} className="flex gap-2"><span>-</span> {t}</li>)}
-                         </ul>
-                      </div>
-                      <div>
-                         <p className="text-xs font-bold uppercase text-primary mb-2">Quick Wins to close the gap</p>
-                         <ul className="space-y-1 text-sm">
-                            {ai.competitorGap?.quickWinsToCloseGap?.map((w, i) => <li key={i} className="flex gap-2 text-primary/90 font-medium"><span>→</span> {w}</li>)}
-                         </ul>
-                      </div>
-                   </div>
-                </div>
-
-                <div className="grid md:grid-cols-3 gap-6">
-                   <div className="bg-muted/30 p-5 rounded-2xl border border-border/50">
-                     <p className="text-xs font-bold uppercase text-muted-foreground mb-1">Meta Tags Score</p>
-                     <p className="text-2xl font-black">{ai.seoHealth?.metaTagsScore ?? 0}/100</p>
-                   </div>
-                   <div className="bg-muted/30 p-5 rounded-2xl border border-border/50">
-                     <p className="text-xs font-bold uppercase text-muted-foreground mb-1">Internal Linking Score</p>
-                     <p className="text-2xl font-black">{ai.seoHealth?.internalLinkingScore ?? 0}/100</p>
-                   </div>
-                   <div className="bg-muted/30 p-5 rounded-2xl border border-border/50">
-                     <p className="text-xs font-bold uppercase text-muted-foreground mb-1">Est. Time to Rank</p>
-                     <p className="text-lg font-bold">{ai.seoHealth?.estimatedTimeToRank || 'N/A'}</p>
-                   </div>
-                </div>
-              </Card>
-            </TabsContent>
-
-            {/* CHECKLIST */}
-            <TabsContent value="checklist">
-              <Card className="p-6 md:p-8 rounded-3xl">
-                <h3 className="text-xl font-black mb-6 flex items-center gap-2"><CheckSquare className="w-6 h-6 text-primary"/> Final Pre-Application Checklist</h3>
-                <div className="space-y-3">
-                  {ai.preApplicationChecklist?.map((c, i) => (
-                    <div key={i} className="flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-background">
-                      {c.status === 'done' && <CheckCircle2 className="h-6 w-6 text-emerald-500 shrink-0" />}
-                      {c.status === 'unknown' && <AlertTriangle className="h-6 w-6 text-amber-500 shrink-0" />}
-                      {c.status === 'not-done' && <div className="h-6 w-6 rounded-full border-2 border-muted-foreground/30 shrink-0" />}
-                      <div className="flex-1">
-                         <span className={`text-sm font-medium ${c.status === 'done' ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
-                           {c.item}
-                         </span>
-                         {c.isBlocker && c.status !== 'done' && (
-                            <p className="text-xs text-red-500 mt-1 font-bold uppercase">Immediate Blocker</p>
-                         )}
-                      </div>
+            {contentAnalysis.thin_or_weak_pages && contentAnalysis.thin_or_weak_pages.length > 0 && (
+              <div className="space-y-2">
+                <strong className="block text-xs font-bold text-foreground">Flagged Thin / Weak Pages:</strong>
+                <div className="max-h-36 overflow-y-auto space-y-1.5 pr-2">
+                  {contentAnalysis.thin_or_weak_pages.map((url, idx) => (
+                    <div key={idx} className="text-[11px] text-red-400 break-all bg-red-500/5 p-2 rounded-lg border border-red-500/10">
+                      ⚠️ {url}
                     </div>
                   ))}
                 </div>
-              </Card>
-            </TabsContent>
+              </div>
+            )}
           </div>
-        </Tabs>
+        </Card>
+
+        {/* Action Plan Checklist */}
+        <Card className="p-6 md:p-8 rounded-2xl border-border/40 bg-card/50">
+          <div className="mb-6">
+            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+              <ClipboardList className="h-4.5 w-4.5 text-emerald-400" /> Priority Action Plan
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">Check off tasks as you complete them to prepare your site for AdSense.</p>
+          </div>
+
+          <div className="space-y-2.5">
+            {actionPlan.map((task, idx) => {
+              const isChecked = !!checkedTasks[idx]
+              return (
+                <div 
+                  key={idx}
+                  onClick={() => toggleTask(idx)}
+                  className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer select-none
+                    ${isChecked 
+                      ? 'bg-emerald-500/5 border-emerald-500/20 text-muted-foreground' 
+                      : 'bg-background/40 border-border/40 text-foreground hover:border-primary/30'}`}
+                >
+                  <button 
+                    className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors mt-0.5
+                      ${isChecked ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-border/80'}`}
+                  >
+                    {isChecked && <CheckCircle2 className="h-3 w-3" />}
+                  </button>
+                  <div className="text-xs leading-relaxed">
+                    <span className={isChecked ? 'line-through opacity-60' : ''}>{task}</span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </Card>
 
       </div>
     </div>

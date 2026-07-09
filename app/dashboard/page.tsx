@@ -6,15 +6,17 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import {
-  Zap, AlertCircle, Globe, Crown, Lock, ArrowRight,
+  Zap, AlertCircle, Globe, ArrowRight,
   Clock, TrendingUp, BarChart3, Sparkles, CheckCircle2,
   FileText, Search, ShieldCheck, Activity, ChevronRight,
-  Target, Layers, Scan,
+  Target, Layers, Scan, Wrench, PenLine, Tag, Code2,
+  ScrollText, Image, FileSearch,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useProfile } from '@/hooks/use-profile'
 import { useRazorpay } from '@/hooks/use-razorpay'
 import DashboardLoading from './loading'
+import { ALL_TOOLS, TOOL_CATEGORIES, type ToolCategory } from '@/lib/tool-catalog'
 
 interface ScanRow {
   id: string
@@ -77,7 +79,6 @@ function CrawlVisualizer({ url, scanStatus }: { url: string; scanStatus: string 
     tick()
   }, [domain])
 
-  // Sync progress to actual scan status
   useEffect(() => {
     if (scanStatus.includes('AI')) setProgress(p => Math.max(p, 88))
     if (scanStatus.includes('Done')) setProgress(100)
@@ -86,7 +87,6 @@ function CrawlVisualizer({ url, scanStatus }: { url: string; scanStatus: string 
 
   return (
     <div className="space-y-5 mt-6">
-      {/* Progress bar */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-xs font-semibold text-primary">
@@ -102,8 +102,6 @@ function CrawlVisualizer({ url, scanStatus }: { url: string; scanStatus: string 
           />
         </div>
       </div>
-
-      {/* Terminal */}
       <div className="rounded-xl bg-[#0d0d0d] border border-white/[0.06] p-4 font-mono text-[11px] leading-5">
         <div className="flex items-center gap-1.5 mb-3 pb-2 border-b border-white/[0.06]">
           <span className="h-2 w-2 rounded-full bg-red-500/60" />
@@ -128,6 +126,27 @@ function CrawlVisualizer({ url, scanStatus }: { url: string; scanStatus: string 
     </div>
   )
 }
+
+// Category icon map
+const CAT_ICONS: Record<ToolCategory, any> = {
+  adsense: Target,
+  content: PenLine,
+  seo: TrendingUp,
+  technical: Code2,
+  legal: ScrollText,
+  media: Image,
+}
+
+const CAT_COLORS: Record<ToolCategory, { color: string; bg: string; ring: string }> = {
+  adsense:   { color: 'text-violet-400',  bg: 'bg-violet-500/10',  ring: 'ring-violet-500/15'  },
+  content:   { color: 'text-blue-400',    bg: 'bg-blue-500/10',    ring: 'ring-blue-500/15'    },
+  seo:       { color: 'text-emerald-400', bg: 'bg-emerald-500/10', ring: 'ring-emerald-500/15' },
+  technical: { color: 'text-amber-400',   bg: 'bg-amber-500/10',   ring: 'ring-amber-500/15'   },
+  legal:     { color: 'text-indigo-400',  bg: 'bg-indigo-500/10',  ring: 'ring-indigo-500/15'  },
+  media:     { color: 'text-pink-400',    bg: 'bg-pink-500/10',    ring: 'ring-pink-500/15'    },
+}
+
+const CATEGORY_ORDER_TYPED: ToolCategory[] = ['adsense', 'content', 'seo', 'technical', 'legal', 'media']
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -188,7 +207,7 @@ export default function DashboardPage() {
       })
       const data = await res.json()
       if (!res.ok || !data.success) {
-        setUrlError(data.upgrade_required ? 'Scan limit reached. Upgrade to Pro.' : (data.error ?? 'Scan failed.'))
+        setUrlError(data.error ?? 'Scan failed. Please try again.')
         setIsScanning(false)
         setScanStatus('')
         return
@@ -239,44 +258,33 @@ export default function DashboardPage() {
 
   const firstName = profile?.fullName?.split(' ')[0]
   const monthUsed = usage?.scans_this_month ?? 0
-  const monthLimit = usage?.scans_limit ?? 1
-  const usagePct = Math.min((monthUsed / monthLimit) * 100, 100)
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 sm:px-6 py-6 max-w-5xl space-y-6">
+      <div className="container mx-auto px-4 sm:px-6 py-6 max-w-5xl space-y-8">
 
-        {/* ── Pro upgrade success banner ── */}
+        {/* ── Welcome banner ── */}
         {upgraded && (
           <div className="flex items-center gap-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 px-5 py-3.5">
-            <CheckCircle2 className="h-4.5 w-4.5 text-emerald-400 flex-shrink-0" />
-            <div>
-              <p className="font-semibold text-emerald-300 text-sm">Welcome to Pro! 🎉</p>
-              <p className="text-xs text-emerald-400/70 mt-0.5">Enjoy 200 scans/month and full AI-powered reports.</p>
-            </div>
+            <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+            <p className="font-semibold text-emerald-300 text-sm">Everything unlocked! All 40+ tools are now free. 🎉</p>
           </div>
         )}
 
         {/* ── Header ── */}
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-bold text-foreground tracking-tight">
-              {firstName ? `Good morning, ${firstName} 👋` : 'Dashboard'}
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">
+              {firstName ? `Hi, ${firstName} 👋` : 'Dashboard'}
             </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {isPro ? 'Pro Plan · 200 scans/month' : 'Free Plan · Run a website analysis below'}
+            <p className="text-sm text-muted-foreground mt-0.5">
+              40+ free tools for bloggers, website owners &amp; agencies
             </p>
           </div>
-          {isPro && (
-            <div className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400">
-              <Crown className="h-3.5 w-3.5" />
-              Pro
-              {profile?.proExpiresAt && (() => {
-                const daysLeft = Math.ceil((new Date(profile.proExpiresAt).getTime() - Date.now()) / 86400000)
-                return daysLeft <= 5 ? <span className="text-red-400 ml-1">· {daysLeft}d left</span> : null
-              })()}
-            </div>
-          )}
+          <div className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex-shrink-0">
+            <Zap className="h-3.5 w-3.5" />
+            All Free
+          </div>
         </div>
 
         {/* ── Stats row ── */}
@@ -284,7 +292,7 @@ export default function DashboardPage() {
           {[
             { icon: Activity,   label: 'Total Scans',  value: usage?.total_scans ?? 0,   color: 'text-violet-400', bg: 'bg-violet-500/10', ring: 'ring-violet-500/20' },
             { icon: Zap,        label: 'This Month',   value: monthUsed,                  color: 'text-blue-400',   bg: 'bg-blue-500/10',   ring: 'ring-blue-500/20'   },
-            { icon: Target,     label: 'Plan',         value: isPro ? 'Pro ✦' : 'Free',  color: 'text-amber-400',  bg: 'bg-amber-500/10',  ring: 'ring-amber-500/20'  },
+            { icon: Wrench,     label: 'Tools',        value: '40+',                      color: 'text-amber-400',  bg: 'bg-amber-500/10',  ring: 'ring-amber-500/20'  },
             { icon: Sparkles,   label: 'AI Reports',   value: 'Included',                 color: 'text-emerald-400',bg: 'bg-emerald-500/10',ring: 'ring-emerald-500/20'},
           ].map(({ icon: Icon, label, value, color, bg, ring }) => (
             <Card key={label} className={`p-4 border-0 rounded-2xl ring-1 ${ring} ${bg}`}>
@@ -301,38 +309,30 @@ export default function DashboardPage() {
 
         {/* ── Scan hero card ── */}
         <div className="relative rounded-2xl overflow-hidden border border-white/[0.07] bg-gradient-to-br from-[#0f0f1a] via-[#0a0a16] to-[#0d0d1f] shadow-2xl shadow-violet-950/30">
-          {/* Decorative glow */}
           <div className="absolute -top-24 -right-24 w-72 h-72 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
-          {/* Top accent bar */}
           <div className="h-[2px] bg-gradient-to-r from-violet-500 via-indigo-400 to-blue-500 opacity-80" />
 
           <div className="relative p-7 sm:p-8">
             {!isScanning ? (
               <>
-                {/* Card header */}
                 <div className="flex items-start gap-4 mb-7">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 ring-1 ring-white/10 flex-shrink-0">
                     <Scan className="h-5 w-5 text-violet-400" />
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-white">Website AdSense Analyzer</h2>
-                    <p className="text-sm text-white/40 mt-0.5">Paste any URL — get a full AI-powered readiness report</p>
+                    <p className="text-sm text-white/40 mt-0.5">Paste any URL — get a full AI-powered readiness report, free</p>
                   </div>
                 </div>
 
-                {/* Error */}
                 {urlError && (
                   <div className="flex items-start gap-2.5 rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 mb-4 text-sm text-red-300">
                     <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5 text-red-400" />
                     <span className="flex-1">{urlError}</span>
-                    {urlError.includes('limit') && (
-                      <Link href="/pricing" className="text-xs font-bold text-red-300 underline flex-shrink-0">Upgrade</Link>
-                    )}
                   </div>
                 )}
 
-                {/* URL input */}
                 <form onSubmit={handleScan} className="space-y-4">
                   <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative flex-1">
@@ -343,7 +343,7 @@ export default function DashboardPage() {
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}
                         disabled={isScanning}
-                        className="pl-11 h-13 text-sm bg-white/5 border-white/10 text-white placeholder:text-white/25 focus:border-violet-500/50 focus:bg-white/[0.07] rounded-xl transition-all h-12"
+                        className="pl-11 h-12 text-sm bg-white/5 border-white/10 text-white placeholder:text-white/25 focus:border-violet-500/50 focus:bg-white/[0.07] rounded-xl transition-all"
                         required
                       />
                     </div>
@@ -357,28 +357,24 @@ export default function DashboardPage() {
                     </Button>
                   </div>
                   <p className="text-[11px] text-white/25 text-center">
-                    Free to use · No credit card required · Results in ~30s
+                    Free · No credit card · Full AI report included · Results in ~30s
                   </p>
                 </form>
 
-                {/* What you get */}
                 <div className="mt-7 pt-6 border-t border-white/[0.06]">
-                  <p className="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-4">What's included in every report</p>
+                  <p className="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-4">Every free report includes</p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                     {[
-                      { icon: BarChart3,    text: 'Readiness Score',        included: true },
-                      { icon: CheckCircle2, text: 'Policy Compliance',       included: true },
-                      { icon: AlertCircle,  text: 'Critical Issues',         included: true },
-                      { icon: Sparkles,     text: 'Full AI Report',          included: true },
-                      { icon: Target,       text: 'Fix Action Plan',         included: true },
-                      { icon: FileText,     text: 'Privacy Policy Gen',      included: false },
-                    ].map(({ icon: Icon, text, included }) => (
-                      <div key={text} className={`flex items-center gap-2 text-xs ${included ? 'text-white/60' : 'text-white/20'}`}>
-                        {included
-                          ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 flex-shrink-0" />
-                          : <Lock className="h-3.5 w-3.5 flex-shrink-0" />}
+                      { icon: BarChart3,    text: 'Readiness Score' },
+                      { icon: CheckCircle2, text: 'Policy Compliance' },
+                      { icon: AlertCircle,  text: 'Critical Issues' },
+                      { icon: Sparkles,     text: 'Full AI Report' },
+                      { icon: Target,       text: '3-Phase Fix Plan' },
+                      { icon: FileText,     text: 'Pre-App Checklist' },
+                    ].map(({ icon: Icon, text }) => (
+                      <div key={text} className="flex items-center gap-2 text-xs text-white/60">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 flex-shrink-0" />
                         <span>{text}</span>
-                        {!included && <span className="ml-auto text-[9px] font-bold text-violet-400 bg-violet-400/10 px-1.5 py-0.5 rounded-full flex-shrink-0">Pro</span>}
                       </div>
                     ))}
                   </div>
@@ -406,26 +402,71 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* ── Quick tools row ── */}
-        <div className="grid sm:grid-cols-3 gap-3">
-          {[
-            { href: '/dashboard/articles',      icon: Layers,      label: 'Article Analyzer',   desc: 'Check all articles for AdSense risk',  color: 'text-blue-400',   bg: 'bg-blue-500/10',    ring: 'ring-blue-500/15'   },
-            { href: '/dashboard/article-studio',icon: FileText,    label: 'Article Studio',     desc: 'AI-powered content generator',         color: 'text-violet-400', bg: 'bg-violet-500/10',  ring: 'ring-violet-500/15' },
-            { href: '/dashboard/extension',     icon: ShieldCheck, label: 'Policy Shield',      desc: 'Real-time browser extension',           color: 'text-emerald-400',bg: 'bg-emerald-500/10', ring: 'ring-emerald-500/15'},
-          ].map(({ href, icon: Icon, label, desc, color, bg, ring }) => (
-            <Link key={href} href={href}>
-              <Card className={`p-4 border-0 rounded-2xl ring-1 ${ring} ${bg} hover:ring-2 transition-all group cursor-pointer h-full`}>
-                <div className="flex items-start gap-3">
-                  <Icon className={`h-4 w-4 ${color} flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform`} />
-                  <div className="min-w-0">
-                    <p className={`text-sm font-semibold ${color}`}>{label}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{desc}</p>
-                  </div>
-                  <ChevronRight className={`h-3.5 w-3.5 ${color} opacity-0 group-hover:opacity-60 transition-opacity ml-auto flex-shrink-0 mt-0.5`} />
-                </div>
-              </Card>
+        {/* ── Tools directory ── */}
+        <div>
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h2 className="text-base font-bold text-foreground">All Tools</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">40+ free tools — no account limits</p>
+            </div>
+            <Link href="/dashboard/tools">
+              <Button variant="ghost" size="sm" className="gap-1 text-xs text-muted-foreground hover:text-foreground h-7 px-2">
+                View all <ArrowRight className="h-3 w-3" />
+              </Button>
             </Link>
-          ))}
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {CATEGORY_ORDER_TYPED.map(cat => {
+              const catDef = TOOL_CATEGORIES[cat]
+              const catColors = CAT_COLORS[cat]
+              const Icon = CAT_ICONS[cat]
+              const count = ALL_TOOLS.filter(t => t.category === cat).length
+              return (
+                <Link key={cat} href={`/dashboard/tools?cat=${cat}`}>
+                  <Card className={`p-4 border-0 rounded-2xl ring-1 ${catColors.ring} ${catColors.bg} hover:ring-2 transition-all group cursor-pointer h-full`}>
+                    <div className="flex items-center gap-3">
+                      <Icon className={`h-5 w-5 ${catColors.color} flex-shrink-0 group-hover:scale-110 transition-transform`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className={`text-sm font-semibold ${catColors.color}`}>{catDef.emoji} {catDef.label}</p>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">{count} tools</p>
+                      </div>
+                      <ChevronRight className={`h-3.5 w-3.5 ${catColors.color} opacity-0 group-hover:opacity-60 transition-opacity flex-shrink-0`} />
+                    </div>
+                  </Card>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* ── Popular individual tools ── */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-bold text-foreground">Popular Tools</h2>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {[
+              { href: '/dashboard/articles',       icon: FileSearch, label: 'Article Analyzer', desc: 'AdSense risk per article',    color: 'text-blue-400',   bg: 'bg-blue-500/10',    ring: 'ring-blue-500/15'   },
+              { href: '/dashboard/article-studio', icon: PenLine,    label: 'Article Studio',   desc: 'AI blog post writer',          color: 'text-violet-400', bg: 'bg-violet-500/10',  ring: 'ring-violet-500/15' },
+              { href: '/dashboard/tools/meta-generator', icon: Tag,  label: 'Meta Generator',  desc: 'SEO title & description',      color: 'text-emerald-400',bg: 'bg-emerald-500/10', ring: 'ring-emerald-500/15'},
+              { href: '/dashboard/tools/schema-generator', icon: Code2, label: 'Schema Markup', desc: 'JSON-LD structured data',    color: 'text-amber-400',  bg: 'bg-amber-500/10',   ring: 'ring-amber-500/15'  },
+            ].map(({ href, icon: Icon, label, desc, color, bg, ring }) => (
+              <Link key={href} href={href}>
+                <Card className={`p-4 border-0 rounded-2xl ring-1 ${ring} ${bg} hover:ring-2 transition-all group cursor-pointer h-full`}>
+                  <div className="flex items-start gap-3">
+                    <Icon className={`h-4 w-4 ${color} flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform`} />
+                    <div className="min-w-0">
+                      <p className={`text-sm font-semibold ${color}`}>{label}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{desc}</p>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* ── Recent scans ── */}
@@ -449,7 +490,7 @@ export default function DashboardPage() {
                 <Globe className="h-5 w-5 text-muted-foreground" />
               </div>
               <p className="font-semibold text-foreground text-sm mb-1">No scans yet</p>
-              <p className="text-xs text-muted-foreground">Paste a URL above to run your first analysis</p>
+              <p className="text-xs text-muted-foreground">Paste a URL above to run your first free analysis</p>
             </Card>
           ) : (
             <div className="space-y-2">
