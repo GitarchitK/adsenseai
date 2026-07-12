@@ -38,7 +38,9 @@ export function getDomain(urlString: string): string {
 export function isSameDomain(url: string, baseDomain: string): boolean {
   try {
     const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
-    return urlObj.hostname === baseDomain || urlObj.hostname?.endsWith(`.${baseDomain}`);
+    const host1 = urlObj.hostname.replace(/^www\./i, '');
+    const host2 = baseDomain.replace(/^www\./i, '');
+    return host1 === host2 || host1.endsWith(`.${host2}`) || host2.endsWith(`.${host1}`);
   } catch {
     return false;
   }
