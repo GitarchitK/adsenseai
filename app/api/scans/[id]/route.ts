@@ -5,10 +5,19 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   try {
     const { id } = await params
     const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
-    if (!profile) return NextResponse.json({ error: 'Authentication required.' }, { status: 401 })
-
-    const scan = await getScanById(id, profile.uid)
-    if (!scan) return NextResponse.json({ error: 'Scan not found.' }, { status: 404 })
+    
+    const { adminDb } = await import('@/lib/firebase-admin')
+    const scanDoc = await adminDb.collection('scans').doc(id).get()
+    if (!scanDoc.exists) return NextResponse.json({ error: 'Scan not found.' }, { status: 404 })
+    
+    const scan = scanDoc.data()
+    const isGuestScan = scan?.userId === 'guest'
+    
+    if (!isGuestScan) {
+      if (!profile || scan?.userId !== profile.uid) {
+        return NextResponse.json({ error: 'Unauthorized.' }, { status: 403 })
+      }
+    }
 
     return NextResponse.json({ scan })
   } catch (err) {

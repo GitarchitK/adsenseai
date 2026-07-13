@@ -21,8 +21,10 @@ export default function FullReportPage({ params }: { params: Promise<{ id: strin
   const [checkedTasks, setCheckedTasks] = useState<Record<number, boolean>>({})
 
   useEffect(() => {
-    if (!token || !id) return
-    fetch(`/api/scans/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+    if (!id) return
+    const headers: Record<string, string> = {}
+    if (token) headers['Authorization'] = `Bearer ${token}`
+    fetch(`/api/scans/${id}`, { headers })
       .then(r => r.json())
       .then(({ scan }) => {
         if (!scan) { setLoading(false); return }

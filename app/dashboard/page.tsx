@@ -169,16 +169,19 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const scanUrl = searchParams.get('scan')
-    if (scanUrl && canScan && token && !isScanning && url === decodeURIComponent(scanUrl)) {
+    if (scanUrl && !isScanning && url === decodeURIComponent(scanUrl)) {
       const timer = setTimeout(() => handleScan({ preventDefault: () => {} } as React.FormEvent), 500)
       return () => clearTimeout(timer)
     }
-  }, [searchParams, canScan, token, url])
+  }, [searchParams, url])
 
   useEffect(() => {
-    if (!token) return
+    if (!token) {
+      setScansLoading(false)
+      return
+    }
     getToken().then(t => {
-      if (!t) return
+      if (!t) { setScansLoading(false); return }
       fetch('/api/scans?limit=5', { headers: { Authorization: `Bearer ${t}` } })
         .then(r => r.json())
         .then(d => setRecentScans(d.scans ?? []))
@@ -190,7 +193,7 @@ export default function DashboardPage() {
   const handleScan = async (e: React.FormEvent) => {
     e.preventDefault()
     setUrlError('')
-    try { new URL(url) } catch { setUrlError('Please enter a valid URL including https://'); return }
+    try { new URL(url.startsWith('http') ? url : `https://${url}`) } catch { setUrlError('Please enter a valid URL'); return }
     if (!url) { setUrlError('Please enter a URL'); return }
 
     setIsScanning(true)
@@ -198,11 +201,13 @@ export default function DashboardPage() {
 
     try {
       const t = await getToken()
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+      if (t) headers['Authorization'] = `Bearer ${t}`
 
       setScanStatus('Crawling homepage and key pages…')
       const res = await fetch('/api/crawl', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
+        headers,
         body: JSON.stringify({ url }),
       })
       const data = await res.json()
@@ -218,9 +223,12 @@ export default function DashboardPage() {
       while (remaining.length > 0) {
         setScanStatus(`Crawling articles… (batch ${batchNum})`)
         try {
+          const batchHeaders: Record<string, string> = { 'Content-Type': 'application/json' }
+          if (t) batchHeaders['Authorization'] = `Bearer ${t}`
+          
           const batchRes = await fetch('/api/crawl/batch', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
+            headers: batchHeaders,
             body: JSON.stringify({ scan_id: data.scan_id, urls: remaining }),
           })
           const batchData = await batchRes.json()
@@ -236,9 +244,12 @@ export default function DashboardPage() {
         setScanStatus('Generating AI analysis…')
         try {
           const freshT = await getToken()
+          const analyzeHeaders: Record<string, string> = { 'Content-Type': 'application/json' }
+          if (freshT) analyzeHeaders['Authorization'] = `Bearer ${freshT}`
+          
           await fetch('/api/analyze/master', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${freshT}` },
+            headers: analyzeHeaders,
             body: JSON.stringify({ scanId: data.scan_id }),
           })
         } catch { /* AI report is bonus */ }

@@ -22,24 +22,26 @@ export async function POST(request: NextRequest) {
 
     // ── Auth ────────────────────────────────────────────────────────────────
     const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
-    if (!profile) {
-      return NextResponse.json({ success: false, error: 'Authentication required.' }, { status: 401 })
-    }
-
-    // ── Scan limit ──────────────────────────────────────────────────────────
-    const monthKey = new Date().toISOString().slice(0, 7)
-    const scansThisMonth = profile.scansMonthKey === monthKey ? profile.scansThisMonth : 0
-    const userPlan = profile.plan || 'free'
-    const isPro = userPlan === 'pro'
-
-    if (!canRunScan(userPlan, scansThisMonth)) {
-      return NextResponse.json({
-        success: false,
-        error: userPlan === 'pro'
-          ? 'Monthly scan limit (200) reached. Resets on the 1st.'
-          : 'Free scan limit (5) reached. Upgrade to Pro for 200 scans/month.',
-        upgrade_required: true,
-      }, { status: 403 })
+    
+    let userId = 'guest'
+    let userPlan = 'free'
+    let isPro = true
+    
+    if (profile) {
+      userId = profile.uid
+      userPlan = profile.plan || 'free'
+      
+      const monthKey = new Date().toISOString().slice(0, 7)
+      const scansThisMonth = profile.scansMonthKey === monthKey ? profile.scansThisMonth : 0
+      if (!canRunScan(userPlan, scansThisMonth)) {
+        return NextResponse.json({
+          success: false,
+          error: userPlan === 'pro'
+            ? 'Monthly scan limit (200) reached. Resets on the 1st.'
+            : 'Free scan limit (5) reached. Upgrade to Pro for 200 scans/month.',
+          upgrade_required: true,
+        }, { status: 403 })
+      }
     }
 
     // ── Parse URL ───────────────────────────────────────────────────────────
@@ -71,7 +73,9 @@ export async function POST(request: NextRequest) {
     const deepCrawlData = buildDeepCrawlResult(crawlResult)
 
     // ── Persist Phase 1 ─────────────────────────────────────────────────────
-    await incrementScanCount(profile.uid)
+    if (profile) {
+      await incrementScanCount(profile.uid)
+    }
 
     const crawlDataToSave = {
       ...deepCrawlData,
@@ -79,8 +83,8 @@ export async function POST(request: NextRequest) {
       _rawPages: crawlResult.pages,
     } as unknown as Record<string, unknown>
 
-    const scanId = await saveScan(profile.uid, {
-      userId:       profile.uid,
+    const scanId = await saveScan(userId, {
+      userId,
       websiteUrl:   normalizedUrl,
       domain:       getDomain(normalizedUrl),
       status:       'completed',

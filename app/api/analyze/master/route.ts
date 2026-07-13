@@ -5,9 +5,6 @@ import { generateAiMasterReport, generateSeoBlogHook } from '@/services/ai-maste
 
 export async function POST(request: NextRequest) {
   try {
-    const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
-    if (!profile) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    
     const { scanId } = await request.json()
     if (!scanId) return NextResponse.json({ error: 'scanId required' }, { status: 400 })
 
@@ -16,7 +13,14 @@ export async function POST(request: NextRequest) {
     if (!scanDoc.exists) return NextResponse.json({ error: 'Scan not found' }, { status: 404 })
 
     const scanData = scanDoc.data()
-    if (scanData?.userId !== profile.uid) return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+    const isGuestScan = scanData?.userId === 'guest'
+
+    if (!isGuestScan) {
+      const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
+      if (!profile || scanData?.userId !== profile.uid) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+      }
+    }
 
     if (!scanData?.crawlData) {
       return NextResponse.json({ error: 'No crawl data available for this scan.' }, { status: 400 })

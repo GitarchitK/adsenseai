@@ -85,9 +85,6 @@ export async function POST(request: NextRequest) {
     const { allowed } = await checkRateLimit(ip)
     if (!allowed) return NextResponse.json({ error: 'Too many requests.' }, { status: 429 })
 
-    const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
-    if (!profile) return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 })
-
     const body = await request.json()
     const { scan_id, urls } = body as { scan_id: string; urls: string[] }
 
@@ -95,11 +92,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'scan_id and urls[] required.' }, { status: 400 })
     }
 
+    const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
+
     // Verify scan ownership
     const scanRef = adminDb.collection('scans').doc(scan_id)
     const scanDoc = await scanRef.get()
-    if (!scanDoc.exists || scanDoc.data()?.userId !== profile.uid) {
+    if (!scanDoc.exists) {
       return NextResponse.json({ error: 'Scan not found.' }, { status: 404 })
+    }
+
+    const scanData = scanDoc.data()
+    const isGuestScan = scanData?.userId === 'guest'
+
+    if (!isGuestScan) {
+      if (!profile || scanData?.userId !== profile.uid) {
+        return NextResponse.json({ error: 'Unauthorized.' }, { status: 403 })
+      }
     }
 
     // Crawl this batch

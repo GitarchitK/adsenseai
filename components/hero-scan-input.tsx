@@ -27,11 +27,7 @@ export function HeroScanInput() {
     if (!url) return
     setIsLoading(true)
     const encodedUrl = encodeURIComponent(url.startsWith('http') ? url : `https://${url}`)
-    if (isLoggedIn) {
-      router.push(`/dashboard?scan=${encodedUrl}`)
-    } else {
-      router.push(`/auth/login?returnUrl=${encodedUrl}`)
-    }
+    router.push(`/dashboard?scan=${encodedUrl}`)
   }
 
   return (
