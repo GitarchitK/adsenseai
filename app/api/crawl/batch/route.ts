@@ -92,7 +92,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'scan_id and urls[] required.' }, { status: 400 })
     }
 
-    const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
+    const profile = await getAuthenticatedProfile(
+      request.headers.get('authorization'),
+      request.headers.get('x-guest-id')
+    )
 
     // Verify scan ownership
     const scanRef = adminDb.collection('scans').doc(scan_id)
@@ -102,9 +105,9 @@ export async function POST(request: NextRequest) {
     }
 
     const scanData = scanDoc.data()
-    const isGuestScan = scanData?.userId === 'guest'
+    const isLegacyGuestScan = scanData?.userId === 'guest'
 
-    if (!isGuestScan) {
+    if (!isLegacyGuestScan) {
       if (!profile || scanData?.userId !== profile.uid) {
         return NextResponse.json({ error: 'Unauthorized.' }, { status: 403 })
       }

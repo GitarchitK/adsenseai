@@ -205,17 +205,10 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[12px] font-semibold text-sidebar-foreground truncate">
-              {profile?.fullName ?? profile?.email ?? 'Loading…'}
+              {profile?.fullName ?? 'Guest User'}
             </p>
             <p className="text-[10px] text-muted-foreground">Free Plan</p>
           </div>
-          <button
-            onClick={handleLogout}
-            className="p-1 rounded-lg hover:bg-muted transition-colors opacity-60 hover:opacity-100"
-            title="Sign out"
-          >
-            <LogOut className="h-3.5 w-3.5 text-muted-foreground" />
-          </button>
         </div>
       </div>
     </>

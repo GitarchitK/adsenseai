@@ -19,18 +19,20 @@ export default function PlanPage() {
   useEffect(() => {
     const fetchPlan = async () => {
       const user = auth.currentUser
-      if (!user) {
+      const guestId = typeof window !== 'undefined' ? localStorage.getItem('adsense_guest_id') : null
+      if (!user && !guestId) {
         router.push('/')
         return
       }
 
       try {
-        const token = await user.getIdToken()
+        const token = user ? await user.getIdToken() : null
+        const headers: Record<string, string> = {}
+        if (token) headers['Authorization'] = `Bearer ${token}`
+        if (guestId) headers['x-guest-id'] = guestId
         
         // First get profile to find activePlanId
-        const profileRes = await fetch('/api/profile', {
-          headers: { Authorization: `Bearer ${token}` }
-        })
+        const profileRes = await fetch('/api/profile', { headers })
         const data = await profileRes.json()
         const profile = data.profile
         
@@ -39,9 +41,7 @@ export default function PlanPage() {
           return
         }
 
-        const planRes = await fetch(`/api/plans/${profile.activePlanId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
+        const planRes = await fetch(`/api/plans/${profile.activePlanId}`, { headers })
 
         if (!planRes.ok) {
           throw new Error('Failed to fetch plan')
@@ -61,7 +61,12 @@ export default function PlanPage() {
       if (user) {
         fetchPlan()
       } else {
-        router.push('/')
+        const guestId = typeof window !== 'undefined' ? localStorage.getItem('adsense_guest_id') : null
+        if (guestId) {
+          fetchPlan()
+        } else {
+          router.push('/')
+        }
       }
     })
 
@@ -73,13 +78,16 @@ export default function PlanPage() {
     setCompleting(true)
     
     try {
-      const token = await auth.currentUser?.getIdToken()
+      const user = auth.currentUser
+      const guestId = typeof window !== 'undefined' ? localStorage.getItem('adsense_guest_id') : null
+      const token = user ? await user.getIdToken() : null
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+      if (token) headers['Authorization'] = `Bearer ${token}`
+      if (guestId) headers['x-guest-id'] = guestId
+
       const res = await fetch(`/api/plans/${plan.planId}/complete-day`, {
         method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
+        headers,
         body: JSON.stringify({ day })
       })
 

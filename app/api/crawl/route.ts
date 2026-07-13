@@ -21,7 +21,10 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Auth ────────────────────────────────────────────────────────────────
-    const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
+    const profile = await getAuthenticatedProfile(
+      request.headers.get('authorization'),
+      request.headers.get('x-guest-id')
+    )
     
     let userId = 'guest'
     let userPlan = 'free'

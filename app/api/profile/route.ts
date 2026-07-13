@@ -4,7 +4,10 @@ import { PLANS } from '@/lib/plans'
 
 export async function GET(request: NextRequest) {
   try {
-    const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
+    const profile = await getAuthenticatedProfile(
+      request.headers.get('authorization'),
+      request.headers.get('x-guest-id')
+    )
     if (!profile) return NextResponse.json({ error: 'Authentication required.' }, { status: 401 })
 
     const monthKey = new Date().toISOString().slice(0, 7)
@@ -28,7 +31,10 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
+    const profile = await getAuthenticatedProfile(
+      request.headers.get('authorization'),
+      request.headers.get('x-guest-id')
+    )
     if (!profile) return NextResponse.json({ error: 'Authentication required.' }, { status: 401 })
 
     const { full_name } = await request.json()

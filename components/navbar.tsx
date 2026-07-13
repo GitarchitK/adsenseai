@@ -72,57 +72,19 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           {mounted && (
             <>
-              {isLoggedIn ? (
-                <>
-                  {/* Desktop */}
-                  <Link href="/dashboard">
-                    <Button variant="ghost" size="sm" className="gap-2 text-sm font-medium hidden md:inline-flex">
-                      <LayoutDashboard className="h-4 w-4" /> Dashboard
-                    </Button>
-                  </Link>
-                  {profile?.activePlanId && (
-                    <Link href="/dashboard/plan">
-                      <Button variant="ghost" size="sm" className="gap-2 text-sm font-medium hidden md:inline-flex text-primary">
-                        My Plan
-                      </Button>
-                    </Link>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="gap-2 text-sm font-medium hidden md:inline-flex text-muted-foreground hover:text-foreground"
-                    onClick={handleSignOut}
-                  >
-                    <LogOut className="h-4 w-4" /> Sign Out
-                  </Button>
-                  {/* Mobile — dashboard icon */}
-                  <Link href="/dashboard" className="md:hidden">
-                    <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-medium h-8 px-3">
-                      <LayoutDashboard className="h-4 w-4" />
-                      <span>Dashboard</span>
-                    </Button>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  {/* Desktop */}
-                  <Link href="/auth/login" className="hidden md:block">
-                    <Button variant="ghost" size="sm" className="text-sm font-medium">Sign In</Button>
-                  </Link>
-                  <Link href="/auth/signup" className="hidden md:block">
-                    <Button size="sm" className="text-sm font-medium shadow-sm bg-violet-600 hover:bg-violet-700 text-white border-0">
-                      Get Started Free
-                    </Button>
-                  </Link>
-                  {/* Mobile — login button */}
-                  <Link href="/auth/login" className="md:hidden">
-                    <Button size="sm" className="gap-1.5 text-xs font-bold h-8 px-3 rounded-lg shadow-sm bg-violet-600 hover:bg-violet-700 text-white border-0">
-                      <User className="h-3.5 w-3.5" />
-                      Login
-                    </Button>
-                  </Link>
-                </>
-              )}
+              {/* Desktop */}
+              <Link href="/dashboard">
+                <Button variant="ghost" size="sm" className="gap-2 text-sm font-medium hidden md:inline-flex">
+                  <LayoutDashboard className="h-4 w-4" /> Dashboard
+                </Button>
+              </Link>
+              {/* Mobile */}
+              <Link href="/dashboard" className="md:hidden">
+                <Button variant="ghost" size="sm" className="gap-1.5 text-xs font-medium h-8 px-3">
+                  <LayoutDashboard className="h-4 w-4" />
+                  <span>Dashboard</span>
+                </Button>
+              </Link>
             </>
           )}
 
@@ -166,27 +128,6 @@ export function Navbar() {
             Blog
           </Link>
           
-          {mounted && isLoggedIn && profile?.activePlanId && (
-            <Link 
-              href="/dashboard/plan" 
-              className="block text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              My Plan
-            </Link>
-          )}
-
-          {mounted && isLoggedIn && (
-            <button
-              onClick={() => {
-                setIsMobileMenuOpen(false)
-                handleSignOut()
-              }}
-              className="block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left w-full"
-            >
-              Sign Out
-            </button>
-          )}
         </div>
       )}
     </nav>

@@ -151,7 +151,7 @@ const CATEGORY_ORDER_TYPED: ToolCategory[] = ['adsense', 'content', 'seo', 'tech
 export default function DashboardPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { profile, usage, token, isLoading, isPro, canScan, getToken } = useProfile()
+  const { profile, usage, token, guestId, isLoading, isPro, canScan, getToken } = useProfile()
   const { openCheckout } = useRazorpay()
   const [url, setUrl] = useState('')
   const [isScanning, setIsScanning] = useState(false)
@@ -176,19 +176,27 @@ export default function DashboardPage() {
   }, [searchParams, url])
 
   useEffect(() => {
-    if (!token) {
+    const headers: Record<string, string> = {}
+    if (token) {
+      getToken().then(t => {
+        if (t) headers['Authorization'] = `Bearer ${t}`
+        fetchScans(headers)
+      })
+    } else if (guestId) {
+      headers['x-guest-id'] = guestId
+      fetchScans(headers)
+    } else {
       setScansLoading(false)
-      return
     }
-    getToken().then(t => {
-      if (!t) { setScansLoading(false); return }
-      fetch('/api/scans?limit=5', { headers: { Authorization: `Bearer ${t}` } })
-        .then(r => r.json())
+
+    function fetchScans(hdrs: Record<string, string>) {
+      fetch('/api/scans?limit=5', { headers: hdrs })
+        .then(r => r.ok ? r.json() : { scans: [] })
         .then(d => setRecentScans(d.scans ?? []))
         .catch(() => {})
         .finally(() => setScansLoading(false))
-    })
-  }, [token, getToken])
+    }
+  }, [token, guestId, getToken])
 
   const handleScan = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -203,6 +211,7 @@ export default function DashboardPage() {
       const t = await getToken()
       const headers: Record<string, string> = { 'Content-Type': 'application/json' }
       if (t) headers['Authorization'] = `Bearer ${t}`
+      if (guestId) headers['x-guest-id'] = guestId
 
       setScanStatus('Crawling homepage and key pages…')
       const res = await fetch('/api/crawl', {
@@ -225,6 +234,7 @@ export default function DashboardPage() {
         try {
           const batchHeaders: Record<string, string> = { 'Content-Type': 'application/json' }
           if (t) batchHeaders['Authorization'] = `Bearer ${t}`
+          if (guestId) batchHeaders['x-guest-id'] = guestId
           
           const batchRes = await fetch('/api/crawl/batch', {
             method: 'POST',
@@ -246,6 +256,7 @@ export default function DashboardPage() {
           const freshT = await getToken()
           const analyzeHeaders: Record<string, string> = { 'Content-Type': 'application/json' }
           if (freshT) analyzeHeaders['Authorization'] = `Bearer ${freshT}`
+          if (guestId) analyzeHeaders['x-guest-id'] = guestId
           
           await fetch('/api/analyze/master', {
             method: 'POST',

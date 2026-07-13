@@ -3,7 +3,10 @@ import { getAuthenticatedProfile, getUserScans } from '@/lib/auth-server'
 
 export async function GET(request: NextRequest) {
   try {
-    const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
+    const profile = await getAuthenticatedProfile(
+      request.headers.get('authorization'),
+      request.headers.get('x-guest-id')
+    )
     if (!profile) return NextResponse.json({ error: 'Authentication required.' }, { status: 401 })
 
     const { searchParams } = new URL(request.url)

@@ -27,29 +27,55 @@ export async function verifyToken(authHeader: string | null) {
   }
 }
 
-export async function getAuthenticatedProfile(authHeader: string | null): Promise<UserProfile | null> {
+export async function getAuthenticatedProfile(
+  authHeader: string | null,
+  guestIdHeader?: string | null
+): Promise<UserProfile | null> {
   try {
     const decoded = await verifyToken(authHeader)
-    if (!decoded) return null
-    const snap = await adminDb.collection("users").doc(decoded.uid).get()
-    if (!snap.exists) {
-      const now = new Date().toISOString()
-      const profile: UserProfile = {
-        uid: decoded.uid, email: decoded.email ?? "", fullName: decoded.name ?? null,
-        plan: isAdmin(decoded.email) ? "pro" : "free", razorpayCustomerId: null, razorpaySubscriptionId: null,
-        proExpiresAt: null,
-        scansThisMonth: 0, scansMonthKey: now.slice(0, 7), totalScans: 0,
-        thumbnailCreditsThisMonth: 0, thumbnailMonthKey: now.slice(0, 7),
-        createdAt: now, updatedAt: now,
+    if (decoded) {
+      const snap = await adminDb.collection("users").doc(decoded.uid).get()
+      if (!snap.exists) {
+        const now = new Date().toISOString()
+        const profile: UserProfile = {
+          uid: decoded.uid, email: decoded.email ?? "", fullName: decoded.name ?? null,
+          plan: "pro", razorpayCustomerId: null, razorpaySubscriptionId: null,
+          proExpiresAt: null,
+          scansThisMonth: 0, scansMonthKey: now.slice(0, 7), totalScans: 0,
+          thumbnailCreditsThisMonth: 0, thumbnailMonthKey: now.slice(0, 7),
+          createdAt: now, updatedAt: now,
+        }
+        await adminDb.collection("users").doc(decoded.uid).set(profile)
+        return profile
       }
-      await adminDb.collection("users").doc(decoded.uid).set(profile)
-      return profile
+      const data = snap.data() as UserProfile
+      data.plan = "pro" // Set all plans to pro / free utility
+      return data
     }
-    const data = snap.data() as UserProfile
-    if (isAdmin(data.email)) {
-      data.plan = "pro"
+
+    if (guestIdHeader) {
+      const guestId = guestIdHeader.trim()
+      if (guestId) {
+        const snap = await adminDb.collection("users").doc(guestId).get()
+        if (snap.exists) {
+          const data = snap.data() as UserProfile
+          data.plan = "pro"
+          return data
+        }
+        const now = new Date().toISOString()
+        const profile: UserProfile = {
+          uid: guestId, email: "guest@adsensechecker.in", fullName: "Guest User",
+          plan: "pro", razorpayCustomerId: null, razorpaySubscriptionId: null,
+          proExpiresAt: null,
+          scansThisMonth: 0, scansMonthKey: now.slice(0, 7), totalScans: 0,
+          thumbnailCreditsThisMonth: 0, thumbnailMonthKey: now.slice(0, 7),
+          createdAt: now, updatedAt: now,
+        }
+        await adminDb.collection("users").doc(guestId).set(profile)
+        return profile
+      }
     }
-    return data
+    return null
   } catch (err) {
     console.error("[auth-server] getAuthenticatedProfile error:", (err as Error).message)
     return null

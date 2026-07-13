@@ -15,7 +15,7 @@ import { AiReportV2 } from '@/lib/firebase-types'
 export default function FullReportPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params)
   const { id } = resolvedParams
-  const { token } = useProfile()
+  const { token, guestId } = useProfile()
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [checkedTasks, setCheckedTasks] = useState<Record<number, boolean>>({})
@@ -24,6 +24,7 @@ export default function FullReportPage({ params }: { params: Promise<{ id: strin
     if (!id) return
     const headers: Record<string, string> = {}
     if (token) headers['Authorization'] = `Bearer ${token}`
+    if (guestId) headers['x-guest-id'] = guestId
     fetch(`/api/scans/${id}`, { headers })
       .then(r => r.json())
       .then(({ scan }) => {
@@ -49,7 +50,7 @@ export default function FullReportPage({ params }: { params: Promise<{ id: strin
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [token, id])
+  }, [token, guestId, id])
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-[50vh]">

@@ -17,12 +17,15 @@ export function useProfile() {
   const [usage, setUsage] = useState<Usage | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [token, setToken] = useState<string | null>(null)
+  const [guestId, setGuestId] = useState<string | null>(null)
 
-  const fetchProfile = useCallback(async (idToken: string) => {
+  const fetchProfile = useCallback(async (idToken: string | null, gId: string | null) => {
     try {
-      const res = await fetch('/api/profile', {
-        headers: { Authorization: `Bearer ${idToken}` },
-      })
+      const headers: Record<string, string> = {}
+      if (idToken) headers['Authorization'] = `Bearer ${idToken}`
+      if (gId) headers['x-guest-id'] = gId
+
+      const res = await fetch('/api/profile', { headers })
       if (res.ok) {
         const data = await res.json()
         setProfile(data.profile)
@@ -36,15 +39,21 @@ export function useProfile() {
   }, [])
 
   useEffect(() => {
+    let gid = typeof window !== 'undefined' ? localStorage.getItem('adsense_guest_id') : null
+    if (typeof window !== 'undefined' && !gid) {
+      gid = 'guest_' + Math.random().toString(36).slice(2, 11) + '_' + Date.now().toString(36)
+      localStorage.setItem('adsense_guest_id', gid)
+    }
+    setGuestId(gid)
+
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const idToken = await user.getIdToken()
         setToken(idToken)
-        await fetchProfile(idToken)
+        await fetchProfile(idToken, null)
       } else {
-        setProfile(null)
-        setUsage(null)
         setToken(null)
+        await fetchProfile(null, gid)
       }
       setIsLoading(false)
     })
@@ -64,5 +73,5 @@ export function useProfile() {
   const used  = usage?.scans_this_month ?? 0
   const canScan = true
 
-  return { profile, usage, token, isLoading, isPro, canScan, getToken }
+  return { profile, usage, token, guestId, isLoading, isPro, canScan, getToken }
 }

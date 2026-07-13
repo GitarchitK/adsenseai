@@ -13,10 +13,13 @@ export async function POST(request: NextRequest) {
     if (!scanDoc.exists) return NextResponse.json({ error: 'Scan not found' }, { status: 404 })
 
     const scanData = scanDoc.data()
-    const isGuestScan = scanData?.userId === 'guest'
+    const isLegacyGuestScan = scanData?.userId === 'guest'
 
-    if (!isGuestScan) {
-      const profile = await getAuthenticatedProfile(request.headers.get('authorization'))
+    if (!isLegacyGuestScan) {
+      const profile = await getAuthenticatedProfile(
+        request.headers.get('authorization'),
+        request.headers.get('x-guest-id')
+      )
       if (!profile || scanData?.userId !== profile.uid) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
       }
