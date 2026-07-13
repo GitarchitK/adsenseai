@@ -252,3 +252,7 @@
 .dark::view-transition-new(root) {
   z-index: 1;
 }
+
+html {
+  scroll-behavior: smooth;
+}
