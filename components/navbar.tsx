@@ -244,6 +244,7 @@ export function Navbar() {
               size="icon"
               className="h-9 w-9 rounded-xl hover:bg-muted"
               title="Search"
+              aria-label="Search articles and tools"
             >
               <Search className="h-4 w-4 text-foreground/80" />
             </Button>
@@ -253,6 +254,7 @@ export function Navbar() {
               onClick={(e) => toggleTheme(e)}
               className="relative flex items-center h-7 w-[52px] rounded-full bg-slate-200 dark:bg-zinc-800 p-1 cursor-pointer transition-colors duration-300 focus:outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
               title="Toggle Theme"
+              aria-label="Toggle dark and light themes"
               disabled={!mounted}
             >
               <div className="flex justify-between w-full px-0.5 text-muted-foreground select-none pointer-events-none">
@@ -278,6 +280,7 @@ export function Navbar() {
               size="icon"
               className="lg:hidden h-9 w-9 rounded-xl hover:bg-muted"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
@@ -313,6 +316,7 @@ export function Navbar() {
               onClick={handlePrevTicker}
               className="p-1 rounded bg-background hover:bg-muted border border-border/50 text-muted-foreground hover:text-foreground transition-colors"
               title="Previous Article"
+              aria-label="Previous article ticker item"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
             </button>
@@ -320,6 +324,7 @@ export function Navbar() {
               onClick={handleNextTicker}
               className="p-1 rounded bg-background hover:bg-muted border border-border/50 text-muted-foreground hover:text-foreground transition-colors"
               title="Next Article"
+              aria-label="Next article ticker item"
             >
               <ChevronRight className="h-3.5 w-3.5" />
             </button>

@@ -334,7 +334,7 @@ export default function HomePage() {
                         <Check className="h-3 w-3" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-sm text-foreground">{benefit.title}</h4>
+                        <h3 className="font-bold text-sm text-foreground">{benefit.title}</h3>
                         <p className="text-xs text-muted-foreground mt-0.5">{benefit.text}</p>
                       </div>
                     </div>
