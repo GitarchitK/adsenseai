@@ -2,9 +2,9 @@ import Link from 'next/link'
 
 const footerLinks = {
   Product: [
-    { href: '/#features', label: 'Features' },
-    { href: '/pricing',   label: 'Pricing' },
-    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/#features', label: 'Platform Features' },
+    { href: '/pricing',   label: 'Pricing Plans' },
+    { href: '/dashboard', label: 'User Dashboard' },
   ],
   'AdSense Guides': [
     { href: '/blog', label: 'All Guides' },
@@ -19,18 +19,18 @@ const footerLinks = {
     { href: 'https://support.google.com/adsense/answer/1346295?hl=en', label: 'Ad Placement Tips' },
   ],
   Company: [
-    { href: '/about',   label: 'About Us' },
-    { href: '/contact', label: 'Contact' },
-    { href: '/blog',    label: 'Guides' },
+    { href: '/about',   label: 'About Our Platform' },
+    { href: '/contact', label: 'Contact Support' },
+    { href: '/blog',    label: 'AdSense Guides' },
   ],
   Legal: [
     { href: '/privacy',    label: 'Privacy Policy' },
     { href: '/terms',      label: 'Terms of Service' },
-    { href: '/disclaimer', label: 'Disclaimer' },
+    { href: '/disclaimer', label: 'Legal Disclaimer' },
   ],
   Account: [
-    { href: '/auth/login',  label: 'Sign In' },
-    { href: '/auth/signup', label: 'Sign Up Free' },
+    { href: '/auth/login',  label: 'Sign In to Account' },
+    { href: '/auth/signup', label: 'Sign Up for Free' },
   ],
 }
 
@@ -85,11 +85,11 @@ export function SiteFooter() {
             © {new Date().getFullYear()} AdSense Checker AI by Navroll Studio. All rights reserved. Made with ❤️ in India.
           </p>
           <div className="flex flex-wrap gap-5 text-xs text-muted-foreground justify-center">
-            <Link href="/privacy"    className="hover:text-foreground transition-colors">Privacy</Link>
-            <Link href="/terms"     className="hover:text-foreground transition-colors">Terms</Link>
-            <Link href="/disclaimer" className="hover:text-foreground transition-colors">Disclaimer</Link>
-            <Link href="/blog"      className="hover:text-foreground transition-colors">Guides</Link>
-            <Link href="/contact"   className="hover:text-foreground transition-colors">Contact</Link>
+            <Link href="/privacy"    className="hover:text-foreground transition-colors">Privacy Policy</Link>
+            <Link href="/terms"     className="hover:text-foreground transition-colors">Terms of Service</Link>
+            <Link href="/disclaimer" className="hover:text-foreground transition-colors">Legal Disclaimer</Link>
+            <Link href="/blog"      className="hover:text-foreground transition-colors">AdSense Approval Guides</Link>
+            <Link href="/contact"   className="hover:text-foreground transition-colors">Contact Our Team</Link>
           </div>
         </div>
         <p className="text-center text-[10px] text-muted-foreground/50 mt-4">

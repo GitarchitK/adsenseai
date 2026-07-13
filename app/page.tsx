@@ -75,14 +75,13 @@ export default function HomePage() {
                   <Sparkles className="h-3.5 w-3.5" /> AdSense Intelligence Platform
                 </div>
                 
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-foreground tracking-tight leading-[1.1] mb-6">
-                  Stop Guessing. <br />
-                  <span className="gradient-text">Get Approved.</span>
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6 gradient-text">
+                  Stop Guessing. Get Approved.
                 </h1>
                 
                 <p className="text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                  Comprehensive website analysis and AdSense eligibility auditing. 
-                  We deep-crawl your entire site to detect thin content, policy violations, and structural errors before you apply.
+                  Comprehensive <strong>website analysis</strong> and <strong>AdSense eligibility auditing</strong>. 
+                  We deep-crawl your entire site to detect <strong>thin content</strong>, <strong>policy violations</strong>, and structural errors before you apply.
                 </p>
 
                 <div className="max-w-xl mx-auto lg:mx-0 bg-background/50 dark:bg-background/20 backdrop-blur-md border border-border p-2 rounded-2xl shadow-xl glow">
@@ -128,7 +127,7 @@ export default function HomePage() {
         <section className="py-24 relative overflow-hidden bg-background">
           <div className="container px-4 mx-auto relative z-10">
             <FadeIn className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-3xl md:text-5xl font-black mb-6">Enterprise-Grade <br/>Website Analysis</h2>
+              <h2 className="text-3xl md:text-5xl font-black mb-6">Enterprise-Grade Website Analysis</h2>
               <p className="text-lg text-muted-foreground">
                 Our proprietary scanning engine acts exactly like Google's crawlers, analyzing every facet of your website to evaluate compliance.
               </p>
@@ -142,7 +141,7 @@ export default function HomePage() {
                 <Brain className="h-12 w-12 text-primary mb-6" />
                 <h3 className="text-2xl font-black mb-3">AI Content Originality Engine</h3>
                 <p className="text-muted-foreground leading-relaxed max-w-md">
-                  We scan every article for AI-generated patterns, thin content, and plagiarism. We verify that your content depth meets AdSense's strict "Valuable Inventory" standards.
+                  We scan every article for <strong>AI-generated patterns</strong>, <strong>thin content</strong>, and <strong>plagiarism</strong>. We verify that your content depth meets AdSense's strict <strong>"Valuable Inventory"</strong> standards.
                 </p>
               </StaggerItem>
 
