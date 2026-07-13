@@ -111,7 +111,7 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 bg-background transition-all duration-300">
       {/* 1. TOP BAR */}
       <div
-        className={`bg-slate-50 dark:bg-zinc-950 border-b border-border/40 transition-all duration-300 overflow-hidden ${
+        className={`bg-slate-50 dark:bg-zinc-950 border-b border-border/40 transition-all duration-300 overflow-hidden hidden lg:block ${
           scrolled ? 'h-0 opacity-0 border-b-0' : 'h-9 opacity-100'
         }`}
       >

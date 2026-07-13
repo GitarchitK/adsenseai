@@ -62,7 +62,7 @@ export default function HomePage() {
 
       <main className="flex min-h-screen flex-col overflow-hidden">
         {/* HERO SECTION */}
-        <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+        <section className="relative pt-8 pb-16 md:pt-16 md:pb-24 overflow-hidden">
           <div className="absolute inset-0 mesh-bg opacity-40 dark:opacity-60 pointer-events-none" />
           <div className="absolute inset-0 dot-grid-anim opacity-50 dark:opacity-30 pointer-events-none" />
           

@@ -222,10 +222,14 @@
 .hero-orb-2 { animation: orb-float-2 16s ease-in-out infinite; }
 .hero-orb-3 { animation: orb-float-3 10s ease-in-out infinite; }
 .dot-grid-anim {
-  background-image: radial-gradient(circle, oklch(0.48 0.24 270 / 0.13) 1px, transparent 1px);
+  background-image: radial-gradient(circle, oklch(0.52 0.22 25 / 0.13) 1px, transparent 1px);
   background-size: 28px 28px;
-  animation: grid-pan 8s linear infinite;
+}
+@media (min-width: 768px) {
+  .dot-grid-anim {
+    animation: grid-pan 8s linear infinite;
+  }
 }
 .dark .dot-grid-anim {
-  background-image: radial-gradient(circle, oklch(0.66 0.20 270 / 0.10) 1px, transparent 1px);
+  background-image: radial-gradient(circle, oklch(0.58 0.20 25 / 0.10) 1px, transparent 1px);
 }
