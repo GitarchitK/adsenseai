@@ -41,7 +41,6 @@ const MAIN_NAV: NavSection = {
 const ADSENSE_NAV: NavSection = {
   label: 'ADSENSE TOOLS',
   items: [
-    { name: 'Site Checker',      href: '/dashboard',                icon: Scan,       exact: true },
     { name: 'Article Analyzer',  href: '/dashboard/articles',       icon: FileSearch, badge: 'Free' },
     { name: 'Article Studio',    href: '/dashboard/article-studio', icon: FilePenLine },
     { name: 'My Plan',           href: '/dashboard/plan',           icon: Target },

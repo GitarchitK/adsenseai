@@ -130,7 +130,7 @@ export default function HomePage() {
             <FadeIn className="text-center max-w-3xl mx-auto mb-16">
               <h2 className="text-3xl md:text-5xl font-black mb-6">Enterprise-Grade <br/>Website Analysis</h2>
               <p className="text-lg text-muted-foreground">
-                Our proprietary scanning engine acts exactly like Google's crawlers, analyzing every facet of your website to guarantee compliance.
+                Our proprietary scanning engine acts exactly like Google's crawlers, analyzing every facet of your website to evaluate compliance.
               </p>
             </FadeIn>
 
@@ -142,7 +142,7 @@ export default function HomePage() {
                 <Brain className="h-12 w-12 text-primary mb-6" />
                 <h3 className="text-2xl font-black mb-3">AI Content Originality Engine</h3>
                 <p className="text-muted-foreground leading-relaxed max-w-md">
-                  We scan every article for AI-generated patterns, thin content, and plagiarism. We guarantee your content depth meets AdSense's strict "Valuable Inventory" standards.
+                  We scan every article for AI-generated patterns, thin content, and plagiarism. We verify that your content depth meets AdSense's strict "Valuable Inventory" standards.
                 </p>
               </StaggerItem>
 
