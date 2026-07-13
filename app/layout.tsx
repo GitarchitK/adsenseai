@@ -310,15 +310,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           id="ahrefs-analytics"
           src="https://analytics.ahrefs.com/analytics.js"
           data-key="3jWlJ1FQDS72Uvc3Xjv2qQ"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
         {/* Google Analytics */}
         <Script
           id="gtm-script"
           src="https://www.googletagmanager.com/gtag/js?id=G-RLS9PPGJ6W"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="gtag-init" strategy="afterInteractive">
+        <Script id="gtag-init" strategy="lazyOnload">
           {`window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-RLS9PPGJ6W', { send_page_view: false });`}
         </Script>
         {/* AdSense */}
@@ -326,7 +326,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           id="adsense-script"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8903097794149189"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
         
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
