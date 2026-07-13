@@ -11,7 +11,8 @@ import {
   Brain, Search, FileText, Star,
   TrendingUp, Clock, Lock, ArrowRight,
   AlertCircle, Crown, DollarSign, Wallet,
-  Check, ChevronRight, Activity, Zap, SearchCode
+  Check, ChevronRight, Activity, Zap, SearchCode,
+  Layers, ShieldCheck, ListTodo, BookOpen, FileCheck2
 } from 'lucide-react'
 import { FadeIn, StaggerChildren, StaggerItem, HoverLift } from '@/components/landing-animations'
 
@@ -176,6 +177,264 @@ export default function HomePage() {
               </StaggerItem>
 
             </StaggerChildren>
+          </div>
+        </section>
+
+        {/* COMPLIANCE PILLARS */}
+        <section className="py-24 bg-muted/20 border-t border-border/50 relative overflow-hidden">
+          <div className="container px-4 mx-auto max-w-6xl relative z-10">
+            <FadeIn className="text-center max-w-3xl mx-auto mb-16">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-widest uppercase mb-4">
+                <Sparkles className="h-3.5 w-3.5" /> Auditing Framework
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black mt-2 mb-6">The 4 Pillars of AdSense Compliance</h2>
+              <p className="text-lg text-muted-foreground">
+                Our crawler analyzes over 40+ signals across four core dimensions to match the exact evaluation criteria used by Google AdSense quality reviewers.
+              </p>
+            </FadeIn>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                {
+                  title: "1. Content Depth & Value",
+                  icon: FileText,
+                  desc: "Google rejects sites with thin or non-original articles. We verify writing patterns and density.",
+                  checks: [
+                    "Average article length > 800 words",
+                    "Keyword stuffing & density check",
+                    "Semantic heading hierarchy (H1-H4)",
+                    "Text-to-HTML code ratio audit"
+                  ]
+                },
+                {
+                  title: "2. Site Architecture",
+                  icon: Layers,
+                  desc: "Reviewers must easily navigate your site. We map sitemap crawlability and link safety.",
+                  checks: [
+                    "Depth of sitemap internal links",
+                    "Detection of 404 & broken links",
+                    "Menu layout accessibility check",
+                    "Breadcrumbs schema verification"
+                  ]
+                },
+                {
+                  title: "3. Trust & Editorial Signals",
+                  icon: ShieldCheck,
+                  desc: "Google requires indicators of editorial responsibility and standard legal compliance.",
+                  checks: [
+                    "Required legal pages (Privacy, About)",
+                    "Contact email & form accessibility",
+                    "Author attribution & E-E-A-T signals",
+                    "SSL/TLS secure connection check"
+                  ]
+                },
+                {
+                  title: "4. Policy & Monetization",
+                  icon: Activity,
+                  desc: "We screen content against restricted niches and technical monetization setup rules.",
+                  checks: [
+                    "Restricted niche keywords scan",
+                    "Valuable Inventory error flags",
+                    "Ads.txt publisher code check",
+                    "Mobile speed & responsiveness"
+                  ]
+                }
+              ].map((p, i) => (
+                <FadeIn key={i} delay={i * 0.1} className="bg-background border border-border/60 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-5 text-primary">
+                    <p.icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-bold text-base text-foreground mb-2">{p.title}</h3>
+                  <p className="text-xs text-muted-foreground mb-4 leading-relaxed">{p.desc}</p>
+                  <ul className="space-y-2 border-t border-border/40 pt-4">
+                    {p.checks.map((c, idx) => (
+                      <li key={idx} className="flex gap-2 items-start text-xs font-semibold text-foreground/80">
+                        <Check className="h-3.5 w-3.5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                        <span>{c}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </FadeIn>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* PRE-FLIGHT CHECKLIST */}
+        <section className="py-24 bg-background border-t border-border/50">
+          <div className="container px-4 mx-auto max-w-5xl">
+            <FadeIn className="text-center max-w-3xl mx-auto mb-16">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-widest uppercase mb-4">
+                <ListTodo className="h-3.5 w-3.5" /> Self-Audit List
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black mt-2 mb-6">Pre-Flight AdSense Checklist</h2>
+              <p className="text-lg text-muted-foreground">
+                Before submitting your site to Google, verify that you meet these critical technical and editorial requirements.
+              </p>
+            </FadeIn>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <h3 className="text-xl font-bold text-foreground flex items-center gap-2 mb-4">
+                  <FileCheck2 className="h-5 w-5 text-primary" /> Technical & Structure Check
+                </h3>
+                {[
+                  { title: "XML Sitemap & Robots.txt", desc: "Ensure your sitemap is submitted to Google Search Console and Robots.txt does not block crawlers." },
+                  { title: "Mobile Responsive Navigation", desc: "Your site navigation must be easy to use on mobile devices without overlapping elements or broken drop-downs." },
+                  { title: "Core Web Vitals Compliance", desc: "LCP (Largest Contentful Paint) under 2.5s and CLS (Cumulative Layout Shift) under 0.1 to pass speed quality checks." },
+                  { title: "Clean URL Structures", desc: "Use human-readable slugs (e.g. /how-to-xyz) instead of query parameters (e.g. ?p=123) for all articles." }
+                ].map((item, idx) => (
+                  <div key={idx} className="p-5 rounded-2xl border border-border/60 bg-muted/10 hover:bg-muted/20 transition-all">
+                    <h4 className="font-bold text-sm text-foreground mb-1">{item.title}</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-6">
+                <h3 className="text-xl font-bold text-foreground flex items-center gap-2 mb-4">
+                  <ShieldCheck className="h-5 w-5 text-primary" /> Trust & Compliance Check
+                </h3>
+                {[
+                  { title: "Standard Mandatory Pages", desc: "Create working Privacy Policy, Terms of Service, About Us, and Contact Us pages linked in the footer." },
+                  { title: "Active SSL/TLS Certificate", desc: "Your site must load securely over HTTPS. Google reviewers will immediately flag insecure sites." },
+                  { title: "E-E-A-T & Author Signals", desc: "Include author bios, editorial policies, and visible contact details to establish site legitimacy." },
+                  { title: "Cookie Consent & GDPR", desc: "If targeting European traffic, a compliant cookie banner must be active to meet AdSense consent policies." }
+                ].map((item, idx) => (
+                  <div key={idx} className="p-5 rounded-2xl border border-border/60 bg-muted/10 hover:bg-muted/20 transition-all">
+                    <h4 className="font-bold text-sm text-foreground mb-1">{item.title}</h4>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* EEAT EXPLAINER */}
+        <section className="py-24 bg-muted/20 border-t border-border/50 relative overflow-hidden">
+          <div className="container px-4 mx-auto max-w-5xl relative z-10">
+            <div className="grid lg:grid-cols-12 gap-12 items-center">
+              <FadeIn className="lg:col-span-5 space-y-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-widest uppercase">
+                  <BookOpen className="h-3.5 w-3.5" /> Editorial Standards
+                </div>
+                <h2 className="text-3xl md:text-4xl font-black text-foreground leading-tight">
+                  Demystifying "Low Value Content"
+                </h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  Over 70% of AdSense rejections are due to "Low Value Content." Google does not just count words; their quality evaluators search for original insights, hands-on experience, and editorial trustworthiness.
+                </p>
+                <div className="space-y-4 pt-2">
+                  {[
+                    { title: "Original Research", text: "Articles must provide unique perspectives, statistics, or analyses not found on other search results." },
+                    { title: "Clear Authority", text: "Demonstrate who wrote the content, their credentials, and why they are qualified to write on the subject." }
+                  ].map((benefit, idx) => (
+                    <div key={idx} className="flex gap-3">
+                      <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 mt-1">
+                        <Check className="h-3 w-3" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-foreground">{benefit.title}</h4>
+                        <p className="text-xs text-muted-foreground mt-0.5">{benefit.text}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </FadeIn>
+
+              <FadeIn className="lg:col-span-7 bg-background border border-border/80 p-8 rounded-3xl shadow-xl">
+                <h3 className="text-lg font-bold text-foreground mb-4">AdSense Content Audit Matrix</h3>
+                <div className="space-y-4">
+                  {[
+                    { status: "Rejected", label: "Thin Content", desc: "Short articles (<500 words), rewrites of Wikipedia, or mass-produced AI content without human curation." },
+                    { status: "Flagged", label: "Scraped Content", desc: "Aggregating news RSS feeds, scraping directory pages, or republishing press releases without value addition." },
+                    { status: "Approved", label: "High-Value Inventory", desc: "In-depth tutorials, original case studies, and structured guides featuring unique images, code blocks, or data sets." }
+                  ].map((row, idx) => (
+                    <div key={idx} className="flex flex-col sm:flex-row gap-4 p-4 rounded-xl border border-border/40 hover:bg-muted/10 transition-colors">
+                      <div className="sm:w-28 shrink-0">
+                        <span className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                          row.status === 'Approved' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
+                          row.status === 'Flagged' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
+                          'bg-red-500/10 text-red-500 border border-red-500/20'
+                        }`}>
+                          {row.status}
+                        </span>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-foreground">{row.label}</h4>
+                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{row.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </FadeIn>
+            </div>
+          </div>
+        </section>
+
+        {/* DIAGNOSTIC MATRIX */}
+        <section className="py-24 bg-background border-t border-border/50">
+          <div className="container px-4 mx-auto max-w-5xl">
+            <FadeIn className="text-center max-w-3xl mx-auto mb-16">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-widest uppercase mb-4">
+                <Sparkles className="h-3.5 w-3.5" /> Diagnostic Intelligence
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black mt-2 mb-6">Common Rejections & Fixes</h2>
+              <p className="text-lg text-muted-foreground">
+                Understand the real reasons behind cryptic AdSense rejection emails and how our platform helps you resolve them.
+              </p>
+            </FadeIn>
+
+            <div className="border border-border/60 rounded-3xl overflow-hidden shadow-xl bg-card">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-muted/50 border-b border-border/60 text-xs font-black uppercase tracking-widest text-muted-foreground">
+                      <th className="p-4 sm:p-5">Google Rejection Message</th>
+                      <th className="p-4 sm:p-5">Real Root Cause</th>
+                      <th className="p-4 sm:p-5">How AdSense Checker AI Resolves It</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/40 text-sm">
+                    {[
+                      {
+                        msg: "Low Value Content",
+                        cause: "Articles lack structural depth, contain less than 600 words, or replicate common topics without original research.",
+                        fix: "Identifies thin articles below word thresholds and highlights lack of unique entity density to fix editorial depth."
+                      },
+                      {
+                        msg: "Valuable Inventory: Under Construction",
+                        cause: "Broken internal links, empty navigation categories, placeholder text, or new/incomplete pages in sitemap.",
+                        fix: "Full sitemap crawl flags category pages without content, dead links, and stub categories instantly."
+                      },
+                      {
+                        msg: "Missing Required Policies",
+                        cause: "Google cannot verify commercial trust. Missing privacy disclosure, user consent, or ownership pages.",
+                        fix: "Scans sitemap metadata to check presence of Privacy Policy, Terms, About, and Contact pages."
+                      },
+                      {
+                        msg: "Site Does Not Comply with Policies",
+                        cause: "Content belongs to restricted categories (health claims without medical backing, finance advice, or scraped content).",
+                        fix: "AI policy engine screens all site text for forbidden terms and policy violation risks before review submission."
+                      }
+                    ].map((row, idx) => (
+                      <tr key={idx} className="hover:bg-muted/10 transition-colors">
+                        <td className="p-4 sm:p-5 font-bold text-primary align-top min-w-[150px]">
+                          {row.msg}
+                        </td>
+                        <td className="p-4 sm:p-5 text-muted-foreground leading-relaxed align-top">
+                          {row.cause}
+                        </td>
+                        <td className="p-4 sm:p-5 font-semibold text-foreground/90 leading-relaxed align-top">
+                          {row.fix}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </section>
 
