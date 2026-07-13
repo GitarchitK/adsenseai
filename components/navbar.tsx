@@ -108,7 +108,7 @@ export function Navbar() {
   }
 
   return (
-    <nav className="fixed w-full top-0 z-50 transition-all duration-300">
+    <nav className="sticky top-0 z-50 bg-background transition-all duration-300">
       {/* 1. TOP BAR */}
       <div
         className={`bg-slate-50 dark:bg-zinc-950 border-b border-border/40 transition-all duration-300 overflow-hidden ${
@@ -207,29 +207,28 @@ export function Navbar() {
             </Button>
 
             {/* Custom Premium Sliding Theme Switch */}
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="relative flex items-center h-7 w-[52px] rounded-full bg-slate-200 dark:bg-zinc-800 p-1 cursor-pointer transition-colors duration-300 focus:outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
-                title="Toggle Theme"
+            <button
+              onClick={() => mounted && setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="relative flex items-center h-7 w-[52px] rounded-full bg-slate-200 dark:bg-zinc-800 p-1 cursor-pointer transition-colors duration-300 focus:outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
+              title="Toggle Theme"
+              disabled={!mounted}
+            >
+              <div className="flex justify-between w-full px-0.5 text-muted-foreground select-none pointer-events-none">
+                <Sun className="h-3.5 w-3.5 text-amber-500" />
+                <Moon className="h-3.5 w-3.5 text-indigo-400" />
+              </div>
+              <div
+                className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white dark:bg-zinc-950 shadow-md transform transition-transform duration-300 flex items-center justify-center ${
+                  mounted && theme === 'dark' ? 'translate-x-6' : 'translate-x-0'
+                }`}
               >
-                <div className="flex justify-between w-full px-0.5 text-muted-foreground select-none pointer-events-none">
-                  <Sun className="h-3.5 w-3.5 text-amber-500" />
-                  <Moon className="h-3.5 w-3.5 text-indigo-400" />
-                </div>
-                <div
-                  className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white dark:bg-zinc-950 shadow-md transform transition-transform duration-300 flex items-center justify-center ${
-                    theme === 'dark' ? 'translate-x-6' : 'translate-x-0'
-                  }`}
-                >
-                  {theme === 'dark' ? (
-                    <Moon className="h-3 w-3 text-indigo-400" />
-                  ) : (
-                    <Sun className="h-3 w-3 text-amber-500" />
-                  )}
-                </div>
-              </button>
-            )}
+                {mounted && theme === 'dark' ? (
+                  <Moon className="h-3 w-3 text-indigo-400" />
+                ) : (
+                  <Sun className="h-3 w-3 text-amber-500" />
+                )}
+              </div>
+            </button>
 
             {/* Mobile menu toggle */}
             <Button
@@ -250,15 +249,15 @@ export function Navbar() {
           scrolled ? 'h-0 opacity-0 border-b-0' : 'h-11 opacity-100'
         }`}
       >
-        <div className="container mx-auto h-full flex items-center justify-between px-6">
+        <div className="container mx-auto h-full flex items-center justify-between px-6 min-w-0">
           {/* Ticker Banner Left */}
-          <div className="flex items-center gap-3 overflow-hidden flex-1 mr-4">
+          <div className="flex items-center gap-3 overflow-hidden flex-1 mr-4 min-w-0">
             <span className="flex-shrink-0 bg-red-600 hover:bg-red-700 text-white text-[11px] font-black px-2.5 py-1 rounded tracking-wider uppercase">
               Interesting:
             </span>
             <Link
               href={TICKER_ITEMS[tickerIndex].href}
-              className={`text-xs md:text-sm font-bold tracking-tight text-foreground/80 hover:text-red-500 truncate transition-all duration-300 ${
+              className={`text-xs md:text-sm font-bold tracking-tight text-foreground/80 hover:text-red-500 truncate flex-1 min-w-0 transition-all duration-300 ${
                 fade ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2'
               }`}
             >
