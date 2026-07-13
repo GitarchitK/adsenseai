@@ -107,6 +107,48 @@ export function Navbar() {
     return pathname.startsWith(href)
   }
 
+  const toggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!mounted) return
+    const targetTheme = theme === 'dark' ? 'light' : 'dark'
+
+    // @ts-ignore
+    if (!document.startViewTransition) {
+      setTheme(targetTheme)
+      return
+    }
+
+    const x = e.clientX
+    const y = e.clientY
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    )
+
+    // @ts-ignore
+    const transition = document.startViewTransition(() => {
+      setTheme(targetTheme)
+    })
+
+    transition.ready.then(() => {
+      const clipPath = [
+        `circle(0px at ${x}px ${y}px)`,
+        `circle(${endRadius}px at ${x}px ${y}px)`
+      ]
+      document.documentElement.animate(
+        {
+          clipPath: theme === 'dark' ? [...clipPath].reverse() : clipPath,
+        },
+        {
+          duration: 450,
+          easing: 'ease-in-out',
+          pseudoElement: theme === 'dark'
+            ? '::view-transition-old(root)'
+            : '::view-transition-new(root)',
+        }
+      )
+    })
+  }
+
   return (
     <nav className="sticky top-0 z-50 bg-background transition-all duration-300">
       {/* 1. TOP BAR */}
@@ -208,7 +250,7 @@ export function Navbar() {
 
             {/* Custom Premium Sliding Theme Switch */}
             <button
-              onClick={() => mounted && setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={(e) => toggleTheme(e)}
               className="relative flex items-center h-7 w-[52px] rounded-full bg-slate-200 dark:bg-zinc-800 p-1 cursor-pointer transition-colors duration-300 focus:outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
               title="Toggle Theme"
               disabled={!mounted}
