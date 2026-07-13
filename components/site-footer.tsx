@@ -43,7 +43,7 @@ export function SiteFooter() {
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
               <div className="flex h-8 w-8 items-center justify-center rounded-xl overflow-hidden">
-                <img src="/icon.svg" alt="AdSense Checker AI" className="w-full h-full object-cover" />
+                <img src="/icon.svg" alt="AdSense Checker AI" className="w-full h-full object-cover" width="32" height="32" loading="lazy" />
               </div>
               <span className="font-black text-foreground">AdSense Approval <span className="text-violet-400">Checker AI</span></span>
             </Link>

@@ -389,6 +389,7 @@ export default function HomePage() {
             <div className="border border-border/60 rounded-3xl overflow-hidden shadow-xl bg-card">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
+                  <caption className="sr-only">Common Google AdSense Rejections, Causes, and AI Auditing Fixes</caption>
                   <thead>
                     <tr className="bg-muted/50 border-b border-border/60 text-xs font-black uppercase tracking-widest text-muted-foreground">
                       <th className="p-4 sm:p-5">Google Rejection Message</th>

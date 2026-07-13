@@ -161,7 +161,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
       <div className="flex items-center justify-between px-4 h-[60px] border-b border-sidebar-border flex-shrink-0">
         <Link href="/dashboard" className="flex items-center gap-2.5" onClick={onClose}>
           <div className="flex h-8 w-8 items-center justify-center rounded-xl overflow-hidden flex-shrink-0 shadow-sm">
-            <img src="/icon.svg" alt="AdSense Checker AI" className="w-full h-full object-cover" />
+            <img src="/icon.svg" alt="AdSense Checker AI" className="w-full h-full object-cover" width="32" height="32" />
           </div>
           <div className="leading-tight">
             <p className="font-bold text-sidebar-foreground text-[13px]">
