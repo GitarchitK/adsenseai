@@ -218,18 +218,18 @@ export default function BlogPage() {
             <p className="text-lg text-muted-foreground mb-6">
               Expert guides, proven strategies, and insider tips to get your site approved and maximize your publishing revenue.
             </p>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                <span>Free guides</span>
+                <span>Free Educational Guides</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                <span>Updated for 2024</span>
+                <span>Updated for 2026 Policies</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                <span>Actionable tips</span>
+                <span>Actionable Resolution Steps</span>
               </div>
             </div>
           </div>
@@ -279,23 +279,23 @@ export default function BlogPage() {
           <Card className="p-8 md:p-12 border-primary/20 bg-gradient-to-br from-primary/5 to-violet-500/5 rounded-2xl">
             <div className="max-w-2xl mx-auto text-center">
               <h2 className="text-2xl md:text-3xl font-black text-foreground mb-3">
-                Ready to Check Your AdSense Readiness?
+                Ready to Pass AdSense Review?
               </h2>
               <p className="text-muted-foreground mb-6">
-                Use our free AI-powered tool to scan your site and get personalized recommendations before applying to AdSense.
+                Explore our step-by-step master checklists and fix low value content rejections with proven publisher blueprints.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link 
-                  href="/auth/signup"
-                  className="inline-flex items-center justify-center gap-2 h-11 px-7 rounded-xl bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all"
+                  href="/blog/adsense-approval-requirements"
+                  className="inline-flex items-center justify-center gap-2 h-11 px-7 rounded-xl bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all w-full sm:w-auto"
                 >
-                  <Zap className="h-4 w-4" /> Check My Site Free
+                  <Shield className="h-4 w-4" /> View Master Checklist
                 </Link>
                 <Link 
-                  href="/pricing"
-                  className="inline-flex items-center justify-center gap-2 h-11 px-7 rounded-xl border border-border bg-background font-semibold hover:bg-muted transition-all"
+                  href="/blog/adsense-low-value-content-fix"
+                  className="inline-flex items-center justify-center gap-2 h-11 px-7 rounded-xl border border-border bg-background font-semibold hover:bg-muted transition-all w-full sm:w-auto"
                 >
-                  View Pricing
+                  Fix Low Value Content <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </div>

@@ -1,70 +1,34 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, LayoutDashboard } from 'lucide-react'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
+import { ArrowRight, BookOpen, Shield } from 'lucide-react'
 
-export function LandingCTA({ size = 'lg' }: { size?: 'lg' | 'xl' }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-    const unsub = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user)
-    })
-    return () => unsub()
-  }, [])
-
-  // Avoid hydration mismatch — render nothing until mounted
-  if (!mounted) {
-    return (
-      <section className="py-24 relative overflow-hidden flex justify-center border-t border-border/50">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className={`rounded-xl bg-primary/20 animate-pulse h-14 w-56`} />
-          <div className={`rounded-xl bg-muted animate-pulse h-14 w-36`} />
-        </div>
-      </section>
-    )
-  }
-
-  const btnCls = 'h-16 px-10 text-lg gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_30px_oklch(var(--primary)/0.3)] hover:shadow-[0_0_40px_oklch(var(--primary)/0.5)] border-0 transition-all rounded-2xl font-bold'
-
+export function LandingCTA() {
   return (
-    <section className="py-24 relative overflow-hidden border-t border-border/50">
+    <section className="py-20 relative overflow-hidden border-t border-border/50">
       <div className="absolute inset-0 bg-primary/5 dark:bg-primary/10" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-3xl bg-primary/20 blur-[100px] rounded-full pointer-events-none" />
       
-      <div className="container relative z-10 px-4 mx-auto text-center">
-        <h2 className="text-4xl md:text-5xl font-black mb-6 text-foreground">Ready to Get Approved?</h2>
-        <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-          Join thousands of successful publishers who used our AI to fix their websites and get Google AdSense approval.
+      <div className="container relative z-10 px-4 sm:px-6 mx-auto text-center">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 text-foreground leading-tight">
+          Ready to Pass Google AdSense Review?
+        </h2>
+        <p className="text-base sm:text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+          Read our step-by-step master checklists and resolution guides to eliminate rejection risks and get approved fast.
         </p>
 
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-          {isLoggedIn ? (
-            <Link href="/dashboard">
-              <Button className={btnCls}>
-                <LayoutDashboard className="h-5 w-5" /> Go to Dashboard
-              </Button>
-            </Link>
-          ) : (
-            <>
-              <Link href="/auth/signup">
-                <Button className={btnCls}>
-                  Analyze My Site Free <ArrowRight className="h-5 w-5 ml-1" />
-                </Button>
-              </Link>
-              <Link href="/auth/login">
-                <Button variant="outline" className="h-16 px-10 text-lg rounded-2xl bg-background/50 backdrop-blur-sm border-border hover:bg-muted">
-                  Sign In
-                </Button>
-              </Link>
-            </>
-          )}
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-3 max-w-md mx-auto">
+          <Link href="/blog/adsense-approval-requirements" className="w-full sm:w-auto">
+            <Button size="lg" className="w-full h-12 px-8 text-base gap-2 rounded-xl font-bold shadow-lg shadow-primary/25">
+              <Shield className="h-4 w-4" /> 2026 Approval Checklist
+            </Button>
+          </Link>
+          <Link href="/blog/adsense-low-value-content-fix" className="w-full sm:w-auto">
+            <Button size="lg" variant="outline" className="w-full h-12 px-8 text-base gap-2 rounded-xl bg-background/80 backdrop-blur-sm border-border hover:bg-muted font-semibold">
+              Fix Low Value Content <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
