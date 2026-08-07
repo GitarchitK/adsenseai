@@ -7,8 +7,6 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
   Home,
-  LayoutDashboard,
-  Terminal,
   BookOpen,
   ShieldCheck,
   TrendingUp,
@@ -23,7 +21,10 @@ import {
   Youtube,
   Instagram,
   Sun,
-  Moon
+  Moon,
+  Info,
+  Mail,
+  Zap
 } from 'lucide-react'
 
 const TOP_BAR_LINKS = [
@@ -44,19 +45,20 @@ const SOCIAL_LINKS = [
 
 const NAV_ITEMS = [
   { label: 'Home', href: '/', icon: Home, exact: true, dot: true },
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Developer Tools', href: '/dashboard/tools', icon: Terminal },
-  { label: 'Audit Guide', href: '/blog/adsense-low-value-content-fix', icon: BookOpen },
-  { label: 'Readiness Checker', href: '/dashboard', icon: ShieldCheck },
-  { label: 'Blog & News', href: '/blog', icon: TrendingUp }
+  { label: 'All Guides', href: '/blog', icon: BookOpen },
+  { label: 'Approval Checklist', href: '/blog/adsense-approval-requirements', icon: ShieldCheck },
+  { label: 'Fix Rejections', href: '/blog/adsense-low-value-content-fix', icon: Zap },
+  { label: 'High CPC Niches', href: '/blog/adsense-high-cpc-niches-2026', icon: TrendingUp },
+  { label: 'About Us', href: '/about', icon: Info },
+  { label: 'Contact', href: '/contact', icon: Mail }
 ]
 
 const TICKER_ITEMS = [
-  { title: 'Google AdSense Approval Requirements: 2026 Complete Blueprint', href: '/blog/adsense-approval-requirements' },
+  { title: 'Google AdSense Approval Requirements 2026: Complete Blueprint', href: '/blog/adsense-approval-requirements' },
   { title: "How to Fix 'Low Value Content' Rejection (Step-by-Step Guide)", href: '/blog/adsense-low-value-content-fix' },
-  { title: 'Top 10 High CPC Niches for Google AdSense in 2026', href: '/blog/adsense-high-cpc-niches-2026' },
+  { title: 'Top High CPC Niches for Google AdSense in 2026', href: '/blog/adsense-high-cpc-niches-2026' },
   { title: 'Thin Content Guide: What It Is and How to Fix It for Approval', href: '/blog/thin-content-guide' },
-  { title: "Does Google AdSense Allow AI-Generated Content? (Google's Stance)", href: '/blog/does-google-adsense-allow-ai-content' }
+  { title: "Does Google AdSense Allow AI-Generated Content? Guidelines Explained", href: '/blog/does-google-adsense-allow-ai-content' }
 ]
 
 export function Navbar() {
@@ -68,7 +70,6 @@ export function Navbar() {
   const [tickerIndex, setTickerIndex] = useState(0)
   const [fade, setFade] = useState(true)
 
-  // Auto-scroll header effect
   useEffect(() => {
     setMounted(true)
     const onScroll = () => {
@@ -78,7 +79,6 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Auto-rotate ticker items
   useEffect(() => {
     const interval = setInterval(() => {
       handleNextTicker()
@@ -110,43 +110,7 @@ export function Navbar() {
   const toggleTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!mounted) return
     const targetTheme = theme === 'dark' ? 'light' : 'dark'
-
-    // @ts-ignore
-    if (!document.startViewTransition) {
-      setTheme(targetTheme)
-      return
-    }
-
-    const x = e.clientX
-    const y = e.clientY
-    const endRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    )
-
-    // @ts-ignore
-    const transition = document.startViewTransition(() => {
-      setTheme(targetTheme)
-    })
-
-    transition.ready.then(() => {
-      const clipPath = [
-        `circle(0px at ${x}px ${y}px)`,
-        `circle(${endRadius}px at ${x}px ${y}px)`
-      ]
-      document.documentElement.animate(
-        {
-          clipPath: theme === 'dark' ? [...clipPath].reverse() : clipPath,
-        },
-        {
-          duration: 450,
-          easing: 'ease-in-out',
-          pseudoElement: theme === 'dark'
-            ? '::view-transition-old(root)'
-            : '::view-transition-new(root)',
-        }
-      )
-    })
+    setTheme(targetTheme)
   }
 
   return (
@@ -158,7 +122,6 @@ export function Navbar() {
         }`}
       >
         <div className="container mx-auto h-full flex items-center justify-between px-6">
-          {/* Top Bar Left links */}
           <div className="flex items-center gap-4 text-[11px] text-muted-foreground font-medium">
             {TOP_BAR_LINKS.map(link => (
               <Link
@@ -171,7 +134,6 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* Top Bar Right socials */}
           <div className="flex items-center gap-3">
             {SOCIAL_LINKS.map(({ icon: Icon, href, label }) => (
               <a
@@ -194,19 +156,13 @@ export function Navbar() {
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <svg
-              className="w-6 h-6 text-red-500 animate-pulse flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl overflow-hidden shadow-sm bg-primary/10">
+              <img src="/icon.svg" alt="AdSense Publisher Insights" className="w-full h-full object-cover" width="32" height="32" />
+            </div>
             <span className="font-black text-[18px] tracking-tight flex items-center">
               <span className="text-foreground">AdSense</span>
-              <span className="ml-1.5 bg-red-600 text-white text-[11px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">
-                INFO
+              <span className="ml-1.5 bg-primary text-primary-foreground text-[11px] font-black px-2 py-0.5 rounded uppercase tracking-wider">
+                BLOG
               </span>
             </span>
           </Link>
@@ -222,12 +178,12 @@ export function Navbar() {
                   href={item.href}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-bold tracking-tight transition-all duration-200 ${
                     active
-                      ? 'text-red-500 hover:text-red-600 bg-red-500/5'
+                      ? 'text-primary hover:text-primary/90 bg-primary/10'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                   }`}
                 >
                   {item.dot && active && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping flex-shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping flex-shrink-0" />
                   )}
                   <Icon className="h-4 w-4" />
                   <span>{item.label}</span>
@@ -238,18 +194,18 @@ export function Navbar() {
 
           {/* Right Action Icons & Dark Mode Switch */}
           <div className="flex items-center gap-3">
-            {/* Search Icon */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 rounded-xl hover:bg-muted"
-              title="Search"
-              aria-label="Search articles and tools"
-            >
-              <Search className="h-4 w-4 text-foreground/80" />
-            </Button>
+            <Link href="/blog">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-xl hover:bg-muted"
+                title="Search Guides"
+                aria-label="Search articles"
+              >
+                <Search className="h-4 w-4 text-foreground/80" />
+              </Button>
+            </Link>
 
-            {/* Custom Premium Sliding Theme Switch */}
             <button
               onClick={(e) => toggleTheme(e)}
               className="relative flex items-center h-7 w-[52px] rounded-full bg-slate-200 dark:bg-zinc-800 p-1 cursor-pointer transition-colors duration-300 focus:outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
@@ -274,7 +230,6 @@ export function Navbar() {
               </div>
             </button>
 
-            {/* Mobile menu toggle */}
             <Button
               variant="ghost"
               size="icon"
@@ -295,14 +250,13 @@ export function Navbar() {
         }`}
       >
         <div className="container mx-auto h-full flex items-center justify-between px-6 min-w-0">
-          {/* Ticker Banner Left */}
           <div className="flex items-center gap-3 overflow-hidden flex-1 mr-4 min-w-0">
-            <span className="flex-shrink-0 bg-red-600 hover:bg-red-700 text-white text-[11px] font-black px-2.5 py-1 rounded tracking-wider uppercase">
-              Interesting:
+            <span className="flex-shrink-0 bg-primary text-primary-foreground text-[11px] font-black px-2.5 py-1 rounded tracking-wider uppercase">
+              Latest:
             </span>
             <Link
               href={TICKER_ITEMS[tickerIndex].href}
-              className={`text-xs md:text-sm font-bold tracking-tight text-foreground/80 hover:text-red-500 truncate flex-1 min-w-0 transition-all duration-300 ${
+              className={`text-xs md:text-sm font-bold tracking-tight text-foreground/80 hover:text-primary truncate flex-1 min-w-0 transition-all duration-300 ${
                 fade ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2'
               }`}
             >
@@ -310,7 +264,6 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Ticker Controls Right */}
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <button
               onClick={handlePrevTicker}
@@ -341,7 +294,7 @@ export function Navbar() {
               href={item.href}
               className={`flex items-center gap-2.5 text-sm font-bold p-2.5 rounded-lg transition-colors ${
                 isActive(item.href, item.exact)
-                  ? 'text-red-500 bg-red-500/5'
+                  ? 'text-primary bg-primary/10'
                   : 'text-foreground/80 hover:text-foreground hover:bg-muted'
               }`}
               onClick={() => setIsMobileMenuOpen(false)}

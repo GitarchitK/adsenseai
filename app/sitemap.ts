@@ -52,9 +52,8 @@ const blogPosts: Array<{ slug: string; date: string; priority: number }> = [
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     // Core pages
-    { url: BASE,                  lastModified: new Date('2026-06-28'), changeFrequency: 'weekly',  priority: 1.0 },
-    { url: `${BASE}/pricing`,     lastModified: new Date('2026-05-17'), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${BASE}/blog`,        lastModified: new Date('2026-06-28'), changeFrequency: 'weekly',  priority: 0.9 },
+    { url: BASE,                  lastModified: new Date('2026-07-14'), changeFrequency: 'weekly',  priority: 1.0 },
+    { url: `${BASE}/blog`,        lastModified: new Date('2026-07-14'), changeFrequency: 'weekly',  priority: 0.9 },
     { url: `${BASE}/about`,       lastModified: new Date('2026-06-28'), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${BASE}/contact`,     lastModified: new Date('2026-06-28'), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${BASE}/privacy`,     lastModified: new Date('2026-06-28'), changeFrequency: 'yearly',  priority: 0.4 },
