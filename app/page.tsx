@@ -485,6 +485,57 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* FEATURED IN-DEPTH PUBLISHER GUIDES */}
+        <section className="py-24 bg-muted/20 border-t border-border/50">
+          <div className="container px-4 mx-auto max-w-5xl">
+            <FadeIn className="text-center max-w-3xl mx-auto mb-16">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold tracking-widest uppercase mb-4">
+                <BookOpen className="h-3.5 w-3.5" /> Featured Compliance Guides
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black mt-2 mb-6">Master AdSense Policy & Approval</h2>
+              <p className="text-lg text-muted-foreground">
+                In-depth blueprints written by AdSense compliance specialists to help you fix rejections and pass Google publisher reviews.
+              </p>
+            </FadeIn>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                {
+                  slug: 'adsense-low-value-content-fix',
+                  title: 'How to Fix "Low Value Content"',
+                  desc: 'Step-by-step resolution blueprint covering word count, E-E-A-T author credentials, and content depth.',
+                  tag: 'Policy Fix',
+                },
+                {
+                  slug: 'adsense-approval-requirements',
+                  title: '2026 AdSense Master Checklist',
+                  desc: 'Comprehensive checklist of every technical, legal, and content requirement Google evaluates.',
+                  tag: 'Checklist',
+                },
+                {
+                  slug: 'why-adsense-keeps-rejecting-my-site',
+                  title: 'Why AdSense Rejects Sites',
+                  desc: 'Decode cryptic rejection emails and fix the top 8 reasons Google rejects publisher applications.',
+                  tag: 'Troubleshooting',
+                },
+              ].map((g, i) => (
+                <FadeIn key={i} delay={i * 0.1} className="bg-background border border-border/70 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 inline-block mb-3">
+                      {g.tag}
+                    </span>
+                    <h3 className="font-bold text-lg text-foreground mb-2">{g.title}</h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed mb-4">{g.desc}</p>
+                  </div>
+                  <Link href={`/blog/${g.slug}`} className="text-xs font-bold text-primary hover:underline inline-flex items-center gap-1.5 pt-2 border-t border-border/40">
+                    Read Full Master Guide <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </FadeIn>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* CTA */}
         <LandingCTA />
       </main>

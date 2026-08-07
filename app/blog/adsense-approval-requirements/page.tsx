@@ -1,18 +1,19 @@
 import { Navbar } from '@/components/navbar'
 import { SiteFooter } from '@/components/site-footer'
+import { AuthorBox } from '@/components/author-box'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { CheckCircle2, XCircle, ArrowRight } from 'lucide-react'
+import { CheckCircle2, XCircle, ArrowRight, ShieldCheck, FileCheck2, Zap, AlertTriangle, Layers, BookOpen } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Google AdSense Approval Requirements for Website (2026 Guide)',
-  description: 'What are the Google AdSense website requirements? Complete checklist of Google AdSense approval requirements for your website and AdSense account requirements.',
-  keywords: ['google adsense approval requirements for website', 'google adsense requirements', 'adsense account requirements', 'google adsense website requirements'],
+  title: 'Google AdSense Approval Requirements 2026: Complete Master Checklist',
+  description: 'What are the exact Google AdSense website requirements? Check our ultimate 2026 checklist covering content depth, E-E-A-T, legal pages, and technical compliance.',
+  keywords: ['google adsense approval requirements for website', 'google adsense requirements', 'adsense account requirements', 'google adsense website requirements 2026'],
   alternates: { canonical: 'https://www.adsensechecker.in/blog/adsense-approval-requirements' },
   openGraph: {
     type: 'article',
-    title: 'Google AdSense Approval Requirements for Website (2026 Guide)',
+    title: 'Google AdSense Approval Requirements 2026: Master Checklist',
     description: 'Complete list of Google AdSense approval requirements for your website.',
     url: 'https://www.adsensechecker.in/blog/adsense-approval-requirements',
     siteName: 'AdSense Approval Checker AI',
@@ -21,14 +22,23 @@ export const metadata: Metadata = {
 
 const articleSchema = {
   '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: 'Google AdSense Approval Requirements for Website (2026 Guide)',
-  description: 'Complete list of Google AdSense approval requirements for your website.',
+  '@type': 'TechArticle',
+  headline: 'Google AdSense Approval Requirements 2026: Complete Master Checklist',
   url: 'https://www.adsensechecker.in/blog/adsense-approval-requirements',
   datePublished: '2025-01-01',
-  dateModified: '2025-04-23',
-  author: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://www.adsensechecker.in' },
-  publisher: { '@type': 'Organization', name: 'AdSense Approval Checker AI', url: 'https://www.adsensechecker.in' },
+  dateModified: '2026-07-14',
+  author: {
+    '@type': 'Person',
+    name: 'Archit Karmakar',
+    jobTitle: 'AdSense Compliance Specialist',
+    worksFor: { '@type': 'Organization', name: 'Navroll Studio' },
+    url: 'https://www.adsensechecker.in/about',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'AdSense Approval Checker AI',
+    url: 'https://www.adsensechecker.in',
+  },
   mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://www.adsensechecker.in/blog/adsense-approval-requirements' },
 }
 
@@ -38,61 +48,52 @@ const breadcrumbSchema = {
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.adsensechecker.in' },
     { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.adsensechecker.in/blog' },
-    { '@type': 'ListItem', position: 3, name: 'AdSense Approval Requirements', item: 'https://www.adsensechecker.in/blog/adsense-approval-requirements' },
-  ],
-}
-
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: [
-    { '@type': 'Question', name: 'What are the requirements for Google AdSense approval?', acceptedAnswer: { '@type': 'Answer', text: 'Google AdSense requires: original content (20-30+ articles, 600+ words each), Privacy Policy page, About page, Contact page, HTTPS, mobile-friendly design, and no policy violations.' } },
-    { '@type': 'Question', name: 'How many articles do I need for AdSense approval?', acceptedAnswer: { '@type': 'Answer', text: 'Most publishers need at least 20-30 quality articles before applying for AdSense. Each article should be at least 600 words of original content.' } },
-    { '@type': 'Question', name: 'Is a Privacy Policy required for AdSense?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, a Privacy Policy page is required for Google AdSense approval. It must explain what data you collect and how you use it.' } },
+    { '@type': 'ListItem', position: 3, name: 'AdSense Requirements', item: 'https://www.adsensechecker.in/blog/adsense-approval-requirements' },
   ],
 }
 
 const requirements = [
   {
-    category: 'Content Requirements',
+    category: '1. Content Depth & Originality',
+    desc: 'Google AdSense quality raters evaluate content substance before anything else.',
     items: [
-      { req: 'Minimum 20-30 original articles', critical: true },
-      { req: 'Each article at least 600 words', critical: true },
-      { req: 'No copied or scraped content', critical: true },
-      { req: 'No adult, violent, or dangerous content', critical: true },
-      { req: 'Content written in a supported language', critical: true },
-      { req: 'Regular publishing schedule (2-3 posts/week)', critical: false },
+      { req: 'Minimum 25–30 original articles published', critical: true, detail: 'Single page apps or sites with <15 articles are flagged for Low Value Content.' },
+      { req: 'Each article at least 1,000 to 1,500+ words', critical: true, detail: 'Short posts under 500 words do not provide enough contextual ad space.' },
+      { req: 'Zero plagiarized, scraped, or unedited AI text', critical: true, detail: 'Run text through plagiarism checkers. Add unique human insights and examples.' },
+      { req: 'Supported primary language', critical: true, detail: 'Must be written in an officially supported Google AdSense publisher language.' },
+      { req: 'Consistent publishing history', critical: false, detail: 'Regular post updates show that the site is actively maintained.' },
     ],
   },
   {
-    category: 'Required Pages',
+    category: '2. Mandatory Trust & Legal Pages',
+    desc: 'Google requires transparent ownership and legal disclosures.',
     items: [
-      { req: 'Privacy Policy page', critical: true },
-      { req: 'About Us page', critical: true },
-      { req: 'Contact page', critical: true },
-      { req: 'Terms of Service page', critical: false },
-      { req: 'Disclaimer page (for finance/health niches)', critical: false },
+      { req: 'Privacy Policy page with Google AdSense cookie clause', critical: true, detail: 'Must explicitly mention Google DoubleClick cookies and opt-out links.' },
+      { req: 'About Us page with team & business background', critical: true, detail: 'Explains who operates the site and your editorial mission.' },
+      { req: 'Contact page with real email and working form', critical: true, detail: 'Provides working contact mechanisms for visitors and compliance reviewers.' },
+      { req: 'Terms of Service page', critical: false, detail: 'Establishes site usage rules and intellectual property ownership.' },
+      { req: 'Disclaimer page (for Finance, Health, Legal niches)', critical: false, detail: 'Protects visitors and satisfies YMYL (Your Money Your Life) criteria.' },
     ],
   },
   {
-    category: 'Technical Requirements',
+    category: '3. Technical & SEO Infrastructure',
+    desc: 'Your site must load securely and navigate seamlessly across all devices.',
     items: [
-      { req: 'HTTPS (SSL certificate)', critical: true },
-      { req: 'H1 heading on every page', critical: true },
-      { req: 'Meta description on every page', critical: false },
-      { req: 'Mobile-friendly design', critical: true },
-      { req: 'Fast page load speed', critical: false },
-      { req: 'No broken links', critical: false },
+      { req: 'Active SSL/TLS Certificate (HTTPS)', critical: true, detail: 'Google reviewers immediately reject insecure HTTP websites.' },
+      { req: 'Mobile-responsive layout without overflow', critical: true, detail: 'Navigation and layout must adjust cleanly on mobile viewports.' },
+      { req: 'Single H1 tag per page & semantic hierarchy', critical: true, detail: 'Structured H1, H2, H3 tags help crawler indexing.' },
+      { req: 'Valid XML Sitemap & Robots.txt', critical: false, detail: 'Ensures Googlebot can crawl and index all your articles.' },
+      { req: 'Zero broken links (404 errors)', critical: false, detail: 'All header and footer links must point to live, working URLs.' },
     ],
   },
   {
-    category: 'Domain & Site Requirements',
+    category: '4. Domain & Policy Compliance',
+    desc: 'AdSense enforces strict safety and niche restrictions.',
     items: [
-      { req: 'Domain at least 6 months old (recommended)', critical: false },
-      { req: 'You own and control the website', critical: true },
-      { req: 'Site is publicly accessible (not under construction)', critical: true },
-      { req: 'No excessive ads from other networks', critical: true },
-      { req: 'Clear navigation structure', critical: false },
+      { req: 'Verified domain ownership & control', critical: true, detail: 'You must own the domain and be able to insert code in <head>.' },
+      { req: 'Site is live and publicly accessible', critical: true, detail: 'Not password protected, under construction, or behind a paywall.' },
+      { req: 'Zero restricted niche violations', critical: true, detail: 'No adult content, dangerous products, hacking tools, or illegal downloads.' },
+      { req: 'Clean ad-to-content balance', critical: true, detail: 'Must not be overloaded with popups, aggressive banners, or third-party ad networks.' },
     ],
   },
 ]
@@ -102,50 +103,64 @@ export default function AdsenseApprovalRequirements() {
     <div className="min-h-screen bg-background">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <Navbar />
-      <article className="container mx-auto px-6 py-16 max-w-3xl">
-        <div className="mb-10">
-          <div className="inline-flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest mb-4">
-            AdSense Guide
+
+      <article className="container mx-auto px-6 py-12 max-w-4xl">
+        <div className="mb-8">
+          <div className="inline-flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest mb-3 bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
+            <FileCheck2 className="h-3.5 w-3.5" /> 2026 Publisher Blueprint
           </div>
-          <h1 className="text-3xl md:text-4xl font-black text-foreground mb-4 leading-tight">
-            Google AdSense Approval Requirements for Website (2026 Guide)
+          <h1 className="text-3xl md:text-5xl font-black text-foreground mb-4 leading-tight">
+            Google AdSense Approval Requirements 2026: Complete Master Checklist
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Before you apply for Google AdSense, your website must meet a specific set of requirements. This complete checklist covers every AdSense approval requirement — use it alongside our free AdSense approval checker to know exactly where you stand.
+            Before submitting your website to Google AdSense, verify that your site satisfies every requirement in this master checklist. Meeting these standards reduces approval time and prevents frustrating 2-week rejections.
           </p>
         </div>
 
-        <div className="prose prose-sm max-w-none space-y-10 text-foreground">
+        <AuthorBox publishedDate="January 01, 2025" updatedDate="July 14, 2026" readTime="10 min read" />
 
-          <section>
-            <h2 className="text-2xl font-black text-foreground mb-2">The AdSense Approval Checklist</h2>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              Items marked <span className="text-red-600 font-bold">Critical</span> will cause automatic rejection if not met. Items marked <span className="text-amber-600 font-bold">Recommended</span> improve your approval chances.
+        <div className="prose prose-sm md:prose-base max-w-none space-y-10 text-foreground leading-relaxed">
+          
+          <section className="space-y-4">
+            <h2 className="text-2xl md:text-3xl font-black text-foreground">Overview: How Google Reviews Your Website</h2>
+            <p>
+              When you submit a site to Google AdSense, a two-stage evaluation process begins:
             </p>
+            <ol className="list-decimal pl-6 space-y-2 text-sm text-muted-foreground">
+              <li><strong>Automated Bot Crawl:</strong> Googlebot scans your HTML for basic requirements: SSL (HTTPS), mobile responsiveness, XML sitemaps, structured headings, and word count across indexed URLs.</li>
+              <li><strong>Human Quality Rater Review:</strong> A human reviewer visits your site to check editorial quality, author credentials (E-E-A-T), mandatory legal pages, and user experience.</li>
+            </ol>
+          </section>
+
+          <section className="space-y-8">
+            <h2 className="text-2xl md:text-3xl font-black text-foreground">The 2026 AdSense Master Checklist</h2>
+            
             <div className="space-y-8">
-              {requirements.map(section => (
-                <div key={section.category}>
-                  <h3 className="text-lg font-black text-foreground mb-3">{section.category}</h3>
-                  <div className="space-y-2">
-                    {section.items.map(item => (
-                      <div key={item.req} className={`flex items-center gap-3 p-3 rounded-xl border text-sm ${
-                        item.critical
-                          ? 'border-red-200 dark:border-red-800/40 bg-red-50/30 dark:bg-red-950/10'
-                          : 'border-border/60 bg-muted/20'
-                      }`}>
-                        {item.critical
-                          ? <XCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
-                          : <CheckCircle2 className="h-4 w-4 text-amber-500 flex-shrink-0" />}
-                        <span className="text-foreground">{item.req}</span>
-                        <span className={`ml-auto text-[10px] font-black px-2 py-0.5 rounded-full flex-shrink-0 ${
-                          item.critical
-                            ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-                            : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
-                        }`}>
-                          {item.critical ? 'Critical' : 'Recommended'}
-                        </span>
+              {requirements.map((section) => (
+                <div key={section.category} className="p-6 rounded-2xl border border-border/70 bg-card">
+                  <h3 className="text-xl font-bold text-foreground mb-1">{section.category}</h3>
+                  <p className="text-xs text-muted-foreground mb-4">{section.desc}</p>
+                  
+                  <div className="space-y-3">
+                    {section.items.map((item) => (
+                      <div key={item.req} className="p-4 rounded-xl border border-border/50 bg-muted/20 space-y-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2.5">
+                            {item.critical ? (
+                              <XCircle className="h-4 w-4 text-red-500 shrink-0" />
+                            ) : (
+                              <CheckCircle2 className="h-4 w-4 text-amber-500 shrink-0" />
+                            )}
+                            <span className="font-bold text-sm text-foreground">{item.req}</span>
+                          </div>
+                          <span className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full shrink-0 ${
+                            item.critical ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                          }`}>
+                            {item.critical ? 'Critical' : 'Recommended'}
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground pl-6">{item.detail}</p>
                       </div>
                     ))}
                   </div>
@@ -154,47 +169,21 @@ export default function AdsenseApprovalRequirements() {
             </div>
           </section>
 
-          <section>
-            <h2 className="text-2xl font-black text-foreground mb-4">How to Check All Requirements Automatically</h2>
-            <p className="text-muted-foreground leading-relaxed mb-4">
-              Manually checking every requirement takes hours. AdSense Checker AI's free AdSense approval checker scans your entire website in 30 seconds and tells you exactly which requirements you're failing — with specific fixes for each one.
+          <section className="p-8 rounded-3xl bg-gradient-to-br from-primary/10 via-background to-violet-500/10 border border-primary/25 text-center my-8">
+            <h2 className="text-2xl font-black text-foreground mb-3">Check All Requirements Automatically in 30 Seconds</h2>
+            <p className="text-sm text-muted-foreground max-w-xl mx-auto mb-6">
+              Skip hours of manual checking. Our free AI-powered scanner evaluates your website against all 40+ AdSense approval rules automatically.
             </p>
-            <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20">
-              <p className="font-bold text-foreground mb-2">Free AdSense Approval Checker</p>
-              <p className="text-sm text-muted-foreground mb-4">Scan your site against all the requirements above. Get a score from 0-100 and a personalised fix list.</p>
-              <Link href="/auth/signup">
-                <Button className="gap-2 rounded-xl">
-                  Check My Site Now — Free <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-black text-foreground mb-4">Frequently Asked Questions</h2>
-            <div className="space-y-4">
-              {[
-                { q: 'How long does AdSense approval take?', a: 'Google typically reviews AdSense applications within 1-14 days. If your site meets all requirements, approval is usually faster.' },
-                { q: 'Can I apply for AdSense with a new website?', a: 'Yes, but Google recommends your site is at least 6 months old and has sufficient content. New sites with fewer than 20 articles are often rejected.' },
-                { q: 'What is the minimum traffic for AdSense approval?', a: 'Google does not have a minimum traffic requirement for AdSense approval. However, sites with some organic traffic tend to get approved faster.' },
-                { q: 'How many times can I apply for AdSense?', a: 'You can reapply for AdSense after fixing the issues that caused rejection. There is no limit on the number of applications.' },
-              ].map(faq => (
-                <div key={faq.q} className="p-4 rounded-xl border border-border/60 bg-muted/20">
-                  <p className="font-bold text-foreground text-sm mb-1">{faq.q}</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{faq.a}</p>
-                </div>
-              ))}
-            </div>
+            <Link href="/auth/signup">
+              <Button size="lg" className="gap-2 rounded-xl shadow-lg shadow-primary/25">
+                Check My Site Free <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </section>
 
         </div>
-      
-          <div className="mt-12 p-6 bg-primary/5 rounded-2xl border border-primary/20">
-            <h3 className="text-xl font-bold mb-2 text-foreground">Ready to get approved?</h3>
-            <p className="text-muted-foreground">Use our AI-powered tool to <Link href="/" className="text-primary hover:underline font-bold">check your AdSense eligibility</Link> and get a step-by-step roadmap to monetization.</p>
-          </div>
-  
       </article>
+
       <SiteFooter />
     </div>
   )
